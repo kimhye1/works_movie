@@ -7,6 +7,7 @@
 //
 
 #import "WMViewController.h"
+#import "WMShowVideosViewController.h"
 
 @interface WMViewController ()
 
@@ -74,7 +75,8 @@
 }
 
 - (void)showVideosButtonClicked:(UIButton *)sender {
-    NSLog(@"show videos button clicked!");
+    WMShowVideosViewController *showVideosViewController = [[WMShowVideosViewController alloc] init];
+    [self presentViewController:showVideosViewController animated:YES completion:nil];
 }
 
 
