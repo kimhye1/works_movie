@@ -54,6 +54,8 @@ NSString *const wm_collection_view_cell_identifier = @"wm_collection_view_cell_i
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self;
     
+    //UICollectionView 객체에 register class 메소드로 재사용할 컬렉션뷰 셀을 설정
+    //forCellWithReuseIdentifier를 사용해서 재사용할 셀의 식별자를 등록
     [self.collectionView registerClass:[WMCollectionViewCell class] forCellWithReuseIdentifier:wm_collection_view_cell_identifier];
     
     [self.view addSubview:self.collectionView];
