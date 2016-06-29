@@ -14,6 +14,7 @@
 		4A4A0FF31D2350330019E8FD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A4A0FF21D2350330019E8FD /* Assets.xcassets */; };
 		4A4A0FF61D2350330019E8FD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A4A0FF41D2350330019E8FD /* LaunchScreen.storyboard */; };
 		4A4A0FFF1D2354FC0019E8FD /* WMShowVideosViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A4A0FFE1D2354FC0019E8FD /* WMShowVideosViewController.m */; };
+		4A4A10021D2359D40019E8FD /* WMCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A4A10011D2359D40019E8FD /* WMCollectionViewCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,8 @@
 		4A4A0FF71D2350330019E8FD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4A4A0FFD1D2354FC0019E8FD /* WMShowVideosViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMShowVideosViewController.h; sourceTree = "<group>"; };
 		4A4A0FFE1D2354FC0019E8FD /* WMShowVideosViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMShowVideosViewController.m; sourceTree = "<group>"; };
+		4A4A10001D2359D40019E8FD /* WMCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMCollectionViewCell.h; sourceTree = "<group>"; };
+		4A4A10011D2359D40019E8FD /* WMCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMCollectionViewCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +75,8 @@
 				4A4A0FE61D2350330019E8FD /* Supporting Files */,
 				4A4A0FFD1D2354FC0019E8FD /* WMShowVideosViewController.h */,
 				4A4A0FFE1D2354FC0019E8FD /* WMShowVideosViewController.m */,
+				4A4A10001D2359D40019E8FD /* WMCollectionViewCell.h */,
+				4A4A10011D2359D40019E8FD /* WMCollectionViewCell.m */,
 			);
 			path = WorksMovie;
 			sourceTree = "<group>";
@@ -156,6 +161,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4A4A0FEE1D2350330019E8FD /* WMViewController.m in Sources */,
+				4A4A10021D2359D40019E8FD /* WMCollectionViewCell.m in Sources */,
 				4A4A0FEB1D2350330019E8FD /* AppDelegate.m in Sources */,
 				4A4A0FFF1D2354FC0019E8FD /* WMShowVideosViewController.m in Sources */,
 				4A4A0FE81D2350330019E8FD /* main.m in Sources */,

@@ -1,5 +1,5 @@
 //
-//  WMShowVideosController.h
+//  WMCollectionViewCell.h
 //  WorksMovie
 //
 //  Created by Naver on 2016. 6. 29..
@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface WMShowVideosViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate>
+@interface WMCollectionViewCell : UICollectionViewCell
+
+@property (nonatomic, strong) UIImageView *imageView;
 
 @end
