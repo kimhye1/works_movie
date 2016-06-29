@@ -15,6 +15,7 @@
 		4A4A0FF61D2350330019E8FD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A4A0FF41D2350330019E8FD /* LaunchScreen.storyboard */; };
 		4A4A0FFF1D2354FC0019E8FD /* WMShowVideosViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A4A0FFE1D2354FC0019E8FD /* WMShowVideosViewController.m */; };
 		4A4A10021D2359D40019E8FD /* WMCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A4A10011D2359D40019E8FD /* WMCollectionViewCell.m */; };
+		4A4A10311D239AC90019E8FD /* WMShootingVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A4A10301D239AC90019E8FD /* WMShootingVideoViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,8 @@
 		4A4A0FFE1D2354FC0019E8FD /* WMShowVideosViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMShowVideosViewController.m; sourceTree = "<group>"; };
 		4A4A10001D2359D40019E8FD /* WMCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMCollectionViewCell.h; sourceTree = "<group>"; };
 		4A4A10011D2359D40019E8FD /* WMCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMCollectionViewCell.m; sourceTree = "<group>"; };
+		4A4A102F1D239AC90019E8FD /* WMShootingVideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMShootingVideoViewController.h; sourceTree = "<group>"; };
+		4A4A10301D239AC90019E8FD /* WMShootingVideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMShootingVideoViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +80,8 @@
 				4A4A0FFE1D2354FC0019E8FD /* WMShowVideosViewController.m */,
 				4A4A10001D2359D40019E8FD /* WMCollectionViewCell.h */,
 				4A4A10011D2359D40019E8FD /* WMCollectionViewCell.m */,
+				4A4A102F1D239AC90019E8FD /* WMShootingVideoViewController.h */,
+				4A4A10301D239AC90019E8FD /* WMShootingVideoViewController.m */,
 			);
 			path = WorksMovie;
 			sourceTree = "<group>";
@@ -161,6 +166,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4A4A0FEE1D2350330019E8FD /* WMViewController.m in Sources */,
+				4A4A10311D239AC90019E8FD /* WMShootingVideoViewController.m in Sources */,
 				4A4A10021D2359D40019E8FD /* WMCollectionViewCell.m in Sources */,
 				4A4A0FEB1D2350330019E8FD /* AppDelegate.m in Sources */,
 				4A4A0FFF1D2354FC0019E8FD /* WMShowVideosViewController.m in Sources */,
@@ -317,6 +323,7 @@
 				4A4A0FFC1D2350330019E8FD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
