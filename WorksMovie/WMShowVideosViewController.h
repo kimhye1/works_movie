@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface WMShowVideosViewController : UIViewController
+@interface WMShowVideosViewController : UIViewController 
 
 @end

@@ -10,9 +10,28 @@
 
 @interface WMShowVideosViewController ()
 
+@property (nonatomic, strong) NSMutableArray *dummyImages;
+
 @end
 
 @implementation WMShowVideosViewController
+
+- (instancetype)init {
+    self = [super init];
+    
+    if(self) {
+        [self initializeAssets];
+    }
+    return self;
+}
+
+- (void)initializeAssets {
+    self.dummyImages = [[NSMutableArray alloc] init];
+    
+    for (NSInteger i = 0 ; i < 20 ; i ++) {
+        [self.dummyImages addObject:[UIImage imageNamed:@"tropical"]];
+    }
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
