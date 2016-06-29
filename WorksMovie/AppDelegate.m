@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "WMViewController.h"
 
 @interface AppDelegate ()
 
@@ -16,7 +17,14 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    UIWindow *window = [[UIWindow alloc] init];
+    self.window = window;
+    self.window.backgroundColor = [UIColor whiteColor];
+    [self.window makeKeyAndVisible];
+    
+    WMViewController *viewController = [[WMViewController alloc] init];
+    [self.window setRootViewController:viewController];
+
     return YES;
 }
 

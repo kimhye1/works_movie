@@ -10,6 +10,8 @@
 
 @interface WMViewController : UIViewController
 
+@property (nonatomic, strong) UIButton *shootingVideoButton;
+@property (nonatomic, strong) UIButton *showVideosButton;
 
 @end
 
