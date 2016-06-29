@@ -6,13 +6,13 @@
 //  Copyright © 2016년 worksmobile. All rights reserved.
 //
 
-#import "ViewController.h"
+#import "WMViewController.h"
 
-@interface ViewController ()
+@interface WMViewController ()
 
 @end
 
-@implementation ViewController
+@implementation WMViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
