@@ -8,6 +8,7 @@
 
 #import "WMViewController.h"
 #import "WMShowVideosViewController.h"
+#import "WMShootingVideoViewController.h"
 
 @interface WMViewController ()
 
@@ -71,7 +72,8 @@
 }
 
 - (void)shootingVideoButtonClicked:(UIButton *)sender {
-    NSLog(@"shooting video button clicked!");
+    WMShootingVideoViewController *shootingVideoViewController = [[WMShootingVideoViewController alloc] init];
+    [self presentViewController:shootingVideoViewController animated:YES completion:nil];
 }
 
 - (void)showVideosButtonClicked:(UIButton *)sender {
