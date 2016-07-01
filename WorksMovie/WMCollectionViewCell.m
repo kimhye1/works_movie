@@ -25,15 +25,17 @@
     self.imageView = [[UIImageView alloc] init];
     self.imageView.translatesAutoresizingMaskIntoConstraints = NO;
     
-    [self addSubview:self.imageView];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[imageView]|"
+    [self.contentView addSubview:self.imageView];
+    [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[imageView]|"
                                                                  options:0
                                                                  metrics:nil
                                                                    views:@{@"imageView" : self.imageView}]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[imageView]|"
+    [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[imageView]|"
                                                                  options:0
                                                                  metrics:nil
                                                                    views:@{@"imageView" : self.imageView}]];
 }
+
+
 
 @end

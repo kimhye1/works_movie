@@ -8,11 +8,14 @@
 
 #import "WMShowVideosViewController.h"
 #import "WMCollectionViewCell.h"
+#import <Photos/Photos.h>
 
 @interface WMShowVideosViewController ()
 
-@property (nonatomic, strong) NSMutableArray *dummyImages;
+//@property (nonatomic, strong) NSMutableArray *dummyImages;
 @property (nonatomic, strong) UICollectionView *collectionView;
+@property (nonatomic, strong) PHImageManager *imageManager;
+@property (nonatomic, strong) PHFetchResult *fetchResult;
 
 @end
 
@@ -24,18 +27,32 @@ NSString *const wm_collection_view_cell_identifier = @"wm_collection_view_cell_i
     self = [super init];
     
     if(self) {
-        [self initializeAssets];
+//        [self initializeAssets];
+        [self fetchAssets];
+        [self initializeImageManager];
     }
     return self;
 }
 
-- (void)initializeAssets {
-    self.dummyImages = [[NSMutableArray alloc] init];
+//- (void)initializeAssets {
+//    self.dummyImages = [[NSMutableArray alloc] init];
+//
+//    for (NSInteger i = 0 ; i < 20 ; i ++) {
+//        [self.dummyImages addObject:[UIImage imageNamed:@"tropical"]];
+//    }
+//}
+
+- (void)fetchAssets {
+    PHFetchOptions *options = [[PHFetchOptions alloc] init];
+    options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:YES]];
     
-    for (NSInteger i = 0 ; i < 20 ; i ++) {
-        [self.dummyImages addObject:[UIImage imageNamed:@"tropical"]];
-    }
+    self.fetchResult = [PHAsset fetchAssetsWithOptions:options];
 }
+
+- (void)initializeImageManager {
+    self.imageManager = [[PHImageManager alloc] init];
+}
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -59,6 +76,8 @@ NSString *const wm_collection_view_cell_identifier = @"wm_collection_view_cell_i
     [self.collectionView registerClass:[WMCollectionViewCell class] forCellWithReuseIdentifier:wm_collection_view_cell_identifier];
     
     [self.view addSubview:self.collectionView];
+
+
 }
 
 - (void)setupConstraints {
@@ -80,18 +99,28 @@ NSString *const wm_collection_view_cell_identifier = @"wm_collection_view_cell_i
 
 // 섹션에 있는 아이템 수 반환
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return [self.dummyImages count];
+    return [self.fetchResult count];
 }
 
 // 참조되는 인덱스에 대한 적절한 셀 객체를 반환
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     //재사용 큐에 셀을 가져온다
-    WMCollectionViewCell *collectionViewCell = [collectionView dequeueReusableCellWithReuseIdentifier:wm_collection_view_cell_identifier forIndexPath:indexPath];
+    WMCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:wm_collection_view_cell_identifier forIndexPath:indexPath];
     
     //표시할 이미지 설정
-    collectionViewCell.imageView.image = self.dummyImages[indexPath.item];
+//    cell.imageView.image = self.dummyImages[indexPath.item];
     
-    return collectionViewCell;
+    PHAsset *asset = self.fetchResult[indexPath.item];
+    [self.imageManager requestImageForAsset:asset
+                                 targetSize:collectionView.collectionViewLayout.collectionViewContentSize
+                                contentMode:PHImageContentModeAspectFill
+                                    options:nil
+                              resultHandler:^(UIImage *result, NSDictionary *info) {
+                                  cell.imageView.image = result;
+                              }];
+
+    
+    return cell;
 }
 
 
