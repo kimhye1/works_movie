@@ -15,17 +15,25 @@
 
 @implementation AppDelegate
 
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [self setupWindow];
+    [self setupRootViewController];
+    
+    return YES;
+}
+
+- (void)setupWindow {
     UIWindow *window = [[UIWindow alloc] init];
     self.window = window;
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
-    
+
+}
+
+- (void)setupRootViewController {
     WMViewController *viewController = [[WMViewController alloc] init];
     [self.window setRootViewController:viewController];
 
-    return YES;
 }
 
 @end

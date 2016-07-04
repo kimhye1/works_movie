@@ -19,11 +19,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self setupComponents];
+    [self setupViewComponents];
     [self setupConstraints];
 }
 
-- (void)setupComponents {
+- (void)setupViewComponents {
     [self setupShootingVideoButton];
     [self setupShowVideosButton];
 }
@@ -48,27 +48,37 @@
 
 
 - (void)setupConstraints {
-    NSDictionary *views = @{@"shootingVideoButton" : self.shootingVideoButton,
-                            @"showVideosButton" : self.showVideosButton};
-    
+    [self setupShootingVideoButtonHorizontalConstraint];
+    [self setupShowVideosButtonHorizontalConstraint];
+    [self setupButtonVerticalConstraints];
+    [self setupShowVideosButtonVerticalConstraints];
+    [self setupShootingVideoButtonVerticalConstraints];
+}
+
+- (void)setupShootingVideoButtonHorizontalConstraint {
     [self.view addConstraint:
      [NSLayoutConstraint constraintWithItem:self.view attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.shootingVideoButton attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
-    
-    [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[shootingVideoButton(==200)]" options:0 metrics:nil views:views]];
-    
-    [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-200-[shootingVideoButton(==50)]" options:0 metrics:nil views:views]];
-    
+}
+
+- (void)setupShowVideosButtonHorizontalConstraint {
     [self.view addConstraint:
      [NSLayoutConstraint constraintWithItem:self.view attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.showVideosButton attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
-    
+}
+
+- (void)setupButtonVerticalConstraints {
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[showVideosButton(==200)]" options:0 metrics:nil views:views]];
-    
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-200-[shootingVideoButton(==50)]-30-[showVideosButton(==50)]" options:0 metrics:nil views:@{@"shootingVideoButton" : self.shootingVideoButton, @"showVideosButton" : self.showVideosButton}]];
+}
+
+- (void)setupShootingVideoButtonVerticalConstraints {
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[shootingVideoButton]-30-[showVideosButton(==50)]" options:0 metrics:nil views:views]];
-    
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[shootingVideoButton(==200)]" options:0 metrics:nil views:@{@"shootingVideoButton" : self.shootingVideoButton}]];
+}
+
+- (void)setupShowVideosButtonVerticalConstraints {
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[showVideosButton(==200)]" options:0 metrics:nil views:@{ @"showVideosButton" : self.showVideosButton}]];
+
 }
 
 - (void)shootingVideoButtonClicked:(UIButton *)sender {
