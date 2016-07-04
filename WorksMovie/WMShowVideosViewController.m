@@ -27,20 +27,11 @@ NSString *const wm_collection_view_cell_identifier = @"wm_collection_view_cell_i
     self = [super init];
     
     if(self) {
-//        [self initializeAssets];
         [self fetchAssets];
         [self initializeImageManager];
     }
     return self;
 }
-
-//- (void)initializeAssets {
-//    self.dummyImages = [[NSMutableArray alloc] init];
-//
-//    for (NSInteger i = 0 ; i < 20 ; i ++) {
-//        [self.dummyImages addObject:[UIImage imageNamed:@"tropical"]];
-//    }
-//}
 
 - (void)fetchAssets {
     PHFetchOptions *options = [[PHFetchOptions alloc] init];
