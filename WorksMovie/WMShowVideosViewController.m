@@ -12,14 +12,13 @@
 
 @interface WMShowVideosViewController ()
 
-//@property (nonatomic, strong) NSMutableArray *dummyImages;
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, strong) PHImageManager *imageManager;
 @property (nonatomic, strong) PHFetchResult *fetchResult;
 
 @end
 
-NSString *const wm_collection_view_cell_identifier = @"wm_collection_view_cell_identifier";
+NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identifier";
 
 @implementation WMShowVideosViewController
 
@@ -64,7 +63,7 @@ NSString *const wm_collection_view_cell_identifier = @"wm_collection_view_cell_i
     
     //UICollectionView 객체에 register class 메소드로 재사용할 컬렉션뷰 셀을 설정
     //forCellWithReuseIdentifier를 사용해서 재사용할 셀의 식별자를 등록
-    [self.collectionView registerClass:[WMCollectionViewCell class] forCellWithReuseIdentifier:wm_collection_view_cell_identifier];
+    [self.collectionView registerClass:[WMCollectionViewCell class] forCellWithReuseIdentifier:kCollectionViewCellIdentifier];
     
     [self.view addSubview:self.collectionView];
 
@@ -96,10 +95,7 @@ NSString *const wm_collection_view_cell_identifier = @"wm_collection_view_cell_i
 // 참조되는 인덱스에 대한 적절한 셀 객체를 반환
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     //재사용 큐에 셀을 가져온다
-    WMCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:wm_collection_view_cell_identifier forIndexPath:indexPath];
-    
-    //표시할 이미지 설정
-//    cell.imageView.image = self.dummyImages[indexPath.item];
+    WMCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kCollectionViewCellIdentifier forIndexPath:indexPath];
     
     PHAsset *asset = self.fetchResult[indexPath.item];
     [self.imageManager requestImageForAsset:asset

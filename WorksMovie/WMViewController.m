@@ -10,6 +10,9 @@
 #import "WMShowVideosViewController.h"
 #import "WMShootingVideoViewController.h"
 
+NSString *const kShootingVideoButtonTitle = @"동영상 촬영";
+NSString *const kShowVideoButtonTitle = @"내 동영상 보기";
+
 @interface WMViewController ()
 
 @end
@@ -23,6 +26,9 @@
     [self setupConstraints];
 }
 
+
+#pragma mark - Create Views Methods
+
 - (void)setupViewComponents {
     [self setupShootingVideoButton];
     [self setupShowVideosButton];
@@ -30,7 +36,7 @@
 
 - (void)setupShootingVideoButton {
     self.shootingVideoButton = [[UIButton alloc] init];
-    [self.shootingVideoButton setTitle:@"동영상 촬영" forState:UIControlStateNormal];
+    [self.shootingVideoButton setTitle:kShootingVideoButtonTitle forState:UIControlStateNormal];
     self.shootingVideoButton.backgroundColor = [UIColor greenColor];
     self.shootingVideoButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.shootingVideoButton];
@@ -39,7 +45,7 @@
 
 - (void)setupShowVideosButton {
     self.showVideosButton = [[UIButton alloc] init];
-    [self.showVideosButton setTitle:@"내 동영상 보기" forState:UIControlStateNormal];
+    [self.showVideosButton setTitle:kShowVideoButtonTitle forState:UIControlStateNormal];
     self.showVideosButton.backgroundColor = [UIColor redColor];
     self.showVideosButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.showVideosButton];
@@ -47,39 +53,66 @@
 }
 
 
+#pragma mark - Setup Constraints Methods
+
 - (void)setupConstraints {
-    [self setupShootingVideoButtonHorizontalConstraint];
-    [self setupShowVideosButtonHorizontalConstraint];
-    [self setupButtonVerticalConstraints];
-    [self setupShowVideosButtonVerticalConstraints];
-    [self setupShootingVideoButtonVerticalConstraints];
+    [self setupShootingVideoButtonAlignConstraint];
+    [self setupShootingVideoButtonHorizontalConstraints];
+    [self setupShowVideoButtonAlignConstraint];
+    [self setupShowVideosButtonHorizontalConstraints];
+    
+    [self setupButtonsVerticalConstraints];
 }
 
-- (void)setupShootingVideoButtonHorizontalConstraint {
+- (void)setupShootingVideoButtonAlignConstraint {
     [self.view addConstraint:
-     [NSLayoutConstraint constraintWithItem:self.view attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.shootingVideoButton attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
+     [NSLayoutConstraint constraintWithItem:self.view attribute:NSLayoutAttributeCenterX
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.shootingVideoButton
+                                  attribute:NSLayoutAttributeCenterX
+                                 multiplier:1
+                                   constant:0]];
 }
 
-- (void)setupShowVideosButtonHorizontalConstraint {
+- (void)setupShootingVideoButtonHorizontalConstraints {
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[shootingVideoButton(==200)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"shootingVideoButton" : self.shootingVideoButton}]];
+}
+
+- (void)setupShowVideoButtonAlignConstraint {
     [self.view addConstraint:
-     [NSLayoutConstraint constraintWithItem:self.view attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.showVideosButton attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
+     [NSLayoutConstraint constraintWithItem:self.view
+                                  attribute:NSLayoutAttributeCenterX
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.showVideosButton
+                                  attribute:NSLayoutAttributeCenterX
+                                 multiplier:1
+                                   constant:0]];
 }
 
-- (void)setupButtonVerticalConstraints {
+- (void)setupShowVideosButtonHorizontalConstraints {
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-200-[shootingVideoButton(==50)]-30-[showVideosButton(==50)]" options:0 metrics:nil views:@{@"shootingVideoButton" : self.shootingVideoButton, @"showVideosButton" : self.showVideosButton}]];
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[showVideosButton(==200)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"showVideosButton" : self.showVideosButton}]];
 }
 
-- (void)setupShootingVideoButtonVerticalConstraints {
+- (void)setupButtonsVerticalConstraints {
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[shootingVideoButton(==200)]" options:0 metrics:nil views:@{@"shootingVideoButton" : self.shootingVideoButton}]];
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-200-[shootingVideoButton(==50)]-30-[showVideosButton(==50)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{
+                                                       @"shootingVideoButton" : self.shootingVideoButton,
+                                                       @"showVideosButton" : self.showVideosButton}]];
 }
 
-- (void)setupShowVideosButtonVerticalConstraints {
-    [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[showVideosButton(==200)]" options:0 metrics:nil views:@{ @"showVideosButton" : self.showVideosButton}]];
 
-}
+#pragma mark - Button Event Handler Methods
 
 - (void)shootingVideoButtonClicked:(UIButton *)sender {
     WMShootingVideoViewController *shootingVideoViewController = [[WMShootingVideoViewController alloc] init];
