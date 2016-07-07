@@ -115,11 +115,19 @@ NSString *const kShowVideoButtonTitle = @"내 동영상 보기";
 #pragma mark - Button Event Handler Methods
 
 - (void)shootingVideoButtonClicked:(UIButton *)sender {
+    [self presentWMShootingVideoViewController];
+}
+
+- (void)presentWMShootingVideoViewController {
     WMShootingVideoViewController *shootingVideoViewController = [[WMShootingVideoViewController alloc] init];
     [self presentViewController:shootingVideoViewController animated:YES completion:nil];
 }
 
 - (void)showVideosButtonClicked:(UIButton *)sender {
+    [self presentWMShowVideosViewController];
+}
+
+- (void)presentWMShowVideosViewController {
     WMShowVideosViewController *showVideosViewController = [[WMShowVideosViewController alloc] init];
     [self presentViewController:showVideosViewController animated:YES completion:nil];
 }
