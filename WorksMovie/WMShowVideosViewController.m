@@ -45,6 +45,7 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
 
 
 - (void)viewDidLoad {
+    //test commit
     [super viewDidLoad];
     
     [self setupComponents];
