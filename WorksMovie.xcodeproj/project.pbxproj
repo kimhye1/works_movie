@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4A1B555B1D2E4BF000267C67 /* WMPlayAndStoreVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A1B555A1D2E4BF000267C67 /* WMPlayAndStoreVideoViewController.m */; };
 		4A4A0FE81D2350330019E8FD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A4A0FE71D2350330019E8FD /* main.m */; };
 		4A4A0FEB1D2350330019E8FD /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A4A0FEA1D2350330019E8FD /* AppDelegate.m */; };
 		4A4A0FEE1D2350330019E8FD /* WMViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A4A0FED1D2350330019E8FD /* WMViewController.m */; };
@@ -18,6 +19,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4A1B55591D2E4BF000267C67 /* WMPlayAndStoreVideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMPlayAndStoreVideoViewController.h; sourceTree = "<group>"; };
+		4A1B555A1D2E4BF000267C67 /* WMPlayAndStoreVideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMPlayAndStoreVideoViewController.m; sourceTree = "<group>"; };
 		4A4A0FE31D2350330019E8FD /* WorksMovie.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WorksMovie.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A4A0FE71D2350330019E8FD /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4A4A0FE91D2350330019E8FD /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -79,6 +82,8 @@
 				4A4A10011D2359D40019E8FD /* WMCollectionViewCell.m */,
 				4A4A102F1D239AC90019E8FD /* WMShootingVideoViewController.h */,
 				4A4A10301D239AC90019E8FD /* WMShootingVideoViewController.m */,
+				4A1B55591D2E4BF000267C67 /* WMPlayAndStoreVideoViewController.h */,
+				4A1B555A1D2E4BF000267C67 /* WMPlayAndStoreVideoViewController.m */,
 			);
 			path = WorksMovie;
 			sourceTree = "<group>";
@@ -165,6 +170,7 @@
 				4A4A10311D239AC90019E8FD /* WMShootingVideoViewController.m in Sources */,
 				4A4A10021D2359D40019E8FD /* WMCollectionViewCell.m in Sources */,
 				4A4A0FEB1D2350330019E8FD /* AppDelegate.m in Sources */,
+				4A1B555B1D2E4BF000267C67 /* WMPlayAndStoreVideoViewController.m in Sources */,
 				4A4A0FFF1D2354FC0019E8FD /* WMShowVideosViewController.m in Sources */,
 				4A4A0FE81D2350330019E8FD /* main.m in Sources */,
 			);

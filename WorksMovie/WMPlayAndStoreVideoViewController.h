@@ -10,4 +10,6 @@
 
 @interface WMPlayAndStoreVideoViewController : UIViewController
 
+- (instancetype)initWithVideoFileUrl:(NSURL *)url;
+
 @end

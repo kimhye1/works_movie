@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <AVFoundation/AVFoundation.h>
 
-@interface WMShootingVideoViewController : UIViewController
+@interface WMShootingVideoViewController : UIViewController <AVCaptureFileOutputRecordingDelegate>
+
+#define CAPTURE_FRAMES_PER_SECOND		20
 
 @end
