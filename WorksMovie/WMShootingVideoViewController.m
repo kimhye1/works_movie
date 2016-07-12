@@ -26,6 +26,7 @@
 //비디오가 녹화 중 인지를 추적하기 위한 변수
 @property (nonatomic) bool recording;
 @property (nonatomic, strong) NSURL *fileURL;
+@property (nonatomic, strong) NSMutableArray *videoListArray;
 
 @end
 
@@ -35,7 +36,7 @@
     self = [super init];
     
     if(self) {
-        
+        self.videoListArray = [[NSMutableArray alloc] init];
     }
     return self;
 }
@@ -266,6 +267,7 @@
         self.recording = YES;
         self.recordingStateMark.hidden = NO;
         self.fileURL = [self tempFileURL];
+        [self.videoListArray addObject:self.fileURL];
         [self.output startRecordingToOutputFileURL:self.fileURL recordingDelegate:self];
     }
     
@@ -280,7 +282,10 @@
 
 //디바이스에 임시 저장된 비디오에 대한 경로를 반환한다. 이미 파일이 저장되어 있는 경우 그 파일을 삭제한다
 - (NSURL *)tempFileURL {
-    NSString *outputPath = [[NSString alloc] initWithFormat:@"%@%@", NSTemporaryDirectory(), @"output.mov" ];
+    NSString *uuid = [[NSUUID UUID] UUIDString];
+
+    NSString *outputPath = [[NSString alloc] initWithFormat:@"%@%@%@", NSTemporaryDirectory(), uuid, @".mov" ];
+
     NSURL *outputURL = [[NSURL alloc] initFileURLWithPath:outputPath];
     NSFileManager *manager = [[NSFileManager alloc] init];
     
@@ -295,7 +300,7 @@
 }
 
 - (void)presentWMPlayAndStoreVideoViewController {
-    WMPlayAndStoreVideoViewController *playAndStoreVideoVeiwController = [[WMPlayAndStoreVideoViewController alloc] initWithVideoFileUrl:self.fileURL];
+    WMPlayAndStoreVideoViewController *playAndStoreVideoVeiwController = [[WMPlayAndStoreVideoViewController alloc] initWithVideoFileUrlList:self.videoListArray];
     [self presentViewController:playAndStoreVideoVeiwController animated:YES completion:nil];
 }
 

@@ -12,6 +12,7 @@
 
 @interface WMPlayAndStoreVideoViewController ()
 
+@property (nonatomic, strong) NSMutableArray *videoListArray;
 @property (nonatomic, strong) UIView *videoView;
 @property (nonatomic, strong) NSURL *videoFileURL;
 @property (nonatomic, strong) UIButton *playVideoButton;
@@ -23,11 +24,11 @@
 
 @implementation WMPlayAndStoreVideoViewController
 
-- (instancetype)initWithVideoFileUrl:url {
+- (instancetype)initWithVideoFileUrlList:list {
     self = [super init];
     
     if(self) {
-        self.videoFileURL = url;
+        self.videoListArray = list;
     }
     return self;
 }
@@ -100,13 +101,29 @@
 
 
 - (void)playVideoButtonClicked:(UIButton *)sender {
-    AVPlayer *player = [[AVPlayer alloc] initWithURL:self.videoFileURL]; // Create The AVPlayer With the URL
-    AVPlayerLayer *playerLayer = [AVPlayerLayer playerLayerWithPlayer:player];//Place it to A Layer
+    NSMutableArray *videoItems = [[NSMutableArray alloc] init];
+    for (int i = 0 ; i < self.videoListArray.count; i++) {
+        AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:self.videoListArray[i]];
+        [videoItems addObject:playerItem];
+    }
+    AVQueuePlayer *player = [[AVQueuePlayer alloc] initWithItems:videoItems];
+    
+    AVPlayerLayer *playerLayer = [AVPlayerLayer playerLayerWithPlayer:player];
     [playerLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
-    playerLayer.frame = self.videoView.frame;//Create A view frame size to match the view
-    [self.view.layer addSublayer: playerLayer];//Add it to Player Layer
-    [playerLayer setNeedsDisplay];// Set it to Display
-    [player play];//Play it
+    playerLayer.frame = self.videoView.frame;
+    
+    [self.view.layer addSublayer:playerLayer];
+    
+    [player play];
+    
+    
+//    AVPlayer *player = [[AVPlayer alloc] initWithURL:self.videoFileURL]; // Create The AVPlayer With the URL
+//    AVPlayerLayer *playerLayer = [AVPlayerLayer playerLayerWithPlayer:player];//Place it to A Layer
+//    [playerLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
+//    playerLayer.frame = self.videoView.frame;//Create A view frame size to match the view
+//    [self.view.layer addSublayer: playerLayer];//Add it to Player Layer
+//    [playerLayer setNeedsDisplay];// Set it to Display
+//    [player play];//Play it
 }
 
 @end
