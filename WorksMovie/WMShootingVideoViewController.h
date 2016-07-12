@@ -6,11 +6,12 @@
 //  Copyright © 2016년 worksmobile. All rights reserved.
 //
 
+/*
+ * 동영상 촬영 및 삭제 기능 구현.
+ */
+
 #import <UIKit/UIKit.h>
-#import <AVFoundation/AVFoundation.h>
 
-@interface WMShootingVideoViewController : UIViewController <AVCaptureFileOutputRecordingDelegate>
-
-#define CAPTURE_FRAMES_PER_SECOND		20
+@interface WMShootingVideoViewController : UIViewController
 
 @end
