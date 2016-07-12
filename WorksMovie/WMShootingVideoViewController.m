@@ -96,6 +96,7 @@
     [self.removeVideoButton setImage:[UIImage imageNamed:@"Delete1"] forState:UIControlStateNormal];
     self.removeVideoButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.videoShootingMenuContainerView addSubview:self.removeVideoButton];
+    [self.removeVideoButton addTarget:self action:@selector(removeVideoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     
 }
 
@@ -305,5 +306,10 @@
 }
 
 
+#pragma mark - Remove Video Button Event Handler Methods
+
+- (void)removeVideoButtonClicked:(UIButton *)sender {
+    [self.videoListArray removeLastObject];
+}
 
 @end
