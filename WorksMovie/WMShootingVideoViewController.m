@@ -65,7 +65,7 @@
 
 - (void)setupVideoShootingMenuContainerView {
     self.videoShootingMenuContainerView = [[UIView alloc] initWithFrame:CGRectZero];
-    self.videoShootingMenuContainerView.backgroundColor = [UIColor darkGrayColor];
+    self.videoShootingMenuContainerView.backgroundColor = [UIColor colorWithRed:0.15 green:0.16 blue:0.17 alpha:1.00];
     self.videoShootingMenuContainerView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.videoShootingMenuContainerView];
 }

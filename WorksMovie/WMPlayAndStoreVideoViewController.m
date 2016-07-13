@@ -16,6 +16,7 @@
 @property (nonatomic, strong) NSArray *videoDatas;
 @property (nonatomic, strong) UIView *videoView;
 @property (nonatomic, strong) UIButton *playVideoButton;
+@property (nonatomic, strong) UIView *videoStoreMenuContainerView;
 @property (nonatomic, strong) UIButton *storeVideoButton;
 @property (nonatomic, strong) UIButton *backButton;
 @property (nonatomic, strong) UIButton *returnToShootingVideoViewButton;
@@ -46,6 +47,8 @@
 - (void)setupComponents {
     [self setupVideoView];
     [self setupPlayVideoButton];
+    [self setupVideoStoreMenuContainerView];
+    [self setupStoreVideoButton];
 }
 
 - (void)setupVideoView {
@@ -78,12 +81,29 @@
     [self.playVideoButton addTarget:self action:@selector(playVideoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
 }
 
+- (void)setupVideoStoreMenuContainerView {
+    self.videoStoreMenuContainerView = [[UIView alloc] initWithFrame:CGRectZero];
+    self.videoStoreMenuContainerView.backgroundColor = [UIColor colorWithRed:0.15 green:0.16 blue:0.17 alpha:1.00];
+    self.videoStoreMenuContainerView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:self.videoStoreMenuContainerView];
+}
+
+- (void)setupStoreVideoButton {
+    self.storeVideoButton = [[UIButton alloc] init];
+    [self.storeVideoButton
+     setImage:[UIImage imageNamed:@"saveButton"] forState:UIControlStateNormal];
+    self.storeVideoButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.videoStoreMenuContainerView addSubview:self.storeVideoButton];
+    [self.storeVideoButton addTarget:self action:@selector(storeVideoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+}
 
 #pragma mark - Setup Constraints Methods
 
 - (void)setupConstraints {
     [self setupVideoViewConstraints];
     [self setupPlayVideoButtonConstraints];
+    [self setupVideoStoreMenuContainerViewConstraints];
+    [self setupStoreVideoButtonConstraints];
 }
 
 - (void)setupVideoViewConstraints {
@@ -121,6 +141,40 @@
                                    constant:0]];
 }
 
+- (void)setupVideoStoreMenuContainerViewConstraints {
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[videoStoreMenuContainerView]|"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"videoStoreMenuContainerView" : self.videoStoreMenuContainerView}]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[videoStoreMenuContainerView(==200)]|"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"videoView" : self.videoView, @"videoStoreMenuContainerView" : self.videoStoreMenuContainerView}]];
+}
+
+- (void)setupStoreVideoButtonConstraints {
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:self.videoStoreMenuContainerView
+                                  attribute:NSLayoutAttributeCenterY
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.storeVideoButton
+                                  attribute:NSLayoutAttributeCenterY
+                                 multiplier:1
+                                   constant:0]];
+    
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:self.videoStoreMenuContainerView
+                                  attribute:NSLayoutAttributeCenterX
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.storeVideoButton
+                                  attribute:NSLayoutAttributeCenterX
+                                 multiplier:1
+                                   constant:0]];
+}
+
 
 #pragma mark - Play Video Button Event Handler Methods
 
@@ -141,6 +195,14 @@
     [self.view.layer addSublayer:playerLayer];
     
     [player play];
+}
+
+
+
+#pragma mark - Store Video Button Event Handler Methods
+
+- (void)storeVideoButtonClicked:(UIButton *)sender {
+    NSLog(@"storeVideoButton clicked");
 }
 
 @end
