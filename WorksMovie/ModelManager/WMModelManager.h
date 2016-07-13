@@ -11,12 +11,13 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "WMModel.h"
 
 @interface WMModelManager : NSObject
 
-@property (nonatomic, strong) NSMutableArray *videosURLArray;
+@property (nonatomic, strong) NSMutableArray *videoDatas;
 
-- (void)addvideoURL:(NSURL *) url;
-- (void)removeLastVideoURL;
+- (void)addvideoData:(WMModel *)videoData;
+- (void)removeLastVideo;
 
 @end

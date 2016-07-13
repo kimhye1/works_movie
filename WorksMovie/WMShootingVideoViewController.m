@@ -8,7 +8,6 @@
 
 #import "WMShootingVideoViewController.h"
 #import "WMPlayAndStoreVideoViewController.h"
-#import <AVFoundation/AVFoundation.h>
 #import "WMModel.h"
 #import "WMModelManager.h"
 
@@ -24,7 +23,6 @@
 @property (nonatomic, strong) AVCaptureSession *session;
 @property (nonatomic, strong) AVCaptureMovieFileOutput *output;
 @property (nonatomic) bool recording; //비디오가 녹화 중 인지를 추적하기 위한 변수
-@property (nonatomic, strong) NSURL *fileURL;
 
 @end
 
@@ -262,17 +260,18 @@
 
 //shootingButton을 long tap할 때 마다 tap 하는 시간 동안 동영상이 녹화되고, button에서 손을 떼면 녹화가 종료된다.
 - (void)shootingButtonLongPress:(UILongPressGestureRecognizer*)gesture {
-    if ( gesture.state == UIGestureRecognizerStateBegan) {
+    if (gesture.state == UIGestureRecognizerStateBegan) {
         self.recording = YES;
         self.recordingStateMark.hidden = NO;
         
-        self.fileURL = [self tempFileURL];
-        [self.output startRecordingToOutputFileURL:self.fileURL recordingDelegate:self];
+        WMModel *videoData = [[WMModel alloc] init];
+        videoData.videoURL = [self tempFileURL];
+        [self.output startRecordingToOutputFileURL:videoData.videoURL recordingDelegate:self];
         
-        [self.modelManager addvideoURL:self.fileURL]; // modelManager의 프로퍼티인 videosURLArray에 촬영된 비디오에 대한 URL 추가
+        [self.modelManager addvideoData:videoData]; // modelManager의 프로퍼티인 videosURLArray에 촬영된 비디오에 대한 URL 추가
     }
     
-    if ( gesture.state == UIGestureRecognizerStateEnded ) {
+    if (gesture.state == UIGestureRecognizerStateEnded) {
         self.recordingStateMark.hidden = YES;
         
         [self.output stopRecording];
@@ -296,15 +295,20 @@
     return outputURL;
 }
 
-
-#pragma mark - Complete Shooting Button Event Handler Methods
+- (void)captureOutput:(AVCaptureFileOutput *)captureOutput didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL fromConnections:(NSArray *)connections error:(NSError *)error {
+}
 
 - (void)completeShootingButtonClicked:(UIButton *)sender {
     [self presentWMPlayAndStoreVideoViewController];
 }
 
+
+#pragma mark - Complete Shooting Button Event Handler Methods
+
+
 - (void)presentWMPlayAndStoreVideoViewController {
-    WMPlayAndStoreVideoViewController *playAndStoreVideoVeiwController = [[WMPlayAndStoreVideoViewController alloc] initWithVideoFileURLList:self.modelManager.videosURLArray];
+    WMPlayAndStoreVideoViewController *playAndStoreVideoVeiwController =
+    [[WMPlayAndStoreVideoViewController alloc] initWithVideoDatas:self.modelManager.videoDatas];
     [self presentViewController:playAndStoreVideoVeiwController animated:YES completion:nil];
 }
 
@@ -312,7 +316,7 @@
 #pragma mark - Remove Video Button Event Handler Methods
 
 - (void)removeVideoButtonClicked:(UIButton *)sender {
-    [self.modelManager removeLastVideoURL];
+    [self.modelManager removeLastVideo];
 }
 
 @end

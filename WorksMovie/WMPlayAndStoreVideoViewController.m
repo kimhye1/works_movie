@@ -6,13 +6,14 @@
 //  Copyright © 2016년 worksmobile. All rights reserved.
 //
 
+#import <AVFoundation/AVFoundation.h>
 #import "WMPlayAndStoreVideoViewController.h"
 #import "WMShowVideosViewController.h"
-#import <AVFoundation/AVFoundation.h>
+#import "WMModel.h"
 
 @interface WMPlayAndStoreVideoViewController ()
 
-@property (nonatomic, strong) NSMutableArray *videoListArray;
+@property (nonatomic, strong) NSArray *videoDatas;
 @property (nonatomic, strong) UIView *videoView;
 @property (nonatomic, strong) UIButton *playVideoButton;
 @property (nonatomic, strong) UIButton *storeVideoButton;
@@ -23,11 +24,11 @@
 
 @implementation WMPlayAndStoreVideoViewController
 
-- (instancetype)initWithVideoFileURLList:list {
+- (instancetype)initWithVideoDatas:(NSArray *)videoDatas {
     self = [super init];
     
     if(self) {
-        self.videoListArray = list;
+        self.videoDatas = videoDatas;
     }
     return self;
 }
@@ -111,8 +112,8 @@
 - (void)playVideoButtonClicked:(UIButton *)sender {
     NSMutableArray *videoItems = [[NSMutableArray alloc] init];
     
-    for (int i = 0 ; i < self.videoListArray.count; i++) {
-        AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:self.videoListArray[i]];
+    for (int i = 0 ; i < self.videoDatas.count; i++) {
+        AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:[(WMModel *)self.videoDatas[i] videoURL]];
         [videoItems addObject:playerItem];
     }
     AVQueuePlayer *player = [[AVQueuePlayer alloc] initWithItems:videoItems];

@@ -15,6 +15,6 @@
 
 @interface WMPlayAndStoreVideoViewController : UIViewController
 
-- (instancetype)initWithVideoFileURLList:(NSMutableArray *) arr;
+- (instancetype)initWithVideoDatas:(NSArray *) videoDatas;
 
 @end

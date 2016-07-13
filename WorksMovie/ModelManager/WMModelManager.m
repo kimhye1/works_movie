@@ -14,17 +14,17 @@
     self = [super init];
     
     if(self) {
-        self.videosURLArray = [[NSMutableArray alloc] init];
+        self.videoDatas = [[NSMutableArray alloc] init];
     }
     return self;
 }
 
-- (void)addvideoURL:(NSURL *) url {
-    [self.videosURLArray addObject:url];
+- (void)addvideoData:(WMModel *)videoData {
+    [self.videoDatas addObject:videoData];
 }
 
-- (void)removeLastVideoURL {
-    [self.videosURLArray removeLastObject];
+- (void)removeLastVideo {
+    [self.videoDatas removeLastObject];
 }
  
 @end

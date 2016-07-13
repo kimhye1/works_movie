@@ -17,5 +17,6 @@
 
 @interface WMModel : NSObject
 
+@property (nonatomic, strong) NSURL *videoURL;
 
 @end
