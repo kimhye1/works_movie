@@ -6,15 +6,15 @@
 //  Copyright © 2016년 worksmobile. All rights reserved.
 //
 
+#import <AVFoundation/AVFoundation.h>
 #import "WMPlayAndStoreVideoViewController.h"
 #import "WMShowVideosViewController.h"
-#import <AVFoundation/AVFoundation.h>
+#import "WMModel.h"
 
 @interface WMPlayAndStoreVideoViewController ()
 
-@property (nonatomic, strong) NSMutableArray *videoListArray;
+@property (nonatomic, strong) NSArray *videoDatas;
 @property (nonatomic, strong) UIView *videoView;
-@property (nonatomic, strong) NSURL *videoFileURL;
 @property (nonatomic, strong) UIButton *playVideoButton;
 @property (nonatomic, strong) UIButton *storeVideoButton;
 @property (nonatomic, strong) UIButton *backButton;
@@ -24,11 +24,11 @@
 
 @implementation WMPlayAndStoreVideoViewController
 
-- (instancetype)initWithVideoFileUrlList:list {
+- (instancetype)initWithVideoDatas:(NSArray *)videoDatas {
     self = [super init];
     
     if(self) {
-        self.videoListArray = list;
+        self.videoDatas = videoDatas;
     }
     return self;
 }
@@ -39,6 +39,9 @@
     [self setupComponents];
     [self setupConstraints];
 }
+
+
+#pragma mark - Create Views Methods
 
 - (void)setupComponents {
     [self setupVideoView];
@@ -58,6 +61,9 @@
     [self.videoView addSubview:self.playVideoButton];
     [self.playVideoButton addTarget:self action:@selector(playVideoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
 }
+
+
+#pragma mark - Setup Constraints Methods
 
 - (void)setupConstraints {
     [self setupVideoViewConstraints];
@@ -100,10 +106,14 @@
 }
 
 
+#pragma mark - Play Video Button Event Handler Methods
+
+// playVideoButton을 클릭하면 videoItems를 차례대로 이어서 재생시킨다.
 - (void)playVideoButtonClicked:(UIButton *)sender {
     NSMutableArray *videoItems = [[NSMutableArray alloc] init];
-    for (int i = 0 ; i < self.videoListArray.count; i++) {
-        AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:self.videoListArray[i]];
+    
+    for (int i = 0 ; i < self.videoDatas.count; i++) {
+        AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:[(WMModel *)self.videoDatas[i] videoURL]];
         [videoItems addObject:playerItem];
     }
     AVQueuePlayer *player = [[AVQueuePlayer alloc] initWithItems:videoItems];
@@ -115,15 +125,6 @@
     [self.view.layer addSublayer:playerLayer];
     
     [player play];
-    
-    
-//    AVPlayer *player = [[AVPlayer alloc] initWithURL:self.videoFileURL]; // Create The AVPlayer With the URL
-//    AVPlayerLayer *playerLayer = [AVPlayerLayer playerLayerWithPlayer:player];//Place it to A Layer
-//    [playerLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
-//    playerLayer.frame = self.videoView.frame;//Create A view frame size to match the view
-//    [self.view.layer addSublayer: playerLayer];//Add it to Player Layer
-//    [playerLayer setNeedsDisplay];// Set it to Display
-//    [player play];//Play it
 }
 
 @end

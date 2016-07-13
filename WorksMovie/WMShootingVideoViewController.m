@@ -8,25 +8,21 @@
 
 #import "WMShootingVideoViewController.h"
 #import "WMPlayAndStoreVideoViewController.h"
-#import <AVFoundation/AVFoundation.h>
-#import <AssetsLibrary/AssetsLibrary.h>
+#import "WMModel.h"
+#import "WMModelManager.h"
 
 @interface WMShootingVideoViewController ()
 
+@property (nonatomic, strong) WMModelManager *modelManager;
 @property (nonatomic, strong) UIView *cameraView;
 @property (nonatomic, strong) UIView *videoShootingMenuContainerView;
 @property (nonatomic, strong) UIButton *shootingButton;
 @property (nonatomic, strong) UIButton *removeVideoButton;
 @property (nonatomic, strong) UIButton *completeShootingButton;
 @property (nonatomic, strong) UIImageView *recordingStateMark;
-
 @property (nonatomic, strong) AVCaptureSession *session;
 @property (nonatomic, strong) AVCaptureMovieFileOutput *output;
-
-//비디오가 녹화 중 인지를 추적하기 위한 변수
-@property (nonatomic) bool recording;
-@property (nonatomic, strong) NSURL *fileURL;
-@property (nonatomic, strong) NSMutableArray *videoListArray;
+@property (nonatomic) bool recording; //비디오가 녹화 중 인지를 추적하기 위한 변수
 
 @end
 
@@ -36,7 +32,7 @@
     self = [super init];
     
     if(self) {
-        self.videoListArray = [[NSMutableArray alloc] init];
+        self.modelManager = [[WMModelManager alloc] init];
     }
     return self;
 }
@@ -84,7 +80,6 @@
     self.shootingButton.layer.borderWidth=2.0f;
     self.shootingButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.videoShootingMenuContainerView addSubview:self.shootingButton];
-//    [self.shootingButton addTarget:self action:@selector(shootingButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     
     UILongPressGestureRecognizer *shootingButtonPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(shootingButtonLongPress:)];
     [self.shootingButton addGestureRecognizer:shootingButtonPressRecognizer];
@@ -221,14 +216,16 @@
                                                views:@{@"recordingStateMark" : self.recordingStateMark}]];
 }
 
+
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
     self.session = [[AVCaptureSession alloc] init];
     self.session.sessionPreset = AVCaptureSessionPresetMedium;
     
     //카메라에 대한 AVCaptureDevice로 인스턴스 생성하고 AVCaptureDeviceInput을 생성한 후 세션에 추가한다.
     AVCaptureDevice *inputDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
     AVCaptureDeviceInput *deviceInput = [AVCaptureDeviceInput deviceInputWithDevice:inputDevice error:nil];
-    
     if ([self.session canAddInput:deviceInput]) { //세션에 추가하기 전에 입력이 올바르게 되었는지 확인
         [self.session addInput:deviceInput];
     }
@@ -239,13 +236,11 @@
     if ([self.session canAddInput:mic]) {
         [self.session addInput:mic];
     }
-    
     self.output = [[AVCaptureMovieFileOutput alloc] init];
     [self.session addOutput:self.output];
 
-    //앱에서 카메라를 통해 보이는 것을 그대로 보여줄 AVCaptureVideoPreviewLayer를 생성
+    //앱에서 카메라를 통해 보이는 것을 그대로 보여줄 AVCaptureVideoPreviewLayer 생성
     AVCaptureVideoPreviewLayer *previewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:self.session];
-    //    AVCaptureVideoPreviewLayer *previewLayer = [AVCaptureVideoPreviewLayer layerWithSession:self.session];
     
     [previewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
     CALayer *rootLayer = [[self view] layer];
@@ -260,32 +255,36 @@
     self.recording = NO;
 }
 
+
 #pragma mark - Shooting Button Event Handler Methods
 
+//shootingButton을 long tap할 때 마다 tap 하는 시간 동안 동영상이 녹화되고, button에서 손을 떼면 녹화가 종료된다.
 - (void)shootingButtonLongPress:(UILongPressGestureRecognizer*)gesture {
-    if ( gesture.state == UIGestureRecognizerStateBegan) {
-        [self.shootingButton setTitle:@"stop" forState:UIControlStateNormal];
+    if (gesture.state == UIGestureRecognizerStateBegan) {
         self.recording = YES;
         self.recordingStateMark.hidden = NO;
-        self.fileURL = [self tempFileURL];
-        [self.videoListArray addObject:self.fileURL];
-        [self.output startRecordingToOutputFileURL:self.fileURL recordingDelegate:self];
+        
+        WMModel *videoData = [[WMModel alloc] init];
+        videoData.videoURL = [self tempFileURL];
+        [self.output startRecordingToOutputFileURL:videoData.videoURL recordingDelegate:self];
+        
+        [self.modelManager addvideoData:videoData]; // modelManager의 프로퍼티인 videosURLArray에 촬영된 비디오에 대한 URL 추가
     }
     
-    if ( gesture.state == UIGestureRecognizerStateEnded ) {
+    if (gesture.state == UIGestureRecognizerStateEnded) {
         self.recordingStateMark.hidden = YES;
-        [self.shootingButton setTitle:@"record" forState:UIControlStateNormal];
+        
         [self.output stopRecording];
         self.recording = NO;
     }
     
 }
 
-//디바이스에 임시 저장된 비디오에 대한 경로를 반환한다. 이미 파일이 저장되어 있는 경우 그 파일을 삭제한다
+//디바이스에 임시 저장된 비디오에 대한 유일한 경로를 반환한다. 이미 파일이 저장되어 있는 경우 그 파일을 삭제한다
 - (NSURL *)tempFileURL {
     NSString *uuid = [[NSUUID UUID] UUIDString];
 
-    NSString *outputPath = [[NSString alloc] initWithFormat:@"%@%@%@", NSTemporaryDirectory(), uuid, @".mov" ];
+    NSString *outputPath = [[NSString alloc] initWithFormat:@"%@%@%@", NSTemporaryDirectory(), uuid, @".mov"];
 
     NSURL *outputURL = [[NSURL alloc] initFileURLWithPath:outputPath];
     NSFileManager *manager = [[NSFileManager alloc] init];
@@ -296,12 +295,20 @@
     return outputURL;
 }
 
+- (void)captureOutput:(AVCaptureFileOutput *)captureOutput didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL fromConnections:(NSArray *)connections error:(NSError *)error {
+}
+
 - (void)completeShootingButtonClicked:(UIButton *)sender {
     [self presentWMPlayAndStoreVideoViewController];
 }
 
+
+#pragma mark - Complete Shooting Button Event Handler Methods
+
+
 - (void)presentWMPlayAndStoreVideoViewController {
-    WMPlayAndStoreVideoViewController *playAndStoreVideoVeiwController = [[WMPlayAndStoreVideoViewController alloc] initWithVideoFileUrlList:self.videoListArray];
+    WMPlayAndStoreVideoViewController *playAndStoreVideoVeiwController =
+    [[WMPlayAndStoreVideoViewController alloc] initWithVideoDatas:self.modelManager.videoDatas];
     [self presentViewController:playAndStoreVideoVeiwController animated:YES completion:nil];
 }
 
@@ -309,7 +316,7 @@
 #pragma mark - Remove Video Button Event Handler Methods
 
 - (void)removeVideoButtonClicked:(UIButton *)sender {
-    [self.videoListArray removeLastObject];
+    [self.modelManager removeLastVideo];
 }
 
 @end
