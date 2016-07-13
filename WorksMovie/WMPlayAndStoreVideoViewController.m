@@ -51,7 +51,23 @@
 - (void)setupVideoView {
     self.videoView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height-200)];
     self.videoView.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    UIImageView *imageView = [self gettingThumbnailFromVideo];
+    
+    [self.videoView addSubview:imageView];
     [self.view addSubview:self.videoView];
+}
+
+// 촬영된 비디오로부터 썸네일을 추출하여 추출된 still 이미지를 imageView에 추가한 후 imageView를 반환
+- (UIImageView *)gettingThumbnailFromVideo {
+    AVURLAsset* asset = [AVURLAsset URLAssetWithURL:[(WMModel *)self.videoDatas[0] videoURL] options:nil]; // 썸네일을 생성하기 위해 첫 번째 비디오의 url을 파라미터를 AVURLAsset에 넣는다.
+    AVAssetImageGenerator* imageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:asset];
+    [imageGenerator setAppliesPreferredTrackTransform:true];
+    UIImage* image = [UIImage imageWithCGImage:[imageGenerator copyCGImageAtTime:CMTimeMake(1, 10) actualTime:nil error:nil]]; // 특정 시점의 이미지를 추출
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
+    imageView.frame = self.videoView.bounds;
+    
+    return imageView;
 }
 
 - (void)setupPlayVideoButton {
