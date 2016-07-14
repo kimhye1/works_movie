@@ -11,8 +11,7 @@
  */
 
 #import <UIKit/UIKit.h>
-#import <AVFoundation/AVFoundation.h>
 
-@interface WMShootingVideoViewController : UIViewController <AVCaptureFileOutputRecordingDelegate>
+@interface WMShootingVideoViewController : UIViewController
 
 @end

@@ -12,9 +12,10 @@
 
 
 #import <UIKit/UIKit.h>
+#import "WMModelManager.h"
 
 @interface WMPlayAndStoreVideoViewController : UIViewController
 
-- (instancetype)initWithVideoDatas:(NSArray *) videoDatas;
+- (instancetype)initWithVideoModelManager:(WMModelManager *) videoManager;
 
 @end
