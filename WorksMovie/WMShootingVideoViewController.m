@@ -243,13 +243,9 @@
     AVCaptureVideoPreviewLayer *previewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:self.session];
     
     [previewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
-    CALayer *rootLayer = [[self view] layer];
-    [rootLayer setMasksToBounds:YES];
     CGRect frame = self.cameraView.frame;
-    
     [previewLayer setFrame:frame];
-    
-    [rootLayer insertSublayer:previewLayer atIndex:0];
+    [self.cameraView.layer insertSublayer:previewLayer atIndex:0];
     
     [self.session startRunning];
     self.recording = NO;
