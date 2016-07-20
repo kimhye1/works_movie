@@ -17,6 +17,10 @@
 @property (nonatomic, strong) WMPlayVideo *playVideo;
 @property (nonatomic, strong) WMStoreVideo *storeVideo;
 @property (nonatomic, strong) UIView *videoView;
+
+@property (nonatomic, strong) UIButton *backToCameraViewButton;
+@property (nonatomic, strong) UIButton *resetAndbackToCameraButton;
+
 @property (nonatomic, strong) UIButton *playVideoButton;
 @property (nonatomic, strong) UIView *videoStoreMenuContainerView;
 @property (nonatomic, strong) UIButton *storeVideoButton;
@@ -49,6 +53,10 @@
 
 - (void)setupComponents {
     [self setupVideoView];
+    
+    [self setupBackToCameraViewButton];
+    [self setupResetAndbackToCameraButton];
+    
     [self setupPlayVideoButton];
     [self setupVideoStoreMenuContainerView];
     [self setupStoreVideoButton];
@@ -63,6 +71,27 @@
     [self.videoView addSubview:imageView];
     [self.view addSubview:self.videoView];
 }
+
+
+- (void)setupBackToCameraViewButton {
+    self.backToCameraViewButton = [[UIButton alloc] init];
+    [self.backToCameraViewButton setImage:[UIImage imageNamed:@"backButton"] forState:UIControlStateNormal];
+    self.backToCameraViewButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.videoView addSubview:self.backToCameraViewButton];
+    [self.backToCameraViewButton addTarget:self action:@selector(backToCameraViewButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    
+}
+
+- (void)setupResetAndbackToCameraButton {
+    self.resetAndbackToCameraButton = [[UIButton alloc] init];
+    [self.resetAndbackToCameraButton setImage:[UIImage imageNamed:@"videoButton"] forState:UIControlStateNormal];
+    self.resetAndbackToCameraButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.videoView addSubview:self.resetAndbackToCameraButton];
+    [self.resetAndbackToCameraButton addTarget:self action:@selector(resetAndbackToCameraButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    
+}
+
+
 
 - (void)setupPlayVideoButton {
     self.playVideoButton = [[UIButton alloc] init];
@@ -92,6 +121,10 @@
 
 - (void)setupConstraints {
     [self setupVideoViewConstraints];
+    
+    [self setupBackToCameraViewButtonConstraints];
+    [self setupResetAndbackToCameraButtonConstraints];
+    
     [self setupPlayVideoButtonConstraints];
     [self setupVideoStoreMenuContainerViewConstraints];
     [self setupStoreVideoButtonConstraints];
@@ -109,8 +142,38 @@
                                              options:0
                                              metrics:nil
                                                views:@{@"videoView" : self.videoView}]];
-
 }
+
+- (void)setupBackToCameraViewButtonConstraints {
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-15-[backToCameraViewButton(==40)]"
+                                            options:0
+                                            metrics:nil
+                                               views:@{@"backToCameraViewButton" : self.backToCameraViewButton}]];
+    
+     [self.view addConstraints:
+        [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-20-[backToCameraViewButton(==40)]"
+                                            options:0
+                                            metrics:nil
+                                                views:@{@"backToCameraViewButton" : self.backToCameraViewButton}]];
+}
+
+- (void)setupResetAndbackToCameraButtonConstraints {
+    [self.view addConstraints:
+        [NSLayoutConstraint constraintsWithVisualFormat:@"H:[resetAndbackToCameraButton(==40)]-20-|"
+                                                options:0
+                                                metrics:nil
+                                                    views:@{@"resetAndbackToCameraButton" : self.resetAndbackToCameraButton}]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-20-[resetAndbackToCameraButton(==40)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"resetAndbackToCameraButton" : self.resetAndbackToCameraButton}]];
+}
+
+
+
 
 - (void)setupPlayVideoButtonConstraints {
     [self.videoView addConstraint:
@@ -182,5 +245,23 @@
     [self.storeVideo mergeVideo];
     [self.storeVideo storeVideo];
 }
+
+
+#pragma mark - back To Camera View Button Event Handler Methods
+
+// backToCamerViewButton을 누르면 카메라 촬영화면으로 되돌아 간다.
+- (void)backToCameraViewButtonClicked:(UIButton *)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+
+#pragma mark - reset And back To Camera Button Event Handler Methods
+
+//resetAndbackToCameraButton을 누르면 촬영한 데이터가 모두 삭제되고 카메라 촬영화면으로 되돌아간다.
+- (void)resetAndbackToCameraButtonClicked:(UIButton *)sender {
+    [self.modelManager.videoDatas removeAllObjects];
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
 
 @end

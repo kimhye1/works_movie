@@ -38,11 +38,14 @@
     return self;
 }
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     
     [self setupComponents];
     [self setupConstraints];
+    
+    [self.recordVideo setupCaptureSession];
+    [self.recordVideo setupPreviewLayerInView:self.cameraView];
 }
 
 
@@ -215,14 +218,6 @@
                                              options:0
                                              metrics:nil
                                                views:@{@"recordingStateMark" : self.recordingStateMark}]];
-}
-
-
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    
-    [self.recordVideo setupCaptureSession];
-    [self.recordVideo setupPreviewLayerInView:self.cameraView];
 }
 
 
