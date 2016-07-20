@@ -14,6 +14,7 @@
 
 - (void)setupCaptureSession;
 - (void)setupPreviewLayerInView:(UIView *)view;
+- (void)switchCamera;
 - (void)startRecording;
 - (void)stopRecording;
 - (NSURL *)createTempURL;

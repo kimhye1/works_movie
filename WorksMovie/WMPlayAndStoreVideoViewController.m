@@ -17,10 +17,8 @@
 @property (nonatomic, strong) WMPlayVideo *playVideo;
 @property (nonatomic, strong) WMStoreVideo *storeVideo;
 @property (nonatomic, strong) UIView *videoView;
-
 @property (nonatomic, strong) UIButton *backToCameraViewButton;
 @property (nonatomic, strong) UIButton *resetAndbackToCameraButton;
-
 @property (nonatomic, strong) UIButton *playVideoButton;
 @property (nonatomic, strong) UIView *videoStoreMenuContainerView;
 @property (nonatomic, strong) UIButton *storeVideoButton;
@@ -53,10 +51,8 @@
 
 - (void)setupComponents {
     [self setupVideoView];
-    
     [self setupBackToCameraViewButton];
     [self setupResetAndbackToCameraButton];
-    
     [self setupPlayVideoButton];
     [self setupVideoStoreMenuContainerView];
     [self setupStoreVideoButton];
@@ -91,8 +87,6 @@
     
 }
 
-
-
 - (void)setupPlayVideoButton {
     self.playVideoButton = [[UIButton alloc] init];
     [self.playVideoButton setImage:[UIImage imageNamed:@"Play"] forState:UIControlStateNormal];
@@ -121,10 +115,8 @@
 
 - (void)setupConstraints {
     [self setupVideoViewConstraints];
-    
     [self setupBackToCameraViewButtonConstraints];
     [self setupResetAndbackToCameraButtonConstraints];
-    
     [self setupPlayVideoButtonConstraints];
     [self setupVideoStoreMenuContainerViewConstraints];
     [self setupStoreVideoButtonConstraints];
@@ -171,9 +163,6 @@
                                              metrics:nil
                                                views:@{@"resetAndbackToCameraButton" : self.resetAndbackToCameraButton}]];
 }
-
-
-
 
 - (void)setupPlayVideoButtonConstraints {
     [self.videoView addConstraint:
