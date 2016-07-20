@@ -44,6 +44,10 @@
     
     self.composition = [[AVMutableComposition alloc] init];
     AVMutableCompositionTrack *compositionVideoTrack = [self.composition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
+    
+    CGAffineTransform transform = CGAffineTransformMakeRotation((90 * M_PI ) / 180);
+    compositionVideoTrack.preferredTransform = transform;
+    
     AVMutableCompositionTrack *soundtrackTrack = [self.composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
     CMTime insertTime = kCMTimeZero;
     

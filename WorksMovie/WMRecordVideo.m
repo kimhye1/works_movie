@@ -30,7 +30,7 @@
 
 - (void)setupCaptureSession {
     self.session = [[AVCaptureSession alloc] init];
-    self.session.sessionPreset = AVCaptureSessionPresetMedium;
+    self.session.sessionPreset = AVCaptureSessionPresetHigh;
     
     //카메라에 대한 AVCaptureDevice로 인스턴스 생성하고 AVCaptureDeviceInput을 생성한 후 세션에 추가한다.
     AVCaptureDevice *inputDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
