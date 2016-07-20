@@ -9,11 +9,13 @@
 #import "WMPlayAndStoreVideoViewController.h"
 #import "WMShowVideosViewController.h"
 #import "WMPlayVideo.h"
+#import "WMStoreVideo.h"
 
 @interface WMPlayAndStoreVideoViewController ()
 
 @property (nonatomic, strong) WMModelManager *modelManager;
 @property (nonatomic, strong) WMPlayVideo *playVideo;
+@property (nonatomic, strong) WMStoreVideo *storeVideo;
 @property (nonatomic, strong) UIView *videoView;
 @property (nonatomic, strong) UIButton *playVideoButton;
 @property (nonatomic, strong) UIView *videoStoreMenuContainerView;
@@ -176,7 +178,9 @@
 #pragma mark - Store Video Button Event Handler Methods
 
 - (void)storeVideoButtonClicked:(UIButton *)sender {
-    NSLog(@"storeVideoButton clicked");
+    self.storeVideo = [[WMStoreVideo alloc] initWithModelManager:self.modelManager];
+    [self.storeVideo mergeVideo];
+    [self.storeVideo storeVideo];
 }
 
 @end
