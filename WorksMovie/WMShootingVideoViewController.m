@@ -16,6 +16,7 @@
 @property (nonatomic, strong) WMRecordVideo *recordVideo;
 @property (nonatomic, strong) WMModelManager *modelManager;
 @property (nonatomic, strong) UIView *cameraView;
+@property (nonatomic, strong) UIButton *switchCameraButton;
 @property (nonatomic, strong) UIView *videoShootingMenuContainerView;
 @property (nonatomic, strong) UIButton *shootingButton;
 @property (nonatomic, strong) UIButton *removeVideoButton;
@@ -38,11 +39,14 @@
     return self;
 }
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     
     [self setupComponents];
     [self setupConstraints];
+    
+    [self.recordVideo setupCaptureSession];
+    [self.recordVideo setupPreviewLayerInView:self.cameraView];
 }
 
 
@@ -50,6 +54,7 @@
 
 - (void)setupComponents {
     [self setupCameraView];
+    [self setupSwitchCameraButton];
     [self setupVideoShootingMenuContainerView];
     [self setupShootingButton];
     [self setupRemoveVideoButton];
@@ -62,6 +67,14 @@
     self.cameraView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.cameraView];
     
+}
+
+- (void)setupSwitchCameraButton {
+    self.switchCameraButton = [[UIButton alloc] init];
+    [self.switchCameraButton setImage:[UIImage imageNamed:@"switchCameraButton"] forState:UIControlStateNormal];
+    self.switchCameraButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.cameraView addSubview:self.switchCameraButton];
+    [self.switchCameraButton addTarget:self action:@selector(switchCameraButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)setupVideoShootingMenuContainerView {
@@ -116,11 +129,42 @@
 #pragma mark - Setup Constraints Methods
 
 - (void)setupConstraints {
+    [self setupCameraViewConstraints];
+    [self setupSwitchCameraButtonConstraints];
     [self setupVideoShootingMenuContainerViewConstraints];
     [self setupShootingButtonConstraints];
     [self setupRemoveVideoButtonConstraint];
     [self setupCompleteShootingButtonConstraints];
     [self setupRecordingStateMarkConstraints];
+}
+
+- (void)setupCameraViewConstraints {
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[cameraView]|"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"cameraView" : self.cameraView}]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[cameraView]-200-|"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"cameraView" : self.cameraView}]];
+}
+
+- (void)setupSwitchCameraButtonConstraints {
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[switchCameraButton(==35)]-20-|"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"switchCameraButton" : self.switchCameraButton}]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-15-[switchCameraButton(==35)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"switchCameraButton" : self.switchCameraButton}]];
+    
 }
 
 - (void) setupVideoShootingMenuContainerViewConstraints {
@@ -218,11 +262,11 @@
 }
 
 
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    
-    [self.recordVideo setupCaptureSession];
-    [self.recordVideo setupPreviewLayerInView:self.cameraView];
+
+#pragma mark - Switch Camera Button Event Handler Methods
+
+- (void)switchCameraButtonClicked:(UIButton *)sender {
+    [self.recordVideo switchCamera];
 }
 
 
