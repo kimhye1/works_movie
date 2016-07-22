@@ -24,6 +24,7 @@
 		4A4A81E61D3726C400477B18 /* WMPlayVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A4A81E51D3726C400477B18 /* WMPlayVideo.m */; };
 		4A4A81E91D3726EB00477B18 /* WMStoreVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A4A81E81D3726EB00477B18 /* WMStoreVideo.m */; };
 		4AC1169F1D41E26500C1D143 /* WMShareVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AC1169E1D41E26500C1D143 /* WMShareVideo.m */; };
+		4AC116A51D420A6200C1D143 /* WMMergeVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AC116A41D420A6200C1D143 /* WMMergeVideo.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,6 +61,8 @@
 		4A4A81E81D3726EB00477B18 /* WMStoreVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMStoreVideo.m; sourceTree = "<group>"; };
 		4AC1169D1D41E26500C1D143 /* WMShareVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMShareVideo.h; sourceTree = "<group>"; };
 		4AC1169E1D41E26500C1D143 /* WMShareVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMShareVideo.m; sourceTree = "<group>"; };
+		4AC116A31D420A6200C1D143 /* WMMergeVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMMergeVideo.h; sourceTree = "<group>"; };
+		4AC116A41D420A6200C1D143 /* WMMergeVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMMergeVideo.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -137,6 +140,8 @@
 				4A4A81E81D3726EB00477B18 /* WMStoreVideo.m */,
 				4AC1169D1D41E26500C1D143 /* WMShareVideo.h */,
 				4AC1169E1D41E26500C1D143 /* WMShareVideo.m */,
+				4AC116A31D420A6200C1D143 /* WMMergeVideo.h */,
+				4AC116A41D420A6200C1D143 /* WMMergeVideo.m */,
 			);
 			name = PlayAndStoreVideo;
 			sourceTree = "<group>";
@@ -258,6 +263,7 @@
 				4A4A81E31D37269D00477B18 /* WMRecordVideo.m in Sources */,
 				4A4A0FEE1D2350330019E8FD /* WMViewController.m in Sources */,
 				4A4813731D34C544003DEBF1 /* WMModelManager.m in Sources */,
+				4AC116A51D420A6200C1D143 /* WMMergeVideo.m in Sources */,
 				4A4813791D34C571003DEBF1 /* WMAudioModel.m in Sources */,
 				4A4A81E61D3726C400477B18 /* WMPlayVideo.m in Sources */,
 				4A48136F1D34BA01003DEBF1 /* WMModel.m in Sources */,

@@ -7,12 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "WMModelManager.h"
 
 @interface WMStoreVideo : NSObject
 
-- (instancetype)initWithModelManager:(WMModelManager *)modelManager;
-- (void)mergeVideo;
-- (void)storeVideo;
+- (void)storeVideo:(AVAssetExportSession *)exportSession;
 
 @end
