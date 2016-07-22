@@ -23,6 +23,7 @@
 		4A4A81E31D37269D00477B18 /* WMRecordVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A4A81E21D37269D00477B18 /* WMRecordVideo.m */; };
 		4A4A81E61D3726C400477B18 /* WMPlayVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A4A81E51D3726C400477B18 /* WMPlayVideo.m */; };
 		4A4A81E91D3726EB00477B18 /* WMStoreVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A4A81E81D3726EB00477B18 /* WMStoreVideo.m */; };
+		4AC1169F1D41E26500C1D143 /* WMShareVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AC1169E1D41E26500C1D143 /* WMShareVideo.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,6 +58,8 @@
 		4A4A81E51D3726C400477B18 /* WMPlayVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMPlayVideo.m; sourceTree = "<group>"; };
 		4A4A81E71D3726EB00477B18 /* WMStoreVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMStoreVideo.h; sourceTree = "<group>"; };
 		4A4A81E81D3726EB00477B18 /* WMStoreVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMStoreVideo.m; sourceTree = "<group>"; };
+		4AC1169D1D41E26500C1D143 /* WMShareVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMShareVideo.h; sourceTree = "<group>"; };
+		4AC1169E1D41E26500C1D143 /* WMShareVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMShareVideo.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +135,8 @@
 				4A4A81E51D3726C400477B18 /* WMPlayVideo.m */,
 				4A4A81E71D3726EB00477B18 /* WMStoreVideo.h */,
 				4A4A81E81D3726EB00477B18 /* WMStoreVideo.m */,
+				4AC1169D1D41E26500C1D143 /* WMShareVideo.h */,
+				4AC1169E1D41E26500C1D143 /* WMShareVideo.m */,
 			);
 			name = PlayAndStoreVideo;
 			sourceTree = "<group>";
@@ -249,6 +254,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4AC1169F1D41E26500C1D143 /* WMShareVideo.m in Sources */,
 				4A4A81E31D37269D00477B18 /* WMRecordVideo.m in Sources */,
 				4A4A0FEE1D2350330019E8FD /* WMViewController.m in Sources */,
 				4A4813731D34C544003DEBF1 /* WMModelManager.m in Sources */,

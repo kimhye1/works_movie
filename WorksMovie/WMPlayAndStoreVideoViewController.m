@@ -10,6 +10,9 @@
 #import "WMShowVideosViewController.h"
 #import "WMPlayVideo.h"
 #import "WMStoreVideo.h"
+#import "WMShareVideo.h"
+#import "WMShareVideo.h"
+
 
 @interface WMPlayAndStoreVideoViewController ()
 
@@ -22,6 +25,7 @@
 @property (nonatomic, strong) UIButton *playVideoButton;
 @property (nonatomic, strong) UIView *videoStoreMenuContainerView;
 @property (nonatomic, strong) UIButton *storeVideoButton;
+@property (nonatomic, strong) UIButton *shareVideoButton;
 @property (nonatomic, strong) UIButton *backButton;
 @property (nonatomic, strong) UIButton *returnToShootingVideoViewButton;
 
@@ -56,6 +60,8 @@
     [self setupPlayVideoButton];
     [self setupVideoStoreMenuContainerView];
     [self setupStoreVideoButton];
+    [self setupShareVideoButton];
+
 }
 
 - (void)setupVideoView {
@@ -111,6 +117,16 @@
     [self.storeVideoButton addTarget:self action:@selector(storeVideoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
 }
 
+- (void)setupShareVideoButton {
+    self.shareVideoButton = [[UIButton alloc] init];
+    [self.shareVideoButton
+     setImage:[UIImage imageNamed:@"shareButton"] forState:UIControlStateNormal];
+    self.shareVideoButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.videoStoreMenuContainerView addSubview:self.shareVideoButton];
+    [self.shareVideoButton addTarget:self action:@selector(shareVideoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+}
+
+
 #pragma mark - Setup Constraints Methods
 
 - (void)setupConstraints {
@@ -120,6 +136,8 @@
     [self setupPlayVideoButtonConstraints];
     [self setupVideoStoreMenuContainerViewConstraints];
     [self setupStoreVideoButtonConstraints];
+    [self setupShareVideoButtonConstraints];
+
 }
 
 - (void)setupVideoViewConstraints {
@@ -199,6 +217,12 @@
 }
 
 - (void)setupStoreVideoButtonConstraints {
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-70-[storeVideoButton]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"storeVideoButton" : self.storeVideoButton}]];
+    
     [self.view addConstraint:
      [NSLayoutConstraint constraintWithItem:self.videoStoreMenuContainerView
                                   attribute:NSLayoutAttributeCenterY
@@ -207,13 +231,21 @@
                                   attribute:NSLayoutAttributeCenterY
                                  multiplier:1
                                    constant:0]];
+}
+
+- (void)setupShareVideoButtonConstraints {
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[shareVideoButton]-70-|"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"shareVideoButton" : self.shareVideoButton}]];
     
     [self.view addConstraint:
      [NSLayoutConstraint constraintWithItem:self.videoStoreMenuContainerView
-                                  attribute:NSLayoutAttributeCenterX
+                                  attribute:NSLayoutAttributeCenterY
                                   relatedBy:NSLayoutRelationEqual
-                                     toItem:self.storeVideoButton
-                                  attribute:NSLayoutAttributeCenterX
+                                     toItem:self.shareVideoButton
+                                  attribute:NSLayoutAttributeCenterY
                                  multiplier:1
                                    constant:0]];
 }
@@ -224,15 +256,6 @@
 // playVideoButton을 클릭하면 videoItems를 차례대로 이어서 재생시킨다.
 - (void)playVideoButtonClicked:(UIButton *)sender {
     [self.playVideo playVideo:self.videoView];
-}
-
-
-#pragma mark - Store Video Button Event Handler Methods
-
-- (void)storeVideoButtonClicked:(UIButton *)sender {
-    self.storeVideo = [[WMStoreVideo alloc] initWithModelManager:self.modelManager];
-    [self.storeVideo mergeVideo];
-    [self.storeVideo storeVideo];
 }
 
 
@@ -251,6 +274,22 @@
     [self.modelManager.videoDatas removeAllObjects];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
+
+
+#pragma mark - Store Video Button Event Handler Methods
+
+- (void)storeVideoButtonClicked:(UIButton *)sender {
+    self.storeVideo = [[WMStoreVideo alloc] initWithModelManager:self.modelManager];
+    [self.storeVideo mergeVideo];
+    [self.storeVideo storeVideo];
+}
+
+
+#pragma mark - Share Video Button Event Handler Methods
+- (void)shareVideoButtonClicked:(UIButton *)sender {
+    NSLog(@"share video clicked");
+}
+
 
 
 @end
