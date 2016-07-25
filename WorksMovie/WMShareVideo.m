@@ -8,6 +8,21 @@
 
 #import "WMShareVideo.h"
 
+@interface WMShareVideo()
+
+@end
+
 @implementation WMShareVideo
+
+- (UIActivityViewController *)shareVideo:(AVAssetExportSession *)exporter {
+    NSURL *outputURL = exporter.outputURL;
+    
+    NSArray* actItems = [NSArray arrayWithObjects:outputURL, nil];
+    
+    UIActivityViewController *activityView = [[UIActivityViewController alloc]
+                                               initWithActivityItems:actItems
+                                               applicationActivities:nil];
+    return activityView;
+}
 
 @end

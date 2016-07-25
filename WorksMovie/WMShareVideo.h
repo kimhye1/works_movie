@@ -6,8 +6,12 @@
 //  Copyright © 2016년 worksmobile. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import <AVFoundation/AVFoundation.h>
 
-@interface WMShareVideo : NSObject
+@interface WMShareVideo : UIViewController
+
+- (UIActivityViewController *)shareVideo:(AVAssetExportSession *)exporter;
+
 
 @end

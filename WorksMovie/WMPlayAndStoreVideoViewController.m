@@ -12,13 +12,17 @@
 #import "WMStoreVideo.h"
 #import "WMShareVideo.h"
 #import "WMShareVideo.h"
-
+#import "WMMergeVideo.h"
 
 @interface WMPlayAndStoreVideoViewController ()
 
 @property (nonatomic, strong) WMModelManager *modelManager;
 @property (nonatomic, strong) WMPlayVideo *playVideo;
 @property (nonatomic, strong) WMStoreVideo *storeVideo;
+@property (nonatomic, strong) WMShareVideo *shareVideo;
+@property (nonatomic, strong) WMMergeVideo *mergeVideo;
+@property (nonatomic, strong) AVAssetExportSession *exporter;
+@property (nonatomic, strong) AVMutableComposition *composition;
 @property (nonatomic, strong) UIView *videoView;
 @property (nonatomic, strong) UIButton *backToCameraViewButton;
 @property (nonatomic, strong) UIButton *resetAndbackToCameraButton;
@@ -39,6 +43,7 @@
     if(self) {
         self.modelManager = modelManager;
         self.playVideo = [[WMPlayVideo alloc] initWithModelManager:modelManager];
+        self.mergeVideo = [[WMMergeVideo alloc] initWithModelManager:modelManager];
     }
     return self;
 }
@@ -48,6 +53,12 @@
     
     [self setupComponents];
     [self setupConstraints];
+    
+    
+    self.composition = [self.mergeVideo mergeVideo];
+    self.exporter = [[AVAssetExportSession alloc] initWithAsset:self.composition
+                                                     presetName:AVAssetExportPresetHighestQuality];
+    self.exporter = [self.mergeVideo exportVideo];
 }
 
 
@@ -279,15 +290,19 @@
 #pragma mark - Store Video Button Event Handler Methods
 
 - (void)storeVideoButtonClicked:(UIButton *)sender {
-    self.storeVideo = [[WMStoreVideo alloc] initWithModelManager:self.modelManager];
-    [self.storeVideo mergeVideo];
-    [self.storeVideo storeVideo];
+    self.storeVideo = [[WMStoreVideo alloc] init];
+//    [self.storeVideo mergeVideo];
+    [self.storeVideo storeVideo:self.exporter];
 }
 
 
 #pragma mark - Share Video Button Event Handler Methods
+
 - (void)shareVideoButtonClicked:(UIButton *)sender {
-    NSLog(@"share video clicked");
+    self.shareVideo = [[WMShareVideo alloc] init];
+    UIActivityViewController *activityView = [self.shareVideo shareVideo:self.exporter];
+    
+    [self presentViewController:activityView animated:YES completion:nil];
 }
 
 
