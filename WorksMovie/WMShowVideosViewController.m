@@ -95,9 +95,12 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
 
 // 참조되는 인덱스에 대한 적절한 셀 객체를 반환
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    //재사용 큐에 셀을 가져온다
+    // 재사용 큐에 셀을 가져온다
     WMCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kCollectionViewCellIdentifier forIndexPath:indexPath];
     
+    // 선택 상태에 따른 셀UI 업데이트
+    cell.layer.borderColor = (cell.selected) ? [UIColor yellowColor].CGColor : nil;
+    cell.layer.borderWidth = (cell.selected) ? 5.0f : 0.0f;
     
     PHAsset *asset = self.fetchResult[indexPath.item];
     [self.imageManager requestImageForAsset:asset
@@ -106,8 +109,25 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
                                     options:nil
                               resultHandler:^(UIImage *result, NSDictionary *info) {
                                   cell.imageView.image = result;
+
                               }];
     return cell;
+}
+
+// 특정 셀이 tap 되었을때 호출
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    UICollectionViewCell* cell = [collectionView cellForItemAtIndexPath:indexPath];
+    
+    cell.layer.borderColor = [UIColor yellowColor].CGColor;
+    cell.layer.borderWidth = 5.0f;
+}
+
+// 델리게이트에게 특정 셀이 선택 해제되었다는 것을 알려준다.
+- (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
+    UICollectionViewCell* cell = [collectionView cellForItemAtIndexPath:indexPath];
+    
+    cell.layer.borderColor = nil;
+    cell.layer.borderWidth = 0.0f;
 }
 
 
