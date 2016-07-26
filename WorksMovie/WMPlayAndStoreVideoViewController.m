@@ -56,7 +56,6 @@
     [self setupVideoStoreMenuContainerView];
     [self setupStoreVideoButton];
     [self setupShareVideoButton];
-
 }
 
 - (void)setupVideoView {
