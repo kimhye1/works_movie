@@ -6,16 +6,18 @@
 //  Copyright © 2016년 worksmobile. All rights reserved.
 //
 
-#import "WMShareVideo.h"
+#import "WMVideoSharer.h"
+#import "WMVideoSaver.h"
 
-@interface WMShareVideo()
+@interface WMVideoSharer()
 
 @end
 
-@implementation WMShareVideo
+@implementation WMVideoSharer
 
-- (UIActivityViewController *)shareVideo:(AVAssetExportSession *)exporter {
-    NSURL *outputURL = exporter.outputURL;
+
+- (UIActivityViewController *)shareVideo:(NSURL *)outputURL {
+
     
     NSArray* actItems = [NSArray arrayWithObjects:outputURL, nil];
     

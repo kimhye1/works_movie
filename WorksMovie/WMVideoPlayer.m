@@ -6,15 +6,15 @@
 //  Copyright © 2016년 worksmobile. All rights reserved.
 //
 
-#import "WMPlayVideo.h"
+#import "WMVideoPlayer.h"
 
-@interface WMPlayVideo ()
+@interface WMVideoPlayer ()
 
 @property (nonatomic, strong) WMModelManager *modelManager;
 
 @end
 
-@implementation WMPlayVideo
+@implementation WMVideoPlayer
 
 - (instancetype)initWithModelManager:(WMModelManager *)modelManager {
     self = [super init];

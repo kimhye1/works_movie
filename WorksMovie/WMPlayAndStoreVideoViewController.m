@@ -8,21 +8,12 @@
 
 #import "WMPlayAndStoreVideoViewController.h"
 #import "WMShowVideosViewController.h"
-#import "WMPlayVideo.h"
-#import "WMStoreVideo.h"
-#import "WMShareVideo.h"
-#import "WMShareVideo.h"
-#import "WMMergeVideo.h"
+#import "WMVideoHelper.h"
 
 @interface WMPlayAndStoreVideoViewController ()
 
 @property (nonatomic, strong) WMModelManager *modelManager;
-@property (nonatomic, strong) WMPlayVideo *playVideo;
-@property (nonatomic, strong) WMStoreVideo *storeVideo;
-@property (nonatomic, strong) WMShareVideo *shareVideo;
-@property (nonatomic, strong) WMMergeVideo *mergeVideo;
-@property (nonatomic, strong) AVAssetExportSession *exporter;
-@property (nonatomic, strong) AVMutableComposition *composition;
+@property (nonatomic, strong) WMVideoHelper *videoHelper;
 @property (nonatomic, strong) UIView *videoView;
 @property (nonatomic, strong) UIButton *backToCameraViewButton;
 @property (nonatomic, strong) UIButton *resetAndbackToCameraButton;
@@ -42,8 +33,7 @@
     
     if(self) {
         self.modelManager = modelManager;
-        self.playVideo = [[WMPlayVideo alloc] initWithModelManager:modelManager];
-        self.mergeVideo = [[WMMergeVideo alloc] initWithModelManager:modelManager];
+        self.videoHelper = [[WMVideoHelper alloc] initWithModelManager:self.modelManager];
     }
     return self;
 }
@@ -53,12 +43,6 @@
     
     [self setupComponents];
     [self setupConstraints];
-    
-    
-    self.composition = [self.mergeVideo mergeVideo];
-    self.exporter = [[AVAssetExportSession alloc] initWithAsset:self.composition
-                                                     presetName:AVAssetExportPresetHighestQuality];
-    self.exporter = [self.mergeVideo exportVideo];
 }
 
 
@@ -79,7 +63,7 @@
     self.videoView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height-200)];
     self.videoView.translatesAutoresizingMaskIntoConstraints = NO;
     
-    UIImageView *imageView = [self.playVideo gettingThumbnailFromVideoInView:self.videoView];
+    UIImageView *imageView = [self.videoHelper gettingThumbnailFromVideoInView:self.videoView];
     
     [self.videoView addSubview:imageView];
     [self.view addSubview:self.videoView];
@@ -266,7 +250,7 @@
 
 // playVideoButton을 클릭하면 videoItems를 차례대로 이어서 재생시킨다.
 - (void)playVideoButtonClicked:(UIButton *)sender {
-    [self.playVideo playVideo:self.videoView];
+    [self.videoHelper playVideo:self.videoView];
 }
 
 
@@ -290,18 +274,19 @@
 #pragma mark - Store Video Button Event Handler Methods
 
 - (void)storeVideoButtonClicked:(UIButton *)sender {
-    self.storeVideo = [[WMStoreVideo alloc] init];
-//    [self.storeVideo mergeVideo];
-    [self.storeVideo storeVideo:self.exporter];
+    [self.videoHelper mergeVideo];
+    [self.videoHelper storeVideo];
+    
 }
 
 
 #pragma mark - Share Video Button Event Handler Methods
 
 - (void)shareVideoButtonClicked:(UIButton *)sender {
-    self.shareVideo = [[WMShareVideo alloc] init];
-    UIActivityViewController *activityView = [self.shareVideo shareVideo:self.exporter];
-    
+    [self.videoHelper mergeVideo];
+    NSURL *url = [self.videoHelper storeVideo];
+
+    UIActivityViewController *activityView = [self.videoHelper shareVideo:url];
     [self presentViewController:activityView animated:YES completion:nil];
 }
 
