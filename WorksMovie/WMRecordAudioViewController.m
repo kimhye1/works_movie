@@ -52,9 +52,15 @@
     self.videoView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height-200)];
     self.videoView.translatesAutoresizingMaskIntoConstraints = NO;
     
-//    UIImageView *imageView = [self.videoHelper gettingThumbnailFromVideoInView:self.videoView];
-//    
-//    [self.videoView addSubview:imageView];
+    // thumbnail 추출
+    AVURLAsset* asset = [AVURLAsset URLAssetWithURL:self.videoURL options:nil];
+    AVAssetImageGenerator* imageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:asset];
+    [imageGenerator setAppliesPreferredTrackTransform:true];
+    UIImage* image = [UIImage imageWithCGImage:[imageGenerator copyCGImageAtTime:CMTimeMake(1, 10) actualTime:nil error:nil]]; // 특정 시점의 이미지를 추출
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
+    imageView.frame = self.videoView.bounds;
+    [self.videoView addSubview:imageView];
+
     [self.view addSubview:self.videoView];
 }
 
