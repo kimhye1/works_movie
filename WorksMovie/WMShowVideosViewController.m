@@ -56,6 +56,9 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
     [self setupConstraints];
 }
 
+
+#pragma mark - Create Views Methods
+
 - (void)setupComponents {
     [self setupCollectionView];
     [self setupSelectButton];
@@ -88,6 +91,9 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
     self.selectButton.hidden = YES;
 }
 
+
+#pragma mark - Setup Constraints Methods
+
 - (void)setupConstraints {
     [self setupCollectionViewConstraints];
     [self setupSelectButtonConstraints];
@@ -116,6 +122,9 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
                                                                       metrics:nil
                                                                         views:@{@"selectButton" : self.selectButton}]];
 }
+
+
+#pragma mark - Collection view delegate methods
 
 // 컬렉션 뷰의 지정된 섹션에 표시되어야 할 항목의 개수 반환
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
@@ -156,14 +165,10 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
     
     self.cell.layer.borderColor = [UIColor yellowColor].CGColor;
     self.cell.layer.borderWidth = 5.0f;
-    
     self.selectButton.hidden = NO;
 
     self.selectButton.titleLabel.text = [NSString stringWithFormat:@"%ld", (unsigned long)indexPath.row];
     self.selectButton.titleLabel.hidden = YES;
-    
-    
-    
     [self.selectButton addTarget:self action:@selector(selectButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
 }
 
@@ -177,23 +182,27 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
     self.selectButton.hidden = YES;
 }
 
+
+#pragma mark - Select Button Event Handler Methods
+
 - (void)selectButtonClicked:(UIButton *)sender {
     [self presentRecordVideoViewController];
-    
 }
 
+// 선택된 cell의 indexPath를 이용해 PHAsset을 생성한 후 AVAsset으로 변환해 url을 추출한다. 그 값을 WMRecordAudioViewController로 전달한다.
 - (void)presentRecordVideoViewController {
     NSString *videoString = self.selectButton.titleLabel.text;
     
     PHAsset *asset = [self.fetchResult objectAtIndex:[videoString intValue]];
     
     [[PHImageManager defaultManager] requestAVAssetForVideo:asset options:nil resultHandler:^(AVAsset *avAsset, AVAudioMix *audioMix, NSDictionary *info) {
-         self.URL = [(AVURLAsset *)avAsset URL];
+        self.URL = [(AVURLAsset *)avAsset URL];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            WMRecordAudioViewController *recordAudioViewController = [[WMRecordAudioViewController alloc] initWithVideoURL:self.URL];
+            [self presentViewController:recordAudioViewController animated:NO completion:nil];
+        });
     }];
-
-    WMRecordAudioViewController *recordAudioViewController = [[WMRecordAudioViewController alloc] initWithVideoURL:self.URL];
-    [self presentViewController:recordAudioViewController animated:NO completion:nil];
 }
-
 
 @end

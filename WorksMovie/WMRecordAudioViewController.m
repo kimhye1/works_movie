@@ -38,6 +38,9 @@
     [self setupConstraints];
 }
 
+
+#pragma mark - Create Views Methods
+
 - (void)setupComponents {
     [self setupVideoView];
     [self setupBackToCellectionViewButton];
@@ -55,13 +58,12 @@
     [self.view addSubview:self.videoView];
 }
 
-
 - (void)setupBackToCellectionViewButton {
     self.backToCellectionViewButton = [[UIButton alloc] init];
     [self.backToCellectionViewButton setImage:[UIImage imageNamed:@"backButton"] forState:UIControlStateNormal];
     self.backToCellectionViewButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.videoView addSubview:self.backToCellectionViewButton];
-    [self.backToCellectionViewButton addTarget:self action:@selector(backToCellectionViewButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [self.backToCellectionViewButton addTarget:self action:@selector(backToCollectionViewButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     
 }
 
@@ -80,6 +82,8 @@
     [self.view addSubview:self.RecordAudioContainerView];
 }
 
+
+#pragma mark - Setup Constraints Methods
 
 - (void)setupConstraints {
     [self setupVideoViewConstraints];
@@ -151,9 +155,14 @@
 }
 
 
-- (void)backToCellectionViewButtonClicked:(UIButton *)sender {
+#pragma mark - Back To Collection View Button Event Handler Methods
+
+- (void)backToCollectionViewButtonClicked:(UIButton *)sender {
     [self dismissViewControllerAnimated:NO completion:nil];
 }
+
+
+#pragma mark - Play Video Button Event Handler Methods
 
 - (void)playVideoButtonClicked:(UIButton *)sender {
     AVURLAsset *avAsset = [AVURLAsset URLAssetWithURL:self.videoURL options:nil];
@@ -165,7 +174,6 @@
     playerLayer.frame = self.videoView.frame;
     
     [self.videoView.layer addSublayer:playerLayer];
-
     
     [player play];
 }
