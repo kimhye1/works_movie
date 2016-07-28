@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		4A1B555B1D2E4BF000267C67 /* WMPlayAndStoreVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A1B555A1D2E4BF000267C67 /* WMPlayAndStoreVideoViewController.m */; };
 		4A44CFC31D46F1BE00C3CC7C /* WMVideoHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A44CFC21D46F1BE00C3CC7C /* WMVideoHelper.m */; };
+		4A44CFC71D473B8600C3CC7C /* WMRecordAudioViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A44CFC61D473B8600C3CC7C /* WMRecordAudioViewController.m */; };
 		4A48136F1D34BA01003DEBF1 /* WMModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A48136E1D34BA01003DEBF1 /* WMModel.m */; };
 		4A4813731D34C544003DEBF1 /* WMModelManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A4813721D34C544003DEBF1 /* WMModelManager.m */; };
 		4A4813761D34C562003DEBF1 /* WMVideoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A4813751D34C562003DEBF1 /* WMVideoModel.m */; };
@@ -33,6 +34,8 @@
 		4A1B555A1D2E4BF000267C67 /* WMPlayAndStoreVideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMPlayAndStoreVideoViewController.m; sourceTree = "<group>"; };
 		4A44CFC11D46F1BE00C3CC7C /* WMVideoHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMVideoHelper.h; sourceTree = "<group>"; };
 		4A44CFC21D46F1BE00C3CC7C /* WMVideoHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMVideoHelper.m; sourceTree = "<group>"; };
+		4A44CFC51D473B8600C3CC7C /* WMRecordAudioViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMRecordAudioViewController.h; sourceTree = "<group>"; };
+		4A44CFC61D473B8600C3CC7C /* WMRecordAudioViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMRecordAudioViewController.m; sourceTree = "<group>"; };
 		4A48136D1D34BA01003DEBF1 /* WMModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WMModel.h; path = Model/WMModel.h; sourceTree = "<group>"; };
 		4A48136E1D34BA01003DEBF1 /* WMModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WMModel.m; path = Model/WMModel.m; sourceTree = "<group>"; };
 		4A4813711D34C544003DEBF1 /* WMModelManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WMModelManager.h; path = ModelManager/WMModelManager.h; sourceTree = "<group>"; };
@@ -86,6 +89,15 @@
 				4A44CFC21D46F1BE00C3CC7C /* WMVideoHelper.m */,
 			);
 			name = VideoHelper;
+			sourceTree = "<group>";
+		};
+		4A44CFC41D473B7300C3CC7C /* RecordAudio */ = {
+			isa = PBXGroup;
+			children = (
+				4A44CFC51D473B8600C3CC7C /* WMRecordAudioViewController.h */,
+				4A44CFC61D473B8600C3CC7C /* WMRecordAudioViewController.m */,
+			);
+			name = RecordAudio;
 			sourceTree = "<group>";
 		};
 		4A48136C1D34B9E6003DEBF1 /* Model */ = {
@@ -173,6 +185,7 @@
 				4A48137B1D34DEDB003DEBF1 /* ShootingVideo */,
 				4A48137D1D34DF13003DEBF1 /* PlayAndStoreVideo */,
 				4A48137C1D34DEFB003DEBF1 /* ShowVideoList */,
+				4A44CFC41D473B7300C3CC7C /* RecordAudio */,
 				4A48136C1D34B9E6003DEBF1 /* Model */,
 				4A4813701D34C50E003DEBF1 /* ModelManager */,
 				4A4A0FE91D2350330019E8FD /* AppDelegate.h */,
@@ -291,6 +304,7 @@
 				4A4A10311D239AC90019E8FD /* WMShootingVideoViewController.m in Sources */,
 				4A4A10021D2359D40019E8FD /* WMCollectionViewCell.m in Sources */,
 				4A4A0FEB1D2350330019E8FD /* AppDelegate.m in Sources */,
+				4A44CFC71D473B8600C3CC7C /* WMRecordAudioViewController.m in Sources */,
 				4A1B555B1D2E4BF000267C67 /* WMPlayAndStoreVideoViewController.m in Sources */,
 				4A4813761D34C562003DEBF1 /* WMVideoModel.m in Sources */,
 				4A4A0FFF1D2354FC0019E8FD /* WMShowVideosViewController.m in Sources */,
