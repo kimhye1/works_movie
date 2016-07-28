@@ -18,6 +18,8 @@
 @property (nonatomic, strong) PHAsset *asset;
 @property (nonatomic, strong) NSURL *videoURL;
 @property (nonatomic, strong) UIButton *recordButton;
+@property (nonatomic, strong) UIView *recordingSquare;
+
 @property (nonatomic, strong) UIButton *removeAudioButton;
 @property (nonatomic, strong) UIButton *completeRecordingButton;
 @property (nonatomic, strong) AVPlayer *player;
@@ -117,6 +119,15 @@
     self.recordButton.layer.borderWidth=2.0f;
     self.recordButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.RecordAudioContainerView addSubview:self.recordButton];
+    
+    self.recordingSquare = [[UIView alloc] init];
+    self.recordingSquare.frame = CGRectMake(0, 0, 25, 25);
+    self.recordingSquare.backgroundColor = [UIColor redColor];
+    self.recordingSquare.layer.cornerRadius = 5;
+    self.recordingSquare.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.recordButton addSubview:self.recordingSquare];
+    self.recordingSquare.hidden = YES;
+    
     [self.recordButton addTarget:self action:@selector(recordButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     [self preparePlayVideoWhenRocorded];
 }
@@ -248,7 +259,37 @@
                                              options:0
                                              metrics:nil
                                                views:@{@"recordButton" : self.recordButton}]];
+
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:self.recordButton
+                                  attribute:NSLayoutAttributeCenterX
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.recordingSquare
+                                  attribute:NSLayoutAttributeCenterX
+                                 multiplier:1
+                                   constant:0]];
+    
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:self.recordButton
+                                  attribute:NSLayoutAttributeCenterY
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.recordingSquare
+                                  attribute:NSLayoutAttributeCenterY
+                                 multiplier:1
+                                   constant:0]];
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[recordingSquare(==25)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"recordingSquare" : self.recordingSquare}]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[recordingSquare(==25)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"recordingSquare" : self.recordingSquare}]];
 }
+
 
 - (void) setupRemoveAudioButtonConstraint {
     [self.view addConstraint:
@@ -377,6 +418,10 @@
     self.videoView.userInteractionEnabled = NO; // 녹음을 진행하는 동안 viewView 클릭 이벤트가 발생해 video가 play되는 것을 막는다.
     
     if(!self.audioRecorder.recording) {
+        self.recordButton.backgroundColor = [UIColor colorWithRed:0.15 green:0.16 blue:0.17 alpha:1.00];
+        self.recordingSquare.hidden = NO;
+        self.recordingSquare.userInteractionEnabled = NO;
+        
         [self.videoView.layer addSublayer:self.playerLayerWithAudio];
         self.playVideoButton.hidden = YES;
         self.backToCellectionViewButton.hidden = NO;
@@ -384,6 +429,9 @@
         [self.audioRecorder record];
     }
     else {
+        self.recordButton.backgroundColor = [UIColor redColor];
+        self.recordingSquare.hidden = YES;
+        
         [self.videoView addSubview:self.playVideoButton];
         [self.videoView addSubview:self.backToCellectionViewButton];
         self.playVideoButton.hidden = NO;
