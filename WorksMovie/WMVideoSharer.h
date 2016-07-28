@@ -9,9 +9,9 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 
-@interface WMShareVideo : UIViewController
+@interface WMVideoSharer : UIViewController
 
-- (UIActivityViewController *)shareVideo:(AVAssetExportSession *)exporter;
+- (UIActivityViewController *)shareVideo:(NSURL *)outputURL;
 
 
 @end

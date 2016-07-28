@@ -6,24 +6,25 @@
 //  Copyright © 2016년 worksmobile. All rights reserved.
 //
 
-#import "WMRecordVideo.h"
+#import "WMVideoRecorder.h"
 #import "WMModel.h"
 
-@interface WMRecordVideo ()
+@interface WMVideoRecorder ()
 
 @property (nonatomic, strong) AVCaptureSession *session;
 @property (nonatomic, strong) AVCaptureMovieFileOutput *output;
 @property (nonatomic) bool recording; //비디오가 녹화 중 인지를 추적하기 위한 변수
+@property (nonatomic, strong) WMModelManager *modelManager;
 
 @end
 
-@implementation WMRecordVideo
+@implementation WMVideoRecorder
 
-- (instancetype)init {
+- (instancetype)initWithModelManager:(WMModelManager *)modelManager {
     self = [super init];
     
     if(self) {
-        self.modelManager = [[WMModelManager alloc] init];
+        self.modelManager = modelManager;
     }
     return self;
 }

@@ -10,16 +10,14 @@
 #import <AVFoundation/AVFoundation.h>
 #import "WMModelManager.h"
 
-@interface WMRecordVideo : NSObject  <AVCaptureFileOutputRecordingDelegate>
+@interface WMVideoRecorder : NSObject  <AVCaptureFileOutputRecordingDelegate>
+
+- (instancetype)initWithModelManager:(WMModelManager *)modelManager;
 
 - (void)setupCaptureSession;
 - (void)setupPreviewLayerInView:(UIView *)view;
 - (void)switchCamera;
 - (void)startRecording;
 - (void)stopRecording;
-- (NSURL *)createTempURL;
-
-@property (nonatomic, strong) WMModelManager *modelManager;
-
 
 @end

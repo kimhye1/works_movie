@@ -9,11 +9,11 @@
 #import "WMShootingVideoViewController.h"
 #import "WMPlayAndStoreVideoViewController.h"
 #import "WMModelManager.h"
-#import "WMRecordVideo.h"
+#import "WMVideoHelper.h"
 
 @interface WMShootingVideoViewController ()
 
-@property (nonatomic, strong) WMRecordVideo *recordVideo;
+@property (nonatomic, strong) WMVideoHelper *videoHelper;
 @property (nonatomic, strong) WMModelManager *modelManager;
 @property (nonatomic, strong) UIView *cameraView;
 @property (nonatomic, strong) UIButton *switchCameraButton;
@@ -33,8 +33,8 @@
     self = [super init];
     
     if(self) {
-        self.recordVideo = [[WMRecordVideo alloc] init];
         self.modelManager = [[WMModelManager alloc] init];
+        self.videoHelper = [[WMVideoHelper alloc] initWithModelManager:self.modelManager];
     }
     return self;
 }
@@ -45,8 +45,8 @@
     [self setupComponents];
     [self setupConstraints];
     
-    [self.recordVideo setupCaptureSession];
-    [self.recordVideo setupPreviewLayerInView:self.cameraView];
+    [self.videoHelper setupCaptureSession];
+    [self.videoHelper setupPreviewLayerInView:self.cameraView];
 }
 
 
@@ -266,7 +266,7 @@
 #pragma mark - Switch Camera Button Event Handler Methods
 
 - (void)switchCameraButtonClicked:(UIButton *)sender {
-    [self.recordVideo switchCamera];
+    [self.videoHelper switchCamera];
 }
 
 
@@ -275,12 +275,12 @@
 //shootingButton을 long tap할 때 마다 tap 하는 시간 동안 동영상이 녹화되고, button에서 손을 떼면 녹화가 종료된다.
 - (void)shootingButtonLongPress:(UILongPressGestureRecognizer*)gesture {
     if (gesture.state == UIGestureRecognizerStateBegan) {
-        [self.recordVideo startRecording];
+        [self.videoHelper startRecording];
         self.recordingStateMark.hidden = NO;
     }
     
     if (gesture.state == UIGestureRecognizerStateEnded) {
-        [self.recordVideo stopRecording];
+        [self.videoHelper stopRecording];
         self.recordingStateMark.hidden = YES;
     }
 }
@@ -294,7 +294,7 @@
 
 - (void)presentWMPlayAndStoreVideoViewController {
     WMPlayAndStoreVideoViewController *playAndStoreVideoVeiwController =
-    [[WMPlayAndStoreVideoViewController alloc] initWithVideoModelManager:self.recordVideo.modelManager];
+    [[WMPlayAndStoreVideoViewController alloc] initWithVideoModelManager:self.modelManager];
     [self presentViewController:playAndStoreVideoVeiwController animated:YES completion:nil];
 }
 
@@ -302,7 +302,7 @@
 #pragma mark - Remove Video Button Event Handler Methods
 
 - (void)removeVideoButtonClicked:(UIButton *)sender {
-    [self.recordVideo.modelManager removeLastVideo];
+    [self.modelManager removeLastVideo];
 }
 
 @end
