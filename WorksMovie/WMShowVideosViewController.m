@@ -36,7 +36,7 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
     PHFetchOptions *options = [[PHFetchOptions alloc] init];
     options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:YES]];
     
-    self.fetchResult = [PHAsset fetchAssetsWithOptions:options];
+    self.fetchResult = [PHAsset fetchAssetsWithMediaType:PHAssetMediaTypeVideo options:options];
 }
 
 - (void)initializeImageManager {
@@ -98,6 +98,7 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
     //재사용 큐에 셀을 가져온다
     WMCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kCollectionViewCellIdentifier forIndexPath:indexPath];
     
+    
     PHAsset *asset = self.fetchResult[indexPath.item];
     [self.imageManager requestImageForAsset:asset
                                  targetSize:collectionView.collectionViewLayout.collectionViewContentSize
@@ -106,8 +107,6 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
                               resultHandler:^(UIImage *result, NSDictionary *info) {
                                   cell.imageView.image = result;
                               }];
-
-    
     return cell;
 }
 
