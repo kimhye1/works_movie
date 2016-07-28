@@ -7,6 +7,7 @@
 //
 
 #import "WMRecordAudioViewController.h"
+#import <AVFoundation/AVFoundation.h>
 
 @interface WMRecordAudioViewController ()
 
@@ -16,11 +17,15 @@
 @property (nonatomic, strong) UIView *RecordAudioContainerView;
 @property (nonatomic, strong) PHAsset *asset;
 @property (nonatomic, strong) NSURL *videoURL;
-
 @property (nonatomic, strong) UIButton *recordButton;
 @property (nonatomic, strong) UIButton *removeAudioButton;
 @property (nonatomic, strong) UIButton *completeRecordingButton;
-
+@property (nonatomic, strong) AVPlayer *player;
+@property (nonatomic, strong) AVPlayerLayer *playerLayer;
+@property (nonatomic, strong) AVPlayer *playerWithAudio;
+@property (nonatomic, strong) AVPlayerLayer *playerLayerWithAudio;
+@property (nonatomic, strong) AVAudioRecorder *audioRecorder;
+@property (nonatomic, strong) AVAudioPlayer *audioPlayer;
 
 @end
 
@@ -41,6 +46,9 @@
     
     [self setupComponents];
     [self setupConstraints];
+    
+    [self preparePlayVideo];
+    [self prepareRecordAudio];
 }
 
 
@@ -69,8 +77,11 @@
     UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
     imageView.frame = self.videoView.bounds;
     [self.videoView addSubview:imageView];
-
+    
     [self.view addSubview:self.videoView];
+    
+    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(videoViewTapped:)];
+    [self.videoView addGestureRecognizer:tapRecognizer];
 }
 
 - (void)setupBackToCellectionViewButton {
@@ -107,6 +118,7 @@
     self.recordButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.RecordAudioContainerView addSubview:self.recordButton];
     [self.recordButton addTarget:self action:@selector(recordButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [self preparePlayVideoWhenRocorded];
 }
 
 - (void)setupRemoveAudioButton {
@@ -273,36 +285,120 @@
 }
 
 
+- (void)prepareRecordAudio {
+    // 저장될 audio 파일명, 경로 지정
+    NSArray *pathComponents = [NSArray arrayWithObjects:
+                               [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject],
+                               @"MyAudioMemo.m4a",
+                               nil];
+    NSURL *outputFileURL = [NSURL fileURLWithPathComponents:pathComponents];
+    
+    // audio session을 정의
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    [session setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+    
+    // recorder setting을 정의
+    NSMutableDictionary *recordSetting = [[NSMutableDictionary alloc] init];
+    
+    [recordSetting setValue:[NSNumber numberWithInt:kAudioFormatMPEG4AAC] forKey:AVFormatIDKey];
+    [recordSetting setValue:[NSNumber numberWithFloat:44100.0] forKey:AVSampleRateKey];
+    [recordSetting setValue:[NSNumber numberWithInt: 2] forKey:AVNumberOfChannelsKey];
+
+    self.audioRecorder = [[AVAudioRecorder alloc] initWithURL:outputFileURL settings:recordSetting error:NULL];
+    self.audioRecorder.delegate = self;
+    self.audioRecorder.meteringEnabled = YES;
+    [self.audioRecorder prepareToRecord];
+}
+
+- (void)preparePlayVideo {
+    AVURLAsset *avAsset = [AVURLAsset URLAssetWithURL:self.videoURL options:nil];
+    AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:avAsset];
+    
+    // 동영상 play가 끝나면 불릴 notification 등록
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:)
+                                                 name:AVPlayerItemDidPlayToEndTimeNotification object:playerItem];
+    
+    self.player = [AVPlayer playerWithPlayerItem:playerItem];
+    
+    self.playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
+    [self.playerLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
+    self.playerLayer.frame = self.videoView.frame;
+}
 
 
-#pragma mark - Back To Collection View Button Event Handler Methods
-
-- (void)backToCollectionViewButtonClicked:(UIButton *)sender {
-    [self dismissViewControllerAnimated:NO completion:nil];
+- (void)preparePlayVideoWhenRocorded {
+    AVURLAsset *avAsset = [AVURLAsset URLAssetWithURL:self.videoURL options:nil];
+    AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:avAsset];
+    
+    // 동영상 play가 끝나면 불릴 notification 등록
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:)
+                                                 name:AVPlayerItemDidPlayToEndTimeNotification object:playerItem];
+    
+    self.playerWithAudio = [AVPlayer playerWithPlayerItem:playerItem];
+    
+    self.playerLayerWithAudio = [AVPlayerLayer playerLayerWithPlayer:self.playerWithAudio];
+    [self.playerLayerWithAudio setVideoGravity:AVLayerVideoGravityResizeAspectFill];
+    self.playerLayerWithAudio.frame = self.videoView.frame;
 }
 
 
 #pragma mark - Play Video Button Event Handler Methods
 
 - (void)playVideoButtonClicked:(UIButton *)sender {
-    AVURLAsset *avAsset = [AVURLAsset URLAssetWithURL:self.videoURL options:nil];
-    AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:avAsset];
-    AVPlayer *player = [AVPlayer playerWithPlayerItem:playerItem];
+    [self.videoView.layer addSublayer:self.playerLayer];
     
-    AVPlayerLayer *playerLayer = [AVPlayerLayer playerLayerWithPlayer:player];
-    [playerLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
-    playerLayer.frame = self.videoView.frame;
-    
-    [self.videoView.layer addSublayer:playerLayer];
-    
-    [player play];
+    [self.player play];
+}
+
+
+#pragma mark - Video View Tapped Event Handler Methods
+
+// viewView를 tap하면 비디오의 재생 상태에 따라 play또는 pause시킨다.
+- (void)videoViewTapped:(UITapGestureRecognizer*)sender {
+    if(self.player.rate == 1.0) { // 재생 중일 때 실행
+        [self.videoView addSubview:self.playVideoButton];
+        [self.videoView addSubview:self.backToCellectionViewButton];
+        self.playVideoButton.hidden = NO;
+        self.backToCellectionViewButton.hidden = NO;
+        [self.player pause];
+    }
+    else if(self.player.rate == 0.0) { // 일시 정지 상태일 때 실행
+        self.playVideoButton.hidden = YES;
+        self.backToCellectionViewButton.hidden = YES;
+        [self.videoView.layer addSublayer:self.playerLayer];
+        [self.player play];
+    }
 }
 
 
 #pragma mark - Record Audio Button Event Handler Methods
 
 - (void)recordButtonClicked:(UIButton *)sender {
-    NSLog(@"Record Audio Button Cliked");
+    self.videoView.userInteractionEnabled = NO; // 녹음을 진행하는 동안 viewView 클릭 이벤트가 발생해 video가 play되는 것을 막는다.
+    
+    if(!self.audioRecorder.recording) {
+        [self.videoView.layer addSublayer:self.playerLayerWithAudio];
+        self.playVideoButton.hidden = YES;
+        self.backToCellectionViewButton.hidden = NO;
+        [self.playerWithAudio play];
+        [self.audioRecorder record];
+    }
+    else {
+        [self.videoView addSubview:self.playVideoButton];
+        [self.videoView addSubview:self.backToCellectionViewButton];
+        self.playVideoButton.hidden = NO;
+        self.backToCellectionViewButton.hidden = NO;
+        [self.playerWithAudio pause];
+        [self.audioRecorder pause];
+    }
+}
+
+
+// 비디오 재생이 끝나면 리플레이를 위해 preparePlayVideo를 호출한다.
+-(void)itemDidFinishPlaying:(NSNotification *) notification {
+    [self preparePlayVideo];
+    [self.videoView addSubview:self.playVideoButton];
+    [self.videoView addSubview:self.backToCellectionViewButton];
 }
 
 
@@ -317,6 +413,13 @@
 
 - (void)completeRecordingButtonClicked:(UIButton *)sender {
     NSLog(@"Complete Recording Button Clicked");
+}
+
+
+#pragma mark - Back To Collection View Button Event Handler Methods
+
+- (void)backToCollectionViewButtonClicked:(UIButton *)sender {
+    [self dismissViewControllerAnimated:NO completion:nil];
 }
 
 @end
