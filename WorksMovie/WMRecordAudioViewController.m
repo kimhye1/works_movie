@@ -28,6 +28,7 @@
 @property (nonatomic, strong) AVPlayerLayer *playerLayerWithAudio;
 @property (nonatomic, strong) AVAudioRecorder *audioRecorder;
 @property (nonatomic, strong) AVAudioPlayer *audioPlayer;
+@property (nonatomic, strong) NSURL *outputFileURL;
 
 @end
 
@@ -332,7 +333,7 @@
                                [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject],
                                @"MyAudioMemo.m4a",
                                nil];
-    NSURL *outputFileURL = [NSURL fileURLWithPathComponents:pathComponents];
+    self.outputFileURL = [NSURL fileURLWithPathComponents:pathComponents];
     
     // audio session을 정의
     AVAudioSession *session = [AVAudioSession sharedInstance];
@@ -345,7 +346,7 @@
     [recordSetting setValue:[NSNumber numberWithFloat:44100.0] forKey:AVSampleRateKey];
     [recordSetting setValue:[NSNumber numberWithInt: 2] forKey:AVNumberOfChannelsKey];
 
-    self.audioRecorder = [[AVAudioRecorder alloc] initWithURL:outputFileURL settings:recordSetting error:NULL];
+    self.audioRecorder = [[AVAudioRecorder alloc] initWithURL:self.outputFileURL settings:recordSetting error:NULL];
     self.audioRecorder.delegate = self;
     self.audioRecorder.meteringEnabled = YES;
     [self.audioRecorder prepareToRecord];
@@ -424,7 +425,6 @@
         
         [self.videoView.layer addSublayer:self.playerLayerWithAudio];
         self.playVideoButton.hidden = YES;
-        self.backToCellectionViewButton.hidden = NO;
         [self.playerWithAudio play];
         [self.audioRecorder record];
     }
@@ -433,9 +433,7 @@
         self.recordingSquare.hidden = YES;
         
         [self.videoView addSubview:self.playVideoButton];
-        [self.videoView addSubview:self.backToCellectionViewButton];
         self.playVideoButton.hidden = NO;
-        self.backToCellectionViewButton.hidden = NO;
         [self.playerWithAudio pause];
         [self.audioRecorder pause];
     }
@@ -453,7 +451,36 @@
 #pragma mark - Remove Audio Button Event Handler Methods
 
 - (void)removeAudioButtonClicked:(UIButton *)sender {
-    NSLog(@"Remove Audio Button Clicked");
+    [self alertResetAudio];
+}
+
+// audio를 reset할 것인지 alert 창을 띄워 확인
+- (void)alertResetAudio {
+    UIAlertController * alert = [UIAlertController alertControllerWithTitle:@"음성 녹음을 취소하겠습니까?"
+                                  message:nil
+                                  preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* ok = [UIAlertAction
+                         actionWithTitle:@"아니요"
+                         style:UIAlertActionStyleDefault
+                         handler:^(UIAlertAction * action) {
+                             [alert dismissViewControllerAnimated:YES completion:nil];
+                             
+                         }];
+    
+     __weak typeof(self) weakSelf = self;
+    UIAlertAction* cancel = [UIAlertAction
+                             actionWithTitle:@"예"
+                             style:UIAlertActionStyleDefault
+                             handler:^(UIAlertAction * action) {
+                                 [alert dismissViewControllerAnimated:YES completion:nil];
+                                 [weakSelf dismissViewControllerAnimated:NO completion:nil];
+                                 
+                             }];
+    [alert addAction:ok];
+    [alert addAction:cancel];
+    
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 
