@@ -14,6 +14,7 @@
 @property (nonatomic, strong) NSURL *videoURL;
 @property (nonatomic, strong) NSURL *audioURL;
 @property (nonatomic, strong) UIView *videoView;
+@property (nonatomic, strong) UIButton *backButton;
 @property (nonatomic, strong) UIButton *playVideoAndAudioButton;
 @property (nonatomic, strong) UIView *videoStoreMenuContainerView;
 @property (nonatomic, strong) AVPlayer *player;
@@ -49,6 +50,7 @@
 
 - (void)setupComponents {
     [self setupVideoView];
+    [self setupBackButton];
     [self setupPlayVideoAndAudioButton];
     [self setupVideoStoreMenuContainerView];
 }
@@ -67,6 +69,14 @@
     [self.videoView addSubview:imageView];
     
     [self.view addSubview:self.videoView];
+}
+
+- (void)setupBackButton {
+    self.backButton = [[UIButton alloc] init];
+    [self.backButton setImage:[UIImage imageNamed:@"backButton"] forState:UIControlStateNormal];
+    self.backButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.videoView addSubview:self.backButton];
+    [self.backButton addTarget:self action:@selector(backButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)setupPlayVideoAndAudioButton {
@@ -89,6 +99,7 @@
 
 - (void)setupConstraints {
     [self setupVideoViewConstraints];
+    [self setupBackButtonConstraints];
     [self setupPlayVideoAndAudioButtonConstraints];
     [self setupVideoStoreMenuContainerViewConstraints];
 }
@@ -105,6 +116,20 @@
                                              options:0
                                              metrics:nil
                                                views:@{@"videoView" : self.videoView}]];
+}
+
+- (void)setupBackButtonConstraints {
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-15-[backButton(==40)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"backButton" : self.backButton}]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-20-[backButton(==40)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"backButton" : self.backButton}]];
 }
 
 - (void)setupPlayVideoAndAudioButtonConstraints {
@@ -170,12 +195,19 @@
 - (void)playAudio {
     self.audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:self.audioURL error:nil];
     [self.audioPlayer play];
-
 }
 
 // 비디오 재생이 끝나면 리플레이를 위해 preparePlayVideo를 호출한다.
 -(void)itemDidFinishPlaying:(NSNotification *) notification {
     [self.videoView addSubview:self.playVideoAndAudioButton];
+    [self.videoView addSubview:self.backButton];
+}
+
+
+#pragma mark - Back Button Event Handler Methods
+
+- (void)backButtonClicked:(UIButton *)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end
