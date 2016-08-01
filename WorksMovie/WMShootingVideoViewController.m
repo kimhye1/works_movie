@@ -16,6 +16,7 @@
 @property (nonatomic, strong) WMVideoHelper *videoHelper;
 @property (nonatomic, strong) WMModelManager *modelManager;
 @property (nonatomic, strong) UIView *cameraView;
+@property (nonatomic, strong) UIButton *backButton;
 @property (nonatomic, strong) UIButton *switchCameraButton;
 @property (nonatomic, strong) UIView *videoShootingMenuContainerView;
 @property (nonatomic, strong) UIButton *shootingButton;
@@ -55,6 +56,7 @@
 - (void)setupComponents {
     [self setupCameraView];
     [self setupSwitchCameraButton];
+    [self setupBackButton];
     [self setupVideoShootingMenuContainerView];
     [self setupShootingButton];
     [self setupRemoveVideoButton];
@@ -75,6 +77,14 @@
     self.switchCameraButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.cameraView addSubview:self.switchCameraButton];
     [self.switchCameraButton addTarget:self action:@selector(switchCameraButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)setupBackButton {
+    self.backButton = [[UIButton alloc] init];
+    [self.backButton setImage:[UIImage imageNamed:@"backButton"] forState:UIControlStateNormal];
+    self.backButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.cameraView addSubview:self.backButton];
+    [self.backButton addTarget:self action:@selector(backButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)setupVideoShootingMenuContainerView {
@@ -131,6 +141,7 @@
 - (void)setupConstraints {
     [self setupCameraViewConstraints];
     [self setupSwitchCameraButtonConstraints];
+    [self setupBackButtonConstrains];
     [self setupVideoShootingMenuContainerViewConstraints];
     [self setupShootingButtonConstraints];
     [self setupRemoveVideoButtonConstraint];
@@ -165,6 +176,20 @@
                                              metrics:nil
                                                views:@{@"switchCameraButton" : self.switchCameraButton}]];
     
+}
+
+- (void)setupBackButtonConstrains {
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-15-[backButton(==40)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"backButton" : self.backButton}]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-20-[backButton(==40)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"backButton" : self.backButton}]];
 }
 
 - (void) setupVideoShootingMenuContainerViewConstraints {
@@ -270,17 +295,26 @@
 }
 
 
+#pragma mark - Back Button Event Handler Methods
+
+- (void)backButtonClicked:(UIButton *)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+
 #pragma mark - Shooting Button Event Handler Methods
 
 //shootingButton을 long tap할 때 마다 tap 하는 시간 동안 동영상이 녹화되고, button에서 손을 떼면 녹화가 종료된다.
 - (void)shootingButtonLongPress:(UILongPressGestureRecognizer*)gesture {
     if (gesture.state == UIGestureRecognizerStateBegan) {
         [self.videoHelper startRecording];
+        self.backButton.hidden = YES;
         self.recordingStateMark.hidden = NO;
     }
     
     if (gesture.state == UIGestureRecognizerStateEnded) {
         [self.videoHelper stopRecording];
+        self.backButton.hidden = NO;
         self.recordingStateMark.hidden = YES;
     }
 }
