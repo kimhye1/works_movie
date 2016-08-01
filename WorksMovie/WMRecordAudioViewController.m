@@ -101,7 +101,7 @@
     [self.playVideoButton setImage:[UIImage imageNamed:@"Play"] forState:UIControlStateNormal];
     self.playVideoButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.videoView addSubview:self.playVideoButton];
-    [self.playVideoButton addTarget:self action:@selector(playVideoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    self.playVideoButton.enabled = NO;
 }
 
 - (void)setupRecordAudioContainerView {
@@ -385,29 +385,20 @@
 }
 
 
-#pragma mark - Play Video Button Event Handler Methods
-
-- (void)playVideoButtonClicked:(UIButton *)sender {
-    [self.videoView.layer addSublayer:self.playerLayer];
-    
-    [self.player play];
-}
-
-
 #pragma mark - Video View Tapped Event Handler Methods
 
 // viewView를 tap하면 비디오의 재생 상태에 따라 play또는 pause시킨다.
 - (void)videoViewTapped:(UITapGestureRecognizer*)sender {
     if(self.player.rate == 1.0) { // 재생 중일 때 실행
-        [self.videoView addSubview:self.playVideoButton];
-        [self.videoView addSubview:self.backToCellectionViewButton];
-        self.playVideoButton.hidden = NO;
-        self.backToCellectionViewButton.hidden = NO;
+//        [self.videoView addSubview:self.playVideoButton];
+//        [self.videoView addSubview:self.backToCellectionViewButton];
+//        self.playVideoButton.hidden = NO;
+//        self.backToCellectionViewButton.hidden = NO;
         [self.player pause];
     }
-    else if(self.player.rate == 0.0) { // 일시 정지 상태일 때 실행
-        self.playVideoButton.hidden = YES;
-        self.backToCellectionViewButton.hidden = YES;
+    else if(self.player.rate == 0.0) { // 정지 상태일 때 실행
+//        self.playVideoButton.hidden = YES;
+//        self.backToCellectionViewButton.hidden = YES;
         [self.videoView.layer addSublayer:self.playerLayer];
         [self.player play];
     }
@@ -444,8 +435,8 @@
 // 비디오 재생이 끝나면 리플레이를 위해 preparePlayVideo를 호출한다.
 -(void)itemDidFinishPlaying:(NSNotification *) notification {
     [self preparePlayVideo];
-    [self.videoView addSubview:self.playVideoButton];
-    [self.videoView addSubview:self.backToCellectionViewButton];
+//    [self.videoView addSubview:self.playVideoButton];
+//    [self.videoView addSubview:self.backToCellectionViewButton];
 }
 
 - (void)itemDidFinishPlayingWithRecord:(NSNotification *) notification {

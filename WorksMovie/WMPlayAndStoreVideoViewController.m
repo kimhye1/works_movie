@@ -23,6 +23,9 @@
 @property (nonatomic, strong) UIButton *shareVideoButton;
 @property (nonatomic, strong) UIButton *backButton;
 @property (nonatomic, strong) UIButton *returnToShootingVideoViewButton;
+@property (nonatomic, strong) AVQueuePlayer *player;
+@property (nonatomic, strong) AVPlayerLayer *playerLayer;
+@property (nonatomic, strong) AVPlayerItem *playerItem;
 
 @end
 
@@ -43,6 +46,8 @@
     
     [self setupComponents];
     [self setupConstraints];
+    
+    [self preparePlayVideo];
 }
 
 
@@ -66,6 +71,9 @@
     
     [self.videoView addSubview:imageView];
     [self.view addSubview:self.videoView];
+    
+    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(videoViewTapped:)];
+    [self.videoView addGestureRecognizer:tapRecognizer];
 }
 
 
@@ -92,7 +100,8 @@
     [self.playVideoButton setImage:[UIImage imageNamed:@"Play"] forState:UIControlStateNormal];
     self.playVideoButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.videoView addSubview:self.playVideoButton];
-    [self.playVideoButton addTarget:self action:@selector(playVideoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    self.playVideoButton.enabled = NO;
+//    [self.playVideoButton addTarget:self action:@selector(playVideoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)setupVideoStoreMenuContainerView {
@@ -245,12 +254,53 @@
 }
 
 
-#pragma mark - Play Video Button Event Handler Methods
 
-// playVideoButton을 클릭하면 videoItems를 차례대로 이어서 재생시킨다.
-- (void)playVideoButtonClicked:(UIButton *)sender {
-    [self.videoHelper playVideo:self.videoView];
+- (void)preparePlayVideo {
+    NSMutableArray *videoItems = [[NSMutableArray alloc] init];
+    
+    for (int i = 0 ; i < self.modelManager.videoDatas.count; i++) {
+        self.playerItem = [AVPlayerItem playerItemWithURL:[(WMModel *)self.modelManager.videoDatas[i] videoURL]];
+        [videoItems addObject:self.playerItem];
+    }
+    
+    // 동영상 play가 끝나면 불릴 notification 등록
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:)
+                                                 name:AVPlayerItemDidPlayToEndTimeNotification object:[videoItems lastObject]];
+    
+    self.player = [[AVQueuePlayer alloc] initWithItems:videoItems];
+
+    self.playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
+    [self.playerLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
+    self.playerLayer.frame = self.videoView.frame;
 }
+
+
+#pragma mark - Video View Tapped Event Handler Methods
+
+// viewView를 tap하면 비디오의 재생 상태에 따라 play또는 pause시킨다.
+- (void)videoViewTapped:(UITapGestureRecognizer*)sender {
+    if(self.player.rate == 1.0) { // 재생 중일 때 실행
+        self.playVideoButton.hidden = NO;
+        self.backButton.hidden = NO;
+        [self.player pause];
+    }
+    else if(self.player.rate == 0.0) { // 정지 상태일 때 실행
+        self.playVideoButton.hidden = YES;
+        self.backButton.hidden = YES;
+
+        [self.videoView.layer insertSublayer:self.playerLayer below:self.playVideoButton.layer]; //이 코드 중요
+        [self.player play];
+    }
+}
+
+
+// 비디오 재생이 끝나면 리플레이를 위해 preparePlayVideo를 호출한다.
+-(void)itemDidFinishPlaying:(NSNotification *) notification {
+    [self preparePlayVideo];
+    self.playVideoButton.hidden = NO;
+    self.backButton.hidden = NO;
+}
+
 
 
 #pragma mark - back To Camera View Button Event Handler Methods
