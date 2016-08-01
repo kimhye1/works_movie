@@ -291,11 +291,12 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
     
     __weak typeof(self) weakSelf = self;
     [[PHImageManager defaultManager] requestAVAssetForVideo:asset options:nil resultHandler:^(AVAsset *avAsset, AVAudioMix *audioMix, NSDictionary *info) {
-        weakSelf.URL = [(AVURLAsset *)avAsset URL];
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        strongSelf.URL = [(AVURLAsset *)avAsset URL];
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            WMRecordAudioViewController *recordAudioViewController = [[WMRecordAudioViewController alloc] initWithVideoURL:weakSelf.URL];
-            [weakSelf presentViewController:recordAudioViewController animated:NO completion:nil];
+            WMRecordAudioViewController *recordAudioViewController = [[WMRecordAudioViewController alloc] initWithVideoURL:strongSelf.URL];
+            [strongSelf presentViewController:recordAudioViewController animated:NO completion:nil];
         });
     }];
 }
