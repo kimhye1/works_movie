@@ -17,6 +17,11 @@
 @property (nonatomic, strong) PHAsset *asset;
 @property (nonatomic, strong) NSURL *videoURL;
 
+@property (nonatomic, strong) UIButton *recordButton;
+@property (nonatomic, strong) UIButton *removeAudioButton;
+@property (nonatomic, strong) UIButton *completeRecordingButton;
+
+
 @end
 
 @implementation WMRecordAudioViewController
@@ -46,6 +51,10 @@
     [self setupBackToCellectionViewButton];
     [self setupPlayVideoButton];
     [self setupRecordAudioContainerView];
+    
+    [self setupRecordButton];
+    [self setupRemoveAudioButton];
+    [self setupCompleteRecordingButton];
 }
 
 - (void)setupVideoView {
@@ -70,7 +79,6 @@
     self.backToCellectionViewButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.videoView addSubview:self.backToCellectionViewButton];
     [self.backToCellectionViewButton addTarget:self action:@selector(backToCollectionViewButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-    
 }
 
 - (void)setupPlayVideoButton {
@@ -88,6 +96,40 @@
     [self.view addSubview:self.RecordAudioContainerView];
 }
 
+- (void)setupRecordButton {
+    self.recordButton = [[UIButton alloc] init];
+    self.recordButton.frame = CGRectMake(0, 0, 70, 70);
+    self.recordButton.backgroundColor = [UIColor redColor];
+    self.recordButton.clipsToBounds = YES;
+    self.recordButton.layer.cornerRadius = 70/2.0f;
+    self.recordButton.layer.borderColor=[UIColor whiteColor].CGColor;
+    self.recordButton.layer.borderWidth=2.0f;
+    self.recordButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.RecordAudioContainerView addSubview:self.recordButton];
+    [self.recordButton addTarget:self action:@selector(recordButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)setupRemoveAudioButton {
+    self.removeAudioButton = [[UIButton alloc] init];
+    [self.removeAudioButton setTitle:@"취소" forState:UIControlStateNormal];
+    [self.removeAudioButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [self.removeAudioButton.titleLabel setFont:[UIFont systemFontOfSize:20]];
+    self.removeAudioButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.RecordAudioContainerView addSubview:self.removeAudioButton];
+    [self.removeAudioButton addTarget:self action:@selector(removeAudioButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    
+}
+
+- (void)setupCompleteRecordingButton {
+    self.completeRecordingButton = [[UIButton alloc] init];
+    [self.completeRecordingButton setTitle:@"완료" forState:UIControlStateNormal];
+    [self.completeRecordingButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [self.completeRecordingButton.titleLabel setFont:[UIFont systemFontOfSize:20]];
+    self.completeRecordingButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.RecordAudioContainerView addSubview:self.completeRecordingButton];
+    [self.completeRecordingButton addTarget:self action:@selector(completeRecordingButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+}
+
 
 #pragma mark - Setup Constraints Methods
 
@@ -96,6 +138,10 @@
     [self setupBackToCellectionViewButtonConstraints];
     [self setupPlayVideoButtonConstraints];
     [self setupRecordAudioContainerViewConstraints];
+    
+    [self setupRecordButtonConstraints];
+    [self setupRemoveAudioButtonConstraint];
+    [self setupCompleteRecordingButtonConstraints];
 }
 
 - (void)setupVideoViewConstraints {
@@ -160,6 +206,74 @@
                                                views:@{@"videoView" : self.videoView, @"RecordAudioContainerView" : self.RecordAudioContainerView}]];
 }
 
+- (void) setupRecordButtonConstraints {
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:self.view
+                                  attribute:NSLayoutAttributeCenterX
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.recordButton
+                                  attribute:NSLayoutAttributeCenterX
+                                 multiplier:1
+                                   constant:0]];
+    
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:self.RecordAudioContainerView
+                                  attribute:NSLayoutAttributeCenterY
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.recordButton
+                                  attribute:NSLayoutAttributeCenterY
+                                 multiplier:1
+                                   constant:0]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[recordButton(==70)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"recordButton" : self.recordButton}]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[recordButton(==70)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"recordButton" : self.recordButton}]];
+}
+
+- (void) setupRemoveAudioButtonConstraint {
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:self.RecordAudioContainerView
+                                  attribute:NSLayoutAttributeCenterY
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.removeAudioButton
+                                  attribute:NSLayoutAttributeCenterY
+                                 multiplier:1
+                                   constant:0]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-40-[removeAudioButton]-40-[recordButton]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"removeAudioButton" : self.removeAudioButton, @"recordButton" : self.recordButton}]];
+}
+
+- (void) setupCompleteRecordingButtonConstraints {
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:self.RecordAudioContainerView
+                                  attribute:NSLayoutAttributeCenterY
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.completeRecordingButton
+                                  attribute:NSLayoutAttributeCenterY
+                                 multiplier:1
+                                   constant:0]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[recordButton]-40-[completeRecordingButton]-40-|"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"completeRecordingButton" : self.completeRecordingButton, @"recordButton" : self.recordButton}]];
+}
+
+
+
 
 #pragma mark - Back To Collection View Button Event Handler Methods
 
@@ -182,6 +296,27 @@
     [self.videoView.layer addSublayer:playerLayer];
     
     [player play];
+}
+
+
+#pragma mark - Record Audio Button Event Handler Methods
+
+- (void)recordButtonClicked:(UIButton *)sender {
+    NSLog(@"Record Audio Button Cliked");
+}
+
+
+#pragma mark - Remove Audio Button Event Handler Methods
+
+- (void)removeAudioButtonClicked:(UIButton *)sender {
+    NSLog(@"Remove Audio Button Clicked");
+}
+
+
+#pragma mark - Complete Recording Button Event Handler Methods
+
+- (void)completeRecordingButtonClicked:(UIButton *)sender {
+    NSLog(@"Complete Recording Button Clicked");
 }
 
 @end
