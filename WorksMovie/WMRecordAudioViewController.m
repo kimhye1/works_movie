@@ -7,6 +7,7 @@
 //
 
 #import "WMRecordAudioViewController.h"
+#import "WMPlayAndStoreAudioViewController.h"
 #import <AVFoundation/AVFoundation.h>
 
 @interface WMRecordAudioViewController ()
@@ -373,7 +374,7 @@
     AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:avAsset];
     
     // 동영상 play가 끝나면 불릴 notification 등록
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:)
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlayingWithRecord:)
                                                  name:AVPlayerItemDidPlayToEndTimeNotification object:playerItem];
     
     self.playerWithAudio = [AVPlayer playerWithPlayerItem:playerItem];
@@ -447,6 +448,15 @@
     [self.videoView addSubview:self.backToCellectionViewButton];
 }
 
+- (void)itemDidFinishPlayingWithRecord:(NSNotification *) notification {
+    self.recordButton.backgroundColor = [UIColor redColor];
+    self.recordingSquare.hidden = YES;
+    
+    [self.videoView addSubview:self.playVideoButton];
+    self.playVideoButton.hidden = NO;
+    
+    self.videoView.userInteractionEnabled = YES;
+}
 
 #pragma mark - Remove Audio Button Event Handler Methods
 
@@ -487,7 +497,10 @@
 #pragma mark - Complete Recording Button Event Handler Methods
 
 - (void)completeRecordingButtonClicked:(UIButton *)sender {
-    NSLog(@"Complete Recording Button Clicked");
+    [self.audioRecorder stop];
+    
+    WMPlayAndStoreAudioViewController *playAndStoreViewController = [[WMPlayAndStoreAudioViewController alloc] initWithAudioURL:self.outputFileURL videoURL:self.videoURL];
+    [self presentViewController:playAndStoreViewController animated:YES completion:nil];
 }
 
 
