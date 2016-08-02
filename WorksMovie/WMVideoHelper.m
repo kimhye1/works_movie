@@ -8,17 +8,17 @@
 
 #import "WMVideoHelper.h"
 #import "WMVideoRecorder.h"
-#import "WMVideoPlayer.h"
+#import "WMMediaPlayer.h"
 #import "WMVideoSaver.h"
-#import "WMVideoSharer.h"
+#import "WMMediaSharer.h"
 
 
 @interface WMVideoHelper ()
 
 @property (nonatomic, strong) WMVideoRecorder *videoRecorder;
-@property (nonatomic, strong) WMVideoPlayer *videoPlayer;
+@property (nonatomic, strong) WMMediaPlayer *videoPlayer;
 @property (nonatomic, strong) WMVideoSaver *videoSaver;
-@property (nonatomic, strong) WMVideoSharer *VideoSharer;
+@property (nonatomic, strong) WMMediaSharer *VideoSharer;
 
 @end
 
@@ -30,9 +30,9 @@
     
     if (self) {
         self.videoRecorder = [[WMVideoRecorder alloc] initWithModelManager:modelManager];
-        self.videoPlayer = [[WMVideoPlayer alloc] initWithModelManager:modelManager];
+        self.videoPlayer = [[WMMediaPlayer alloc] initWithModelManager:modelManager];
         self.videoSaver = [[WMVideoSaver alloc] initWithModelManager:modelManager];
-        self.VideoSharer = [[WMVideoSharer  alloc] init];
+        self.VideoSharer = [[WMMediaSharer  alloc] init];
     }
     return self;
 }
@@ -57,8 +57,8 @@
     [self.videoRecorder stopRecording];
 }
 
-- (UIImageView *)gettingThumbnailFromVideoInView:(UIView *)videoView {
-    return [self.videoPlayer gettingThumbnailFromVideoInView:videoView];
+- (UIImageView *)gettingThumbnailFromVideoInView:(UIView *)videoView withURL:(NSURL *)url {
+    return [self.videoPlayer gettingThumbnailFromVideoInView:videoView withURL:url];
 }
 
 - (void)playVideo:(UIView *)videoView {

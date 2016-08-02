@@ -10,10 +10,12 @@
 #import <AVFoundation/AVFoundation.h>
 #import "WMModelManager.h"
 
-@interface WMVideoPlayer : NSObject
+@interface WMMediaPlayer : NSObject
 
 - (instancetype)initWithModelManager:(WMModelManager *)modelManager;
-- (UIImageView *)gettingThumbnailFromVideoInView:(UIView *)videoView;
+- (UIImageView *)gettingThumbnailFromVideoInView:(UIView *)videoView withURL:(NSURL *)url;
+- (void)preparePlay;
 - (void)playVideo:(UIView *)videoView;
+- (void)stopPlay;
 
 @end

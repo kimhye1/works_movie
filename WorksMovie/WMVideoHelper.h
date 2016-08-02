@@ -20,7 +20,7 @@
 - (void)startRecording;
 - (void)stopRecording;
 
-- (UIImageView *)gettingThumbnailFromVideoInView:(UIView *)videoView;
+- (UIImageView *)gettingThumbnailFromVideoInView:(UIView *)videoView withURL:(NSURL *)url;
 - (void)playVideo:(UIView *)videoView;
 
 - (void)mergeVideo;

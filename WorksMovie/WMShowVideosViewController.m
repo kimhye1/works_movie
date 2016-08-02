@@ -56,14 +56,14 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self setupComponents];
+    [self setupViewComponents];
     [self setupConstraints];
 }
 
 
 #pragma mark - Create Views Methods
 
-- (void)setupComponents {
+- (void)setupViewComponents {
     [self setupTitleView];
     [self setupCollectionView];
     [self setupSelectButton];
@@ -246,7 +246,6 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
     return cell;
 }
 
-// 특정 셀이 tap 되었을때 호출
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     self.cell = [collectionView cellForItemAtIndexPath:indexPath];
     

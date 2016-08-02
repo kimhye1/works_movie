@@ -67,7 +67,7 @@
     self.videoView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height-200)];
     self.videoView.translatesAutoresizingMaskIntoConstraints = NO;
     
-    UIImageView *imageView = [self.videoHelper gettingThumbnailFromVideoInView:self.videoView];
+    UIImageView *imageView = [self.videoHelper gettingThumbnailFromVideoInView:self.videoView withURL:[(WMModel *)self.modelManager.videoDatas[0] videoURL]];
     
     [self.videoView addSubview:imageView];
     [self.view addSubview:self.videoView];
@@ -101,7 +101,6 @@
     self.playVideoButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.videoView addSubview:self.playVideoButton];
     self.playVideoButton.enabled = NO;
-//    [self.playVideoButton addTarget:self action:@selector(playVideoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)setupVideoStoreMenuContainerView {
@@ -254,21 +253,35 @@
 }
 
 
+#pragma mark - Prepare Play Video
 
 - (void)preparePlayVideo {
+    // 로직 부분 클래스 옮기기
+    NSMutableArray *videoItems = [self fetchPlayerItem];
+    
+    [self setupItemDidFinishActionWithVideoItems:videoItems];
+    [self setupPlayerViewLayerWithVideoItems:videoItems];
+}
+
+- (NSMutableArray *)fetchPlayerItem {
     NSMutableArray *videoItems = [[NSMutableArray alloc] init];
     
     for (int i = 0 ; i < self.modelManager.videoDatas.count; i++) {
         self.playerItem = [AVPlayerItem playerItemWithURL:[(WMModel *)self.modelManager.videoDatas[i] videoURL]];
         [videoItems addObject:self.playerItem];
     }
-    
-    // 동영상 play가 끝나면 불릴 notification 등록
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:)
-                                                 name:AVPlayerItemDidPlayToEndTimeNotification object:[videoItems lastObject]];
-    
-    self.player = [[AVQueuePlayer alloc] initWithItems:videoItems];
+    return videoItems;
+}
 
+// 동영상 play가 끝나면 불릴 notification 등록
+- (void)setupItemDidFinishActionWithVideoItems:(NSArray *)videoItems {
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:)
+                                                 name:AVPlayerItemDidPlayToEndTimeNotification object:self.playerItem];
+}
+
+- (void)setupPlayerViewLayerWithVideoItems:(NSArray *)videoItems {
+    self.player = [[AVQueuePlayer alloc] initWithItems:videoItems];
+    
     self.playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
     [self.playerLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
     self.playerLayer.frame = self.videoView.frame;
@@ -279,24 +292,41 @@
 
 // viewView를 tap하면 비디오의 재생 상태에 따라 play또는 pause시킨다.
 - (void)videoViewTapped:(UITapGestureRecognizer*)sender {
-    if(self.player.rate == 1.0) { // 재생 중일 때 실행
+    if([self isPlaying]) {
         self.playVideoButton.hidden = NO;
         self.backButton.hidden = NO;
         [self.player pause];
-    }
-    else if(self.player.rate == 0.0) { // 정지 상태일 때 실행
+    } else {
         self.playVideoButton.hidden = YES;
         self.backButton.hidden = YES;
-
-        [self.videoView.layer insertSublayer:self.playerLayer below:self.playVideoButton.layer]; //이 코드 중요
+        
+        [self.videoView.layer insertSublayer:self.playerLayer below:self.playVideoButton.layer];
         [self.player play];
+        
     }
+}
+
+- (BOOL)isPlaying {
+    if (self.player.rate == 0.0) { // player가 정지 상태일 때 실행
+        return NO;
+    }
+    return YES;
 }
 
 
 // 비디오 재생이 끝나면 리플레이를 위해 preparePlayVideo를 호출한다.
 -(void)itemDidFinishPlaying:(NSNotification *) notification {
-    [self preparePlayVideo];
+//    [self preparePlayVideo];
+    
+//    AVPlayerItem *playerItem = [notification object];
+//    [self.player advanceToNextItem];
+    
+    AVPlayerItem *currentItem = [notification object];
+    [currentItem seekToTime:kCMTimeZero];
+    [self.player advanceToNextItem];
+    [self.player insertItem:currentItem afterItem:nil];
+    [self.player pause];
+   
     self.playVideoButton.hidden = NO;
     self.backButton.hidden = NO;
 }
@@ -338,7 +368,5 @@
     UIActivityViewController *activityView = [self.videoHelper shareVideo:url];
     [self presentViewController:activityView animated:YES completion:nil];
 }
-
-
 
 @end

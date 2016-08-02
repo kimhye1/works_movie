@@ -43,24 +43,20 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self setupComponents];
+    [self setupViewComponents];
     [self setupConstraints];
     
-    [self.videoHelper setupCaptureSession];
-    [self.videoHelper setupPreviewLayerInView:self.cameraView];
+    [self prepareRecording];
 }
 
 
 #pragma mark - Create Views Methods
 
-- (void)setupComponents {
+- (void)setupViewComponents {
     [self setupCameraView];
     [self setupSwitchCameraButton];
     [self setupBackButton];
     [self setupVideoShootingMenuContainerView];
-    [self setupShootingButton];
-    [self setupRemoveVideoButton];
-    [self setupCompleteShootingButton];
     [self setupRecordingStateMark];
 }
 
@@ -92,6 +88,10 @@
     self.videoShootingMenuContainerView.backgroundColor = [UIColor colorWithRed:0.15 green:0.16 blue:0.17 alpha:1.00];
     self.videoShootingMenuContainerView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.videoShootingMenuContainerView];
+    
+    [self setupShootingButton];
+    [self setupRemoveVideoButton];
+    [self setupCompleteShootingButton];
 }
 
 - (void)setupShootingButton {
@@ -135,6 +135,10 @@
     [self.cameraView addSubview:self.recordingStateMark];
 }
 
+- (void)prepareRecording {
+    [self.videoHelper setupCaptureSession];
+    [self.videoHelper setupPreviewLayerInView:self.cameraView];
+}
 
 #pragma mark - Setup Constraints Methods
 
@@ -143,9 +147,6 @@
     [self setupSwitchCameraButtonConstraints];
     [self setupBackButtonConstrains];
     [self setupVideoShootingMenuContainerViewConstraints];
-    [self setupShootingButtonConstraints];
-    [self setupRemoveVideoButtonConstraint];
-    [self setupCompleteShootingButtonConstraints];
     [self setupRecordingStateMarkConstraints];
 }
 
@@ -204,6 +205,10 @@
                                              options:0
                                              metrics:nil
                                                views:@{@"cameraView" : self.cameraView, @"videoShootingMenuContainerView" : self.videoShootingMenuContainerView}]];
+
+    [self setupShootingButtonConstraints];
+    [self setupRemoveVideoButtonConstraint];
+    [self setupCompleteShootingButtonConstraints];
 }
 
 - (void) setupShootingButtonConstraints {

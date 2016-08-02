@@ -73,10 +73,8 @@
         BOOL didFound = NO;
         
         for(NSInteger index = 0 ; index < self.session.inputs.count ; index ++) {
-            
             currentInput = [self.session.inputs objectAtIndex:index];
             NSArray *inputPorts = currentInput.ports;
-            
             
             for(AVCaptureInputPort *port in inputPorts) {
                 if(port.mediaType == AVMediaTypeVideo) {
@@ -84,10 +82,7 @@
                     break;
                 }
             }
-            
-            if (didFound) {
-                break;
-            }
+            if (didFound) break;
         }
         
         if(!currentInput) {
@@ -105,8 +100,7 @@
         AVCaptureDevice *newInputDevice = nil;
         if(((AVCaptureDeviceInput *)currentInput).device.position == AVCaptureDevicePositionBack) {
             newInputDevice = [self cameraWithPosition:AVCaptureDevicePositionFront];
-        }
-        else {
+        }else {
             newInputDevice = [self cameraWithPosition:AVCaptureDevicePositionBack];
         }
         
@@ -114,17 +108,15 @@
         AVCaptureDeviceInput *newDeviceInput = [[AVCaptureDeviceInput alloc] initWithDevice:newInputDevice error:&err];
         if(!newDeviceInput || err) {
             NSLog(@"Error creating capture device input: %@", err.localizedDescription);
-        }
-        else {
+        } else {
             [self.session addInput:newDeviceInput]; // input을 session에 추가
         }
         [self.session commitConfiguration]; // 모든 변경 사항을 session에 commit 시킨다.
     }
 }
 
-// Find a camera with the specified AVCaptureDevicePosition, returning nil if one is not found
-- (AVCaptureDevice *)cameraWithPosition:(AVCaptureDevicePosition) position
-{
+// AVCaptureDevicePosition을 찾아서 반환. device를 발견하지 못하면 nil을 반환
+- (AVCaptureDevice *)cameraWithPosition:(AVCaptureDevicePosition) position {
     NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
     for (AVCaptureDevice *device in devices) {
         if ([device position] == position) return device;
