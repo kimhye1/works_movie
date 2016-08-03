@@ -316,17 +316,8 @@
 
 // 비디오 재생이 끝나면 리플레이를 위해 preparePlayVideo를 호출한다.
 -(void)itemDidFinishPlaying:(NSNotification *) notification {
-//    [self preparePlayVideo];
-    
-//    AVPlayerItem *playerItem = [notification object];
-//    [self.player advanceToNextItem];
-    
-    AVPlayerItem *currentItem = [notification object];
-    [currentItem seekToTime:kCMTimeZero];
-    [self.player advanceToNextItem];
-    [self.player insertItem:currentItem afterItem:nil];
-    [self.player pause];
-   
+    [self preparePlayVideo];
+       
     self.playVideoButton.hidden = NO;
     self.backButton.hidden = NO;
 }

@@ -11,6 +11,7 @@
 #import "WMMediaPlayer.h"
 #import "WMVideoSaver.h"
 #import "WMMediaSharer.h"
+#import "WMMediaUtils.h"
 
 
 @interface WMVideoHelper ()
@@ -58,7 +59,7 @@
 }
 
 - (UIImageView *)gettingThumbnailFromVideoInView:(UIView *)videoView withURL:(NSURL *)url {
-    return [self.videoPlayer gettingThumbnailFromVideoInView:videoView withURL:url];
+    return [WMMediaUtils gettingThumbnailFromVideoInView:videoView withURL:url];
 }
 
 - (void)playVideo:(UIView *)videoView {

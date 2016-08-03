@@ -8,6 +8,7 @@
 
 #import <AVFoundation/AVFoundation.h>
 #import "WMPlayAndStoreAudioViewController.h"
+#import "WMMediaUtils.h"
 
 @interface WMPlayAndStoreAudioViewController ()
 
@@ -17,7 +18,7 @@
 @property (nonatomic, strong) UIButton *backButton;
 @property (nonatomic, strong) UIButton *playVideoAndAudioButton;
 @property (nonatomic, strong) UIView *videoStoreMenuContainerView;
-@property (nonatomic, strong) AVQueuePlayer *player;
+@property (nonatomic, strong) AVPlayer *player;
 @property (nonatomic, strong) AVPlayerLayer *playerLayer;
 @property (nonatomic, strong) AVPlayer *playerWithAudio;
 @property (nonatomic, strong) AVPlayerLayer *playerLayerWithAudio;
@@ -62,14 +63,9 @@
     self.videoView.translatesAutoresizingMaskIntoConstraints = NO;
     
     // thumbnail 추출
-    AVURLAsset* asset = [AVURLAsset URLAssetWithURL:self.videoURL options:nil];
-    AVAssetImageGenerator* imageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:asset];
-    [imageGenerator setAppliesPreferredTrackTransform:true];
-    UIImage* image = [UIImage imageWithCGImage:[imageGenerator copyCGImageAtTime:CMTimeMake(1, 10) actualTime:nil error:nil]]; // 특정 시점의 이미지를 추출
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
-    imageView.frame = self.videoView.bounds;
-    [self.videoView addSubview:imageView];
+    UIImageView *imageView = [WMMediaUtils gettingThumbnailFromVideoInView:self.videoView withURL:self.videoURL];
     
+    [self.videoView addSubview:imageView];
     [self.view addSubview:self.videoView];
     
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(videoViewTapped:)];
@@ -220,13 +216,7 @@
 
 // 비디오 재생이 끝나면 리플레이를 위해 preparePlayVideo를 호출한다.
 -(void)itemDidFinishPlaying:(NSNotification *) notification {
-    //    [self.player seekToTime:kCMTimeZero];
-    
-    AVPlayerItem *currentItem = [notification object];
-    [currentItem seekToTime:kCMTimeZero];
-    [self.player advanceToNextItem];
-    [self.player insertItem:currentItem afterItem:nil];
-    [self.player pause];
+    [self preparePlayVideo];
     
     self.playVideoAndAudioButton.hidden = NO;
     self.backButton.hidden = NO;

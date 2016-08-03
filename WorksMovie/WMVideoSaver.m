@@ -90,13 +90,12 @@
             case AVAssetExportSessionStatusCancelled:
                 NSLog(@"Export canceled");
                 break;
-            default:
+            case AVAssetExportSessionStatusCompleted:
+                UISaveVideoAtPathToSavedPhotosAlbum(outputVideoPath, self, @selector(video:didFinishSavingWithError:contextInfo:), nil); // 카메라 롤에 저장
+                break;
+            default :
                 break;
         }
-        if(UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(outputVideoPath)) {
-            NSLog(@"video path is compatible with saved photo album");
-        }
-        UISaveVideoAtPathToSavedPhotosAlbum(outputVideoPath, self, @selector(video:didFinishSavingWithError:contextInfo:), nil); // 카메라 롤에 저장
     }];
     return outputVideoURL;
 }

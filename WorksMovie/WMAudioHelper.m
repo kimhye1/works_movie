@@ -26,9 +26,9 @@
     
     if (self) {
         self.audioRecorder = [[WMAudioRecorder alloc] init];
-//        self.videoPlayer = [[WMMediaPlayer alloc] initWithModelManager:modelManager];
-//        self.videoSaver = [[WMVideoSaver alloc] initWithModelManager:modelManager];
-//        self.VideoSharer = [[WMMediaSharer  alloc] init];
+//        self.audioPlayer = [[WMMediaPlayer alloc] initWithModelManager:modelManager];
+//        self.audioSaver = [[WMAudioSaver alloc] initWithModelManager:modelManager];
+//        audioSharer = [[WMMediaSharer  alloc] init];
     }
     return self;
 }
