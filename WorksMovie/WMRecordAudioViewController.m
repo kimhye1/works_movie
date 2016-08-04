@@ -32,6 +32,9 @@
 @property (nonatomic, strong) AVPlayerLayer *playerLayerWithAudio;
 @property (nonatomic, strong) AVAudioPlayer *audioPlayer;
 @property (nonatomic, strong) NSURL *outputFileURL;
+@property (nonatomic, strong) UIProgressView *progressView;
+@property (nonatomic, assign) CGFloat progress;
+@property (nonatomic, strong) NSTimer *timer;
 
 @end
 
@@ -66,8 +69,8 @@
     [self setupVideoView];
     [self setupBackToCellectionViewButton];
     [self setupPlayVideoButton];
+    [self setupProgressView];
     [self setupRecordAudioContainerView];
-    
     [self setupRecordButton];
     [self setupRemoveAudioButton];
     [self setupCompleteRecordingButton];
@@ -101,6 +104,22 @@
     self.playVideoButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.videoView addSubview:self.playVideoButton];
     self.playVideoButton.enabled = NO;
+}
+
+- (void)setupProgressView {
+    self.progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
+    self.progressView.frame = CGRectMake(0, self.view.frame.size.height-200, self.view.frame.size.width, 7);
+    self.progressView.progress = 0.0f;
+    self.progressView.transform = CGAffineTransformMakeScale(1.0, 2.0);
+    
+   
+    
+    
+    self.progressView.trackTintColor = [UIColor colorWithRed:0.13 green:0.13 blue:0.13 alpha:1.00];
+    self.progressView.progressTintColor = [UIColor whiteColor];
+    [self.progressView setProgressViewStyle:UIProgressViewStyleBar];
+    self.playVideoButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:self.progressView];
 }
 
 - (void)setupRecordAudioContainerView {
@@ -160,6 +179,7 @@
     [self setupVideoViewConstraints];
     [self setupBackToCellectionViewButtonConstraints];
     [self setupPlayVideoButtonConstraints];
+    [self setupProgressViewConstraints];
     [self setupRecordAudioContainerViewConstraints];
     
     [self setupRecordButtonConstraints];
@@ -215,6 +235,14 @@
                                    constant:0]];
 }
 
+- (void)setupProgressViewConstraints {
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[progressView]|"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"progressView" : self.progressView}]];
+}
+
 - (void)setupRecordAudioContainerViewConstraints {
     [self.view addConstraints:
      [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[RecordAudioContainerView]|"
@@ -223,10 +251,10 @@
                                                views:@{@"RecordAudioContainerView" : self.RecordAudioContainerView}]];
     
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[RecordAudioContainerView(==200)]|"
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[RecordAudioContainerView(==198)]|"
                                              options:0
                                              metrics:nil
-                                               views:@{@"videoView" : self.videoView, @"RecordAudioContainerView" : self.RecordAudioContainerView}]];
+                                               views:@{@"RecordAudioContainerView" : self.RecordAudioContainerView}]];
 }
 
 - (void) setupRecordButtonConstraints {
@@ -302,10 +330,10 @@
                                    constant:0]];
     
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-40-[removeAudioButton]-40-[recordButton]"
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[removeAudioButton]-40-[recordButton]-40-[completeRecordingButton]"
                                              options:0
                                              metrics:nil
-                                               views:@{@"removeAudioButton" : self.removeAudioButton, @"recordButton" : self.recordButton}]];
+                                               views:@{@"removeAudioButton" : self.removeAudioButton, @"recordButton" : self.recordButton, @"completeRecordingButton" : self.completeRecordingButton}]];
 }
 
 - (void) setupCompleteRecordingButtonConstraints {
@@ -317,12 +345,6 @@
                                   attribute:NSLayoutAttributeCenterY
                                  multiplier:1
                                    constant:0]];
-    
-    [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[recordButton]-40-[completeRecordingButton]-40-|"
-                                             options:0
-                                             metrics:nil
-                                               views:@{@"completeRecordingButton" : self.completeRecordingButton, @"recordButton" : self.recordButton}]];
 }
 
 
@@ -398,6 +420,8 @@
         [self.playerWithAudio play];
         
         [self.audioHelper startRecording];
+        
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(updateProgressing) userInfo:nil repeats:YES]; //0.01초 마다 updateProgressing를 호출
     }
     else {
         self.recordButton.backgroundColor = [UIColor redColor];
@@ -408,7 +432,22 @@
         [self.playerWithAudio pause];
         
         [self.audioHelper pauseRecording];
+        
+        [self.progressView setProgress:self.progress animated:NO];
+        
+        [self.timer invalidate]; //progress 진행을 멈춘다.
     }
+}
+
+// record progress의 현재 상태를 업데이트 한다.
+- (void)updateProgressing {
+    AVURLAsset *avUrl = [AVURLAsset URLAssetWithURL:self.videoURL options:nil];
+    CMTime time = [avUrl duration];
+    double videoRunningTime = ceil(time.value/time.timescale);
+    double eachProgress = 0.01 / videoRunningTime;
+    
+    self.progress += eachProgress;
+    self.progressView.progress = self.progress;
 }
 
 
