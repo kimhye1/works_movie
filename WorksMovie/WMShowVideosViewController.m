@@ -56,14 +56,14 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self setupComponents];
+    [self setupViewComponents];
     [self setupConstraints];
 }
 
 
 #pragma mark - Create Views Methods
 
-- (void)setupComponents {
+- (void)setupViewComponents {
     [self setupTitleView];
     [self setupCollectionView];
     [self setupSelectButton];
@@ -213,11 +213,6 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
 
 #pragma mark - Collection view delegate methods
 
-// 컬렉션 뷰의 지정된 섹션에 표시되어야 할 항목의 개수 반환
-- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
-    return 1;
-}
-
 // 섹션에 있는 아이템 수 반환
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     return [self.fetchResult count];
@@ -231,8 +226,7 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
     // 선택 상태에 따른 셀UI 업데이트
     cell.layer.borderColor = (cell.selected) ? [UIColor yellowColor].CGColor : nil;
     cell.layer.borderWidth = (cell.selected) ? 5.0f : 0.0f;
-    
-    
+    cell.imageView.image = nil;
     
     PHAsset *asset = self.fetchResult[indexPath.item];
     [self.imageManager requestImageForAsset:asset
@@ -246,7 +240,6 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
     return cell;
 }
 
-// 특정 셀이 tap 되었을때 호출
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     self.cell = [collectionView cellForItemAtIndexPath:indexPath];
     

@@ -9,9 +9,12 @@
 #import "WMRecordAudioViewController.h"
 #import "WMPlayAndStoreAudioViewController.h"
 #import <AVFoundation/AVFoundation.h>
+#import "WMAudioHelper.h"
+#import "WMMediaUtils.h"
 
 @interface WMRecordAudioViewController ()
 
+@property (nonatomic, strong) WMAudioHelper *audioHelper;
 @property (nonatomic, strong) UIView *videoView;
 @property (nonatomic, strong) UIButton *backToCellectionViewButton;
 @property (nonatomic, strong) UIButton *playVideoButton;
@@ -27,7 +30,6 @@
 @property (nonatomic, strong) AVPlayerLayer *playerLayer;
 @property (nonatomic, strong) AVPlayer *playerWithAudio;
 @property (nonatomic, strong) AVPlayerLayer *playerLayerWithAudio;
-@property (nonatomic, strong) AVAudioRecorder *audioRecorder;
 @property (nonatomic, strong) AVAudioPlayer *audioPlayer;
 @property (nonatomic, strong) NSURL *outputFileURL;
 
@@ -40,6 +42,7 @@
     
     if(self) {
         self.videoURL = videoURL;
+        self.audioHelper = [[WMAudioHelper alloc] init];
     }
     return self;
   
@@ -48,17 +51,18 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self setupComponents];
+    [self setupViewComponents];
     [self setupConstraints];
     
     [self preparePlayVideo];
     [self prepareRecordAudio];
+    [self preparePlayVideoWhenRocorded];
 }
 
 
 #pragma mark - Create Views Methods
 
-- (void)setupComponents {
+- (void)setupViewComponents {
     [self setupVideoView];
     [self setupBackToCellectionViewButton];
     [self setupPlayVideoButton];
@@ -74,14 +78,9 @@
     self.videoView.translatesAutoresizingMaskIntoConstraints = NO;
     
     // thumbnail 추출
-    AVURLAsset* asset = [AVURLAsset URLAssetWithURL:self.videoURL options:nil];
-    AVAssetImageGenerator* imageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:asset];
-    [imageGenerator setAppliesPreferredTrackTransform:true];
-    UIImage* image = [UIImage imageWithCGImage:[imageGenerator copyCGImageAtTime:CMTimeMake(1, 10) actualTime:nil error:nil]]; // 특정 시점의 이미지를 추출
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
-    imageView.frame = self.videoView.bounds;
-    [self.videoView addSubview:imageView];
+    UIImageView *imageView = [WMMediaUtils gettingThumbnailFromVideoInView:self.videoView withURL:self.videoURL];
     
+    [self.videoView addSubview:imageView];
     [self.view addSubview:self.videoView];
     
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(videoViewTapped:)];
@@ -101,7 +100,7 @@
     [self.playVideoButton setImage:[UIImage imageNamed:@"Play"] forState:UIControlStateNormal];
     self.playVideoButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.videoView addSubview:self.playVideoButton];
-    [self.playVideoButton addTarget:self action:@selector(playVideoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    self.playVideoButton.enabled = NO;
 }
 
 - (void)setupRecordAudioContainerView {
@@ -131,7 +130,6 @@
     self.recordingSquare.hidden = YES;
     
     [self.recordButton addTarget:self action:@selector(recordButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-    [self preparePlayVideoWhenRocorded];
 }
 
 - (void)setupRemoveAudioButton {
@@ -328,29 +326,11 @@
 }
 
 
-- (void)prepareRecordAudio {
-    // 저장될 audio 파일명, 경로 지정
-    NSArray *pathComponents = [NSArray arrayWithObjects:
-                               [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject],
-                               @"MyAudioMemo.m4a",
-                               nil];
-    self.outputFileURL = [NSURL fileURLWithPathComponents:pathComponents];
-    
-    // audio session을 정의
-    AVAudioSession *session = [AVAudioSession sharedInstance];
-    [session setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
-    
-    // recorder setting을 정의
-    NSMutableDictionary *recordSetting = [[NSMutableDictionary alloc] init];
-    
-    [recordSetting setValue:[NSNumber numberWithInt:kAudioFormatMPEG4AAC] forKey:AVFormatIDKey];
-    [recordSetting setValue:[NSNumber numberWithFloat:44100.0] forKey:AVSampleRateKey];
-    [recordSetting setValue:[NSNumber numberWithInt: 2] forKey:AVNumberOfChannelsKey];
+#pragma mark - Prepare Record Audio / Play Video Method
 
-    self.audioRecorder = [[AVAudioRecorder alloc] initWithURL:self.outputFileURL settings:recordSetting error:NULL];
-    self.audioRecorder.delegate = self;
-    self.audioRecorder.meteringEnabled = YES;
-    [self.audioRecorder prepareToRecord];
+- (void)prepareRecordAudio {
+    self.outputFileURL = [self.audioHelper setupFile];
+    [self.audioHelper setupAudioRecorder:self.outputFileURL];
 }
 
 - (void)preparePlayVideo {
@@ -361,7 +341,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:)
                                                  name:AVPlayerItemDidPlayToEndTimeNotification object:playerItem];
     
-    self.player = [AVPlayer playerWithPlayerItem:playerItem];
+    self.player = [AVQueuePlayer playerWithPlayerItem:playerItem];
     
     self.playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
     [self.playerLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
@@ -385,30 +365,19 @@
 }
 
 
-#pragma mark - Play Video Button Event Handler Methods
-
-- (void)playVideoButtonClicked:(UIButton *)sender {
-    [self.videoView.layer addSublayer:self.playerLayer];
-    
-    [self.player play];
-}
-
-
 #pragma mark - Video View Tapped Event Handler Methods
 
 // viewView를 tap하면 비디오의 재생 상태에 따라 play또는 pause시킨다.
 - (void)videoViewTapped:(UITapGestureRecognizer*)sender {
     if(self.player.rate == 1.0) { // 재생 중일 때 실행
-        [self.videoView addSubview:self.playVideoButton];
-        [self.videoView addSubview:self.backToCellectionViewButton];
         self.playVideoButton.hidden = NO;
         self.backToCellectionViewButton.hidden = NO;
         [self.player pause];
     }
-    else if(self.player.rate == 0.0) { // 일시 정지 상태일 때 실행
+    else if(self.player.rate == 0.0) { // 정지 상태일 때 실행
         self.playVideoButton.hidden = YES;
         self.backToCellectionViewButton.hidden = YES;
-        [self.videoView.layer addSublayer:self.playerLayer];
+        [self.videoView.layer insertSublayer:self.playerLayer below:self.playVideoButton.layer];
         [self.player play];
     }
 }
@@ -419,7 +388,7 @@
 - (void)recordButtonClicked:(UIButton *)sender {
     self.videoView.userInteractionEnabled = NO; // 녹음을 진행하는 동안 viewView 클릭 이벤트가 발생해 video가 play되는 것을 막는다.
     
-    if(!self.audioRecorder.recording) {
+    if(![self.audioHelper isRecording]) {
         self.recordButton.backgroundColor = [UIColor colorWithRed:0.15 green:0.16 blue:0.17 alpha:1.00];
         self.recordingSquare.hidden = NO;
         self.recordingSquare.userInteractionEnabled = NO;
@@ -427,7 +396,8 @@
         [self.videoView.layer addSublayer:self.playerLayerWithAudio];
         self.playVideoButton.hidden = YES;
         [self.playerWithAudio play];
-        [self.audioRecorder record];
+        
+        [self.audioHelper startRecording];
     }
     else {
         self.recordButton.backgroundColor = [UIColor redColor];
@@ -436,7 +406,8 @@
         [self.videoView addSubview:self.playVideoButton];
         self.playVideoButton.hidden = NO;
         [self.playerWithAudio pause];
-        [self.audioRecorder pause];
+        
+        [self.audioHelper pauseRecording];
     }
 }
 
@@ -444,8 +415,9 @@
 // 비디오 재생이 끝나면 리플레이를 위해 preparePlayVideo를 호출한다.
 -(void)itemDidFinishPlaying:(NSNotification *) notification {
     [self preparePlayVideo];
-    [self.videoView addSubview:self.playVideoButton];
-    [self.videoView addSubview:self.backToCellectionViewButton];
+    
+    self.playVideoButton.hidden = NO;
+    self.backToCellectionViewButton.hidden = NO;
 }
 
 - (void)itemDidFinishPlayingWithRecord:(NSNotification *) notification {
@@ -497,7 +469,7 @@
 #pragma mark - Complete Recording Button Event Handler Methods
 
 - (void)completeRecordingButtonClicked:(UIButton *)sender {
-    [self.audioRecorder stop];
+    [self.audioHelper stopRecording];
     
     WMPlayAndStoreAudioViewController *playAndStoreViewController = [[WMPlayAndStoreAudioViewController alloc] initWithAudioURL:self.outputFileURL videoURL:self.videoURL];
     [self presentViewController:playAndStoreViewController animated:YES completion:nil];

@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <Photos/Photos.h>
 
-@interface WMRecordAudioViewController : UIViewController <AVAudioRecorderDelegate, AVAudioPlayerDelegate>
+@interface WMRecordAudioViewController : UIViewController 
 
 - (instancetype)initWithVideoURL:(NSURL *)videoURL;
 

@@ -29,18 +29,10 @@
     return self;
 }
 
-// modalManager의 videoData들을(촬영된 비디오들의 url) asset으로 생성
-- (void)setupAssetsOfVideoDatas {
-    self.assets = [[NSMutableArray alloc] init];
-    
-    for(int i = 0 ; i < [self.modelManager.videoDatas count] ; i++) {
-        [self.assets addObject:[AVAsset assetWithURL:[(WMModel *)self.modelManager.videoDatas[i] videoURL]]];
-    }
-}
 
 // 촬영된 1개 이상의 비디오를 하나로 병합시키는 기능
 - (void)mergeVideo {
-    [self setupAssetsOfVideoDatas];
+    [self convertVideoDatasToAssets];
     
     self.composition = [[AVMutableComposition alloc] init];
     AVMutableCompositionTrack *compositionVideoTrack = [self.composition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
@@ -56,6 +48,15 @@
         [soundtrackTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, videoAsset.duration) ofTrack:[[videoAsset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0] atTime:insertTime error:nil];
         
         insertTime = CMTimeAdd(insertTime, videoAsset.duration); // 다음 insert를 위해 insertTime을 갱신
+    }
+}
+
+// modalManager의 videoData들을(촬영된 비디오들의 url) asset으로 생성
+- (void)convertVideoDatasToAssets {
+    self.assets = [[NSMutableArray alloc] init];
+    
+    for(int i = 0 ; i < [self.modelManager.videoDatas count] ; i++) {
+        [self.assets addObject:[AVAsset assetWithURL:[(WMModel *)self.modelManager.videoDatas[i] videoURL]]];
     }
 }
 
@@ -89,13 +90,12 @@
             case AVAssetExportSessionStatusCancelled:
                 NSLog(@"Export canceled");
                 break;
-            default:
+            case AVAssetExportSessionStatusCompleted:
+                UISaveVideoAtPathToSavedPhotosAlbum(outputVideoPath, self, @selector(video:didFinishSavingWithError:contextInfo:), nil); // 카메라 롤에 저장
+                break;
+            default :
                 break;
         }
-        if(UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(outputVideoPath)) {
-            NSLog(@"video path is compatible with saved photo album");
-        }
-        UISaveVideoAtPathToSavedPhotosAlbum(outputVideoPath, self, @selector(video:didFinishSavingWithError:contextInfo:), nil); // 카메라 롤에 저장
     }];
     return outputVideoURL;
 }

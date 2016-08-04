@@ -6,14 +6,14 @@
 //  Copyright © 2016년 worksmobile. All rights reserved.
 //
 
-#import "WMVideoSharer.h"
+#import "WMMediaSharer.h"
 #import "WMVideoSaver.h"
 
-@interface WMVideoSharer()
+@interface WMMediaSharer()
 
 @end
 
-@implementation WMVideoSharer
+@implementation WMMediaSharer
 
 
 - (UIActivityViewController *)shareVideo:(NSURL *)outputURL {

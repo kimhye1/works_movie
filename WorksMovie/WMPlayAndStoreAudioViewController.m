@@ -8,6 +8,7 @@
 
 #import <AVFoundation/AVFoundation.h>
 #import "WMPlayAndStoreAudioViewController.h"
+#import "WMMediaUtils.h"
 
 @interface WMPlayAndStoreAudioViewController ()
 
@@ -41,14 +42,16 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self setupComponents];
+    [self setupViewComponents];
     [self setupConstraints];
+    
+    [self preparePlayVideoAndAudio];
 }
 
 
 #pragma mark - Create Views Methods
 
-- (void)setupComponents {
+- (void)setupViewComponents {
     [self setupVideoView];
     [self setupBackButton];
     [self setupPlayVideoAndAudioButton];
@@ -60,15 +63,13 @@
     self.videoView.translatesAutoresizingMaskIntoConstraints = NO;
     
     // thumbnail 추출
-    AVURLAsset* asset = [AVURLAsset URLAssetWithURL:self.videoURL options:nil];
-    AVAssetImageGenerator* imageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:asset];
-    [imageGenerator setAppliesPreferredTrackTransform:true];
-    UIImage* image = [UIImage imageWithCGImage:[imageGenerator copyCGImageAtTime:CMTimeMake(1, 10) actualTime:nil error:nil]]; // 특정 시점의 이미지를 추출
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
-    imageView.frame = self.videoView.bounds;
-    [self.videoView addSubview:imageView];
+    UIImageView *imageView = [WMMediaUtils gettingThumbnailFromVideoInView:self.videoView withURL:self.videoURL];
     
+    [self.videoView addSubview:imageView];
     [self.view addSubview:self.videoView];
+    
+    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(videoViewTapped:)];
+    [self.videoView addGestureRecognizer:tapRecognizer];
 }
 
 - (void)setupBackButton {
@@ -84,7 +85,6 @@
     [self.playVideoAndAudioButton setImage:[UIImage imageNamed:@"Play"] forState:UIControlStateNormal];
     self.playVideoAndAudioButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.videoView addSubview:self.playVideoAndAudioButton];
-    [self.playVideoAndAudioButton addTarget:self action:@selector(playVideoAndAudioButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)setupVideoStoreMenuContainerView {
@@ -167,14 +167,14 @@
 }
 
 
-#pragma mark - Play Video And Audio Button Event Handler Methods
+#pragma mark - Prepare Play Video And Audio Method
 
-- (void)playVideoAndAudioButtonClicked:(UIButton *)sender {
-    [self playVideo];
-    [self playAudio];
+- (void)preparePlayVideoAndAudio {
+    [self preparePlayVideo];
+    [self preparePlayAudio];
 }
 
-- (void)playVideo {
+- (void)preparePlayVideo {
     AVURLAsset *avAsset = [AVURLAsset URLAssetWithURL:self.videoURL options:nil];
     AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:avAsset];
     
@@ -182,25 +182,44 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:)
                                                  name:AVPlayerItemDidPlayToEndTimeNotification object:playerItem];
     
-    self.player = [AVPlayer playerWithPlayerItem:playerItem];
+    self.player = [AVQueuePlayer playerWithPlayerItem:playerItem];
     
     self.playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
     [self.playerLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
     self.playerLayer.frame = self.videoView.frame;
-    [self.videoView.layer addSublayer:self.playerLayer];
-    
-    [self.player play];
 }
 
-- (void)playAudio {
+- (void)preparePlayAudio {
     self.audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:self.audioURL error:nil];
-    [self.audioPlayer play];
 }
+
+
+#pragma mark - Video View Tapped Event Handler Methods
+
+// viewView를 tap하면 비디오의 재생 상태에 따라 play또는 pause시킨다.
+- (void)videoViewTapped:(UITapGestureRecognizer*)sender {
+    if(self.player.rate == 1.0) { // 재생 중일 때 실행
+        self.playVideoAndAudioButton.hidden = NO;
+        self.backButton.hidden = NO;
+        [self.player pause];
+        [self.audioPlayer pause];
+    }
+    else if(self.player.rate == 0.0) { // 정지 상태일 때 실행
+        self.playVideoAndAudioButton.hidden = YES;
+        self.backButton.hidden = YES;
+        [self.videoView.layer insertSublayer:self.playerLayer below:self.playVideoAndAudioButton.layer];
+        [self.player play];
+        [self.audioPlayer play];
+    }
+}
+
 
 // 비디오 재생이 끝나면 리플레이를 위해 preparePlayVideo를 호출한다.
 -(void)itemDidFinishPlaying:(NSNotification *) notification {
-    [self.videoView addSubview:self.playVideoAndAudioButton];
-    [self.videoView addSubview:self.backButton];
+    [self preparePlayVideo];
+    
+    self.playVideoAndAudioButton.hidden = NO;
+    self.backButton.hidden = NO;
 }
 
 

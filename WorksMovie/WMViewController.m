@@ -13,10 +13,6 @@
 NSString *const kShootingVideoButtonTitle = @"동영상 촬영";
 NSString *const kShowVideoButtonTitle = @"내 동영상 보기";
 
-@interface WMViewController ()
-
-@end
-
 @implementation WMViewController
 
 - (void)viewDidLoad {

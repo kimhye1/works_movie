@@ -9,8 +9,9 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 #import "WMModelManager.h"
+#import "WMMultiMediaRecordProtocol.h"
 
-@interface WMVideoRecorder : NSObject  <AVCaptureFileOutputRecordingDelegate>
+@interface WMVideoRecorder : NSObject  <AVCaptureFileOutputRecordingDelegate, WMMultiMediaRecordProtocol>
 
 - (instancetype)initWithModelManager:(WMModelManager *)modelManager;
 
