@@ -111,10 +111,6 @@
     self.progressView.frame = CGRectMake(0, self.view.frame.size.height-200, self.view.frame.size.width, 7);
     self.progressView.progress = 0.0f;
     self.progressView.transform = CGAffineTransformMakeScale(1.0, 2.0);
-    
-   
-    
-    
     self.progressView.trackTintColor = [UIColor colorWithRed:0.13 green:0.13 blue:0.13 alpha:1.00];
     self.progressView.progressTintColor = [UIColor whiteColor];
     [self.progressView setProgressViewStyle:UIProgressViewStyleBar];
