@@ -25,6 +25,7 @@
 		4A4A81E61D3726C400477B18 /* WMMediaPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A4A81E51D3726C400477B18 /* WMMediaPlayer.m */; };
 		4A4A81E91D3726EB00477B18 /* WMVideoSaver.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A4A81E81D3726EB00477B18 /* WMVideoSaver.m */; };
 		4A50B79F1D517FBA004B94B3 /* WMMediaUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A50B79E1D517FBA004B94B3 /* WMMediaUtils.m */; };
+		4A5E15271D545D9200782A0C /* works.mov in Resources */ = {isa = PBXBuildFile; fileRef = 4A5E15261D545D9200782A0C /* works.mov */; };
 		4A7612A81D502E4400DEB65A /* WMAudioHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A7612A71D502E4400DEB65A /* WMAudioHelper.m */; };
 		4A7612B11D50319100DEB65A /* WMAudioRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A7612B01D50319100DEB65A /* WMAudioRecorder.m */; };
 		4A7612B41D509AC500DEB65A /* WMAudioSaver.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A7612B31D509AC500DEB65A /* WMAudioSaver.m */; };
@@ -71,6 +72,7 @@
 		4A4A81E81D3726EB00477B18 /* WMVideoSaver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMVideoSaver.m; sourceTree = "<group>"; };
 		4A50B79D1D517FBA004B94B3 /* WMMediaUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMMediaUtils.h; sourceTree = "<group>"; };
 		4A50B79E1D517FBA004B94B3 /* WMMediaUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMMediaUtils.m; sourceTree = "<group>"; };
+		4A5E15261D545D9200782A0C /* works.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = works.mov; sourceTree = "<group>"; };
 		4A7612A61D502E4400DEB65A /* WMAudioHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMAudioHelper.h; sourceTree = "<group>"; };
 		4A7612A71D502E4400DEB65A /* WMAudioHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMAudioHelper.m; sourceTree = "<group>"; };
 		4A7612A91D502E6C00DEB65A /* WMMultiMediaHelperProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMMultiMediaHelperProtocol.h; sourceTree = "<group>"; };
@@ -189,6 +191,7 @@
 			children = (
 				4A4A0FE51D2350330019E8FD /* WorksMovie */,
 				4A4A0FE41D2350330019E8FD /* Products */,
+				4A5E15261D545D9200782A0C /* works.mov */,
 			);
 			sourceTree = "<group>";
 		};
@@ -374,6 +377,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4A4A0FF61D2350330019E8FD /* LaunchScreen.storyboard in Resources */,
+				4A5E15271D545D9200782A0C /* works.mov in Resources */,
 				4A4A0FF31D2350330019E8FD /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
