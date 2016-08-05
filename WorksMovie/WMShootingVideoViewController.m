@@ -118,7 +118,6 @@
     
     UILongPressGestureRecognizer *shootingButtonPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(shootingButtonLongPress:)];
     [self.shootingButton addGestureRecognizer:shootingButtonPressRecognizer];
-
 }
 
 - (void)setupRemoveVideoButton {
@@ -356,13 +355,13 @@
                                                       target:self
                                                     selector:@selector(updateProgressing)
                                                     userInfo:nil
-                                                     repeats:YES];
+                                                     repeats:YES]; // 0.01마다 updateProgressing 호출
         
         self.countDownTimer = [NSTimer scheduledTimerWithTimeInterval:1
                                                           target:self
                                                         selector:@selector(countdownProgressing)
                                                         userInfo:nil
-                                                         repeats:YES];
+                                                         repeats:YES]; // 1초마다 countdownProgressing 호출
         
         [self.videoHelper startRecording];
         self.backButton.hidden = YES;
@@ -374,11 +373,12 @@
         self.backButton.hidden = NO;
         self.recordingStateMark.hidden = YES;
         
-        [self.timer invalidate]; //progress 진행을 멈춘다.
-        [self.countDownTimer invalidate];
+        [self.timer invalidate]; //progressing을 멈춘다.
+        [self.countDownTimer invalidate]; // progressing을 멈춘다.
     }
 }
 
+// circular progress bar 상태를 업데이트 시킨다.
 - (void)updateProgressing {
     double videoRunningTime = 30;
     double eachProgress = 0.01 / videoRunningTime;
@@ -386,6 +386,7 @@
     self.shootingButton.progress += eachProgress;
 }
 
+// time 값이 0이 될 때 까지 초 단위로 카운트 다운 한다.
 - (void)countdownProgressing {
     if(self.time > 0) {
         self.time--;
