@@ -20,7 +20,9 @@
 @property (nonatomic, strong) UIButton *playVideoButton;
 @property (nonatomic, strong) UIView *videoStoreMenuContainerView;
 @property (nonatomic, strong) UIButton *storeVideoButton;
+@property (nonatomic, strong) UILabel *storeLabel;
 @property (nonatomic, strong) UIButton *shareVideoButton;
+@property (nonatomic, strong) UILabel *shareLabel;
 @property (nonatomic, strong) UIButton *backButton;
 @property (nonatomic, strong) UIButton *returnToShootingVideoViewButton;
 @property (nonatomic, strong) AVQueuePlayer *player;
@@ -92,7 +94,6 @@
     self.resetAndbackToCameraButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.videoView addSubview:self.resetAndbackToCameraButton];
     [self.resetAndbackToCameraButton addTarget:self action:@selector(resetAndbackToCameraButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-    
 }
 
 - (void)setupPlayVideoButton {
@@ -117,6 +118,17 @@
     self.storeVideoButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.videoStoreMenuContainerView addSubview:self.storeVideoButton];
     [self.storeVideoButton addTarget:self action:@selector(storeVideoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    
+    [self setupStoreVideoButtonLabel];
+}
+
+- (void)setupStoreVideoButtonLabel {
+    self.storeLabel = [[UILabel alloc] init];
+    self.storeLabel.text = @"저장";
+    self.storeLabel.textColor = [UIColor whiteColor];
+    [self.storeLabel setFont:[UIFont systemFontOfSize:14]];
+    self.storeLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.videoStoreMenuContainerView addSubview:self.storeLabel];
 }
 
 - (void)setupShareVideoButton {
@@ -126,8 +138,18 @@
     self.shareVideoButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.videoStoreMenuContainerView addSubview:self.shareVideoButton];
     [self.shareVideoButton addTarget:self action:@selector(shareVideoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    
+    [self setupShareVideoButtonLabel];
 }
 
+- (void)setupShareVideoButtonLabel {
+    self.shareLabel = [[UILabel alloc] init];
+    self.shareLabel.text = @"공유";
+    self.shareLabel.textColor = [UIColor whiteColor];
+    [self.shareLabel setFont:[UIFont systemFontOfSize:14]];
+    self.shareLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.videoStoreMenuContainerView addSubview:self.shareLabel];
+}
 
 #pragma mark - Setup Constraints Methods
 
@@ -233,6 +255,18 @@
                                   attribute:NSLayoutAttributeCenterY
                                  multiplier:1
                                    constant:0]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-84-[storeLabel]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"storeLabel" : self.storeLabel}]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[storeVideoButton]-10-[storeLabel]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"storeVideoButton" : self.storeVideoButton, @"storeLabel" : self.storeLabel}]];
 }
 
 - (void)setupShareVideoButtonConstraints {
@@ -250,6 +284,18 @@
                                   attribute:NSLayoutAttributeCenterY
                                  multiplier:1
                                    constant:0]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[shareLabel]-84-|"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"shareLabel" : self.shareLabel}]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[shareVideoButton]-10-[shareLabel]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"shareVideoButton" : self.shareVideoButton, @"shareLabel" : self.shareLabel}]];
 }
 
 
