@@ -28,6 +28,7 @@
 @property (nonatomic, strong) AVQueuePlayer *player;
 @property (nonatomic, strong) AVPlayerLayer *playerLayer;
 @property (nonatomic, strong) AVPlayerItem *playerItem;
+@property (nonatomic, strong) UILabel *saveAlertLabel;
 
 @end
 
@@ -63,6 +64,7 @@
     [self setupVideoStoreMenuContainerView];
     [self setupStoreVideoButton];
     [self setupShareVideoButton];
+    [self setupSaveAlertView];
 }
 
 - (void)setupVideoView {
@@ -151,6 +153,20 @@
     [self.videoStoreMenuContainerView addSubview:self.shareLabel];
 }
 
+- (void)setupSaveAlertView {
+    self.saveAlertLabel = [[UILabel alloc] init];
+    self.saveAlertLabel.text = @"영상을 저장했습니다.";
+    self.saveAlertLabel.textColor = [UIColor whiteColor];
+    self.saveAlertLabel.textAlignment = NSTextAlignmentCenter;
+    self.saveAlertLabel.backgroundColor = [UIColor colorWithRed:0.15 green:0.16 blue:0.17 alpha:1.00];
+    [self.saveAlertLabel setFont:[UIFont systemFontOfSize:15]];
+    self.saveAlertLabel.layer.cornerRadius = 8;
+    self.saveAlertLabel.clipsToBounds = YES;
+    self.saveAlertLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.videoView addSubview:self.saveAlertLabel];
+    self.saveAlertLabel.hidden = YES;
+}
+
 #pragma mark - Setup Constraints Methods
 
 - (void)setupConstraints {
@@ -161,6 +177,7 @@
     [self setupVideoStoreMenuContainerViewConstraints];
     [self setupStoreVideoButtonConstraints];
     [self setupShareVideoButtonConstraints];
+    [self setupSaveAlertViewConstraints];
 
 }
 
@@ -298,6 +315,29 @@
                                                views:@{@"shareVideoButton" : self.shareVideoButton, @"shareLabel" : self.shareLabel}]];
 }
 
+- (void)setupSaveAlertViewConstraints {
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:self.videoView
+                                  attribute:NSLayoutAttributeCenterX
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.saveAlertLabel
+                                  attribute:NSLayoutAttributeCenterX
+                                 multiplier:1
+                                   constant:0]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[saveAlertLabel(==150)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"saveAlertLabel" : self.saveAlertLabel}]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[saveAlertLabel(==40)]-50-|"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"saveAlertLabel" : self.saveAlertLabel}]];
+}
+
 
 #pragma mark - Prepare Play Video
 
@@ -382,8 +422,37 @@
 
 //resetAndbackToCameraButton을 누르면 촬영한 데이터가 모두 삭제되고 카메라 촬영화면으로 되돌아간다.
 - (void)resetAndbackToCameraButtonClicked:(UIButton *)sender {
-    [self.modelManager.videoDatas removeAllObjects];
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [self alertResetVideo];
+}
+
+// 촬영된 모든 비디오를 reset할 것인지 alert 창을 띄워 확인
+- (void)alertResetVideo {
+    UIAlertController * alert = [UIAlertController alertControllerWithTitle:@"완성된 무비를 저장하지 않고 새로 시작하겠습니까?"
+                                                                    message:nil
+                                                             preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* cancel = [UIAlertAction
+                         actionWithTitle:@"취소"
+                         style:UIAlertActionStyleDefault
+                         handler:^(UIAlertAction * action) {
+                             [alert dismissViewControllerAnimated:YES completion:nil];
+                             
+                         }];
+    
+    __weak typeof(self) weakSelf = self;
+    UIAlertAction* reset = [UIAlertAction
+                             actionWithTitle:@"신규촬영"
+                             style:UIAlertActionStyleDefault
+                             handler:^(UIAlertAction * action) {
+                                 [alert dismissViewControllerAnimated:YES completion:nil];
+                                
+                                 [weakSelf.modelManager.videoDatas removeAllObjects];
+                                 [weakSelf dismissViewControllerAnimated:YES completion:nil];
+                             }];
+    [alert addAction:cancel];
+    [alert addAction:reset];
+    
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 
@@ -392,9 +461,22 @@
 - (void)storeVideoButtonClicked:(UIButton *)sender {
     [self.videoHelper mergeVideo];
     [self.videoHelper storeVideo];
-    
+    [self savedAlert]; // 카메라 롤에 저장 후 호출되도록 수정 해야함
 }
 
+- (void)savedAlert {
+    self.saveAlertLabel.hidden = NO;
+    
+    [self.saveAlertLabel setAlpha:0.0f];
+    
+    [UIView animateWithDuration:1.0f animations:^{ // fade in
+        [self.saveAlertLabel setAlpha:1.0f];
+    } completion:^(BOOL finished) {
+        [UIView animateWithDuration:1.0f animations:^{ // fade out
+            [self.saveAlertLabel setAlpha:0.0f];
+        } completion:nil];
+    }];
+}
 
 #pragma mark - Share Video Button Event Handler Methods
 

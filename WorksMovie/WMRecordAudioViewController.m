@@ -147,7 +147,6 @@
     self.recordingSquare.translatesAutoresizingMaskIntoConstraints = NO;
     [self.recordButton addSubview:self.recordingSquare];
     self.recordingSquare.hidden = YES;
-    
     [self.recordButton addTarget:self action:@selector(recordButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
 }
 
@@ -186,6 +185,7 @@
     [self.completeRecordingButton.titleLabel setFont:[UIFont systemFontOfSize:20]];
     self.completeRecordingButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.recordAudioContainerView addSubview:self.completeRecordingButton];
+    self.completeRecordingButton.hidden = YES;
     [self.completeRecordingButton addTarget:self action:@selector(completeRecordingButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
 }
 
@@ -540,15 +540,28 @@
 }
 
 - (void)itemDidFinishPlayingWithRecord:(NSNotification *) notification {
+    [self showCompleteButton];
+    
     [self.recordMarkTimer invalidate];
     
     self.recordButton.backgroundColor = [UIColor redColor];
     self.recordingSquare.hidden = YES;
-    
     [self.videoView addSubview:self.playVideoButton];
     self.playVideoButton.hidden = NO;
-    
+    [self.videoView addSubview:self.backToCellectionViewButton];
     self.videoView.userInteractionEnabled = YES;
+    self.completeRecordingButton.userInteractionEnabled = YES;
+}
+
+// 녹음이 끝나면 완료 버튼을 노출
+- (void)showCompleteButton {
+    self.completeRecordingButton.hidden = NO;
+    
+    [self.completeRecordingButton setAlpha:0.0f];
+    
+    [UIView animateWithDuration:0.5f animations:^{ // fade in
+        [self.completeRecordingButton setAlpha:1.0f];
+    } ];
 }
 
 #pragma mark - Remove Audio Button Event Handler Methods

@@ -18,4 +18,6 @@
 
 - (instancetype)initWithVideoModelManager:(WMModelManager *) videoManager;
 
+- (void)savedAlert;
+
 @end
