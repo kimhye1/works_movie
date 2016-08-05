@@ -10,6 +10,8 @@
 #import "WMPlayAndStoreVideoViewController.h"
 #import "WMModelManager.h"
 #import "WMVideoHelper.h"
+#import "DACircularProgressView.h"
+#import "DALabeledCircularProgressView.h"
 
 @interface WMShootingVideoViewController ()
 
@@ -19,10 +21,14 @@
 @property (nonatomic, strong) UIButton *backButton;
 @property (nonatomic, strong) UIButton *switchCameraButton;
 @property (nonatomic, strong) UIView *videoShootingMenuContainerView;
-@property (nonatomic, strong) UIButton *shootingButton;
 @property (nonatomic, strong) UIButton *removeVideoButton;
 @property (nonatomic, strong) UIButton *completeShootingButton;
 @property (nonatomic, strong) UIImageView *recordingStateMark;
+@property (nonatomic, strong) DACircularProgressView *shootingButton;
+@property (nonatomic, strong) NSTimer *timer;
+@property (nonatomic, strong) NSTimer *countDownTimer;
+@property (nonatomic, strong) UILabel *recordingTimeCounter;
+@property (nonatomic, assign) int time;
 
 
 
@@ -64,7 +70,6 @@
     self.cameraView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height-200)];
     self.cameraView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.cameraView];
-    
 }
 
 - (void)setupSwitchCameraButton {
@@ -95,24 +100,30 @@
 }
 
 - (void)setupShootingButton {
-    self.shootingButton = [[UIButton alloc] init];
-    self.shootingButton.frame = CGRectMake(0, 0, 70, 70);
-    self.shootingButton.backgroundColor = [UIColor redColor];
-    self.shootingButton.clipsToBounds = YES;
-    self.shootingButton.layer.cornerRadius = 70/2.0f;
-    self.shootingButton.layer.borderColor=[UIColor whiteColor].CGColor;
-    self.shootingButton.layer.borderWidth=2.0f;
+    self.shootingButton = [[DACircularProgressView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    self.shootingButton.roundedCorners = YES;
+    self.shootingButton.trackTintColor = [UIColor darkGrayColor];
+    self.shootingButton.progressTintColor = [UIColor greenColor];
     self.shootingButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.videoShootingMenuContainerView addSubview:self.shootingButton];
     
+    self.recordingTimeCounter = [[UILabel alloc] init];
+    self.recordingTimeCounter.text = @"30";
+    self.recordingTimeCounter.textColor = [UIColor whiteColor];
+    self.recordingTimeCounter.textAlignment = NSTextAlignmentCenter;
+    [self.recordingTimeCounter setFont:[UIFont systemFontOfSize:40]];
+    self.recordingTimeCounter.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.shootingButton addSubview:self.recordingTimeCounter];
+    self.time = 30;
+    
     UILongPressGestureRecognizer *shootingButtonPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(shootingButtonLongPress:)];
     [self.shootingButton addGestureRecognizer:shootingButtonPressRecognizer];
-
 }
 
 - (void)setupRemoveVideoButton {
     self.removeVideoButton = [[UIButton alloc] init];
     [self.removeVideoButton setImage:[UIImage imageNamed:@"Delete1"] forState:UIControlStateNormal];
+    self.removeVideoButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentFill;
     self.removeVideoButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.videoShootingMenuContainerView addSubview:self.removeVideoButton];
     [self.removeVideoButton addTarget:self action:@selector(removeVideoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
@@ -123,6 +134,7 @@
     self.completeShootingButton = [[UIButton alloc] init];
     [self.completeShootingButton
      setImage:[UIImage imageNamed:@"Checkmark1"] forState:UIControlStateNormal];
+    self.completeShootingButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentFill;
     self.completeShootingButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.videoShootingMenuContainerView addSubview:self.completeShootingButton];
     [self.completeShootingButton addTarget:self action:@selector(completeShootingButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
@@ -231,16 +243,36 @@
                                    constant:0]];
     
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[shootingButton(==70)]"
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[shootingButton(==120)]"
                                              options:0
                                              metrics:nil
                                                views:@{@"shootingButton" : self.shootingButton}]];
     
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[shootingButton(==70)]"
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[shootingButton(==120)]"
                                              options:0
                                              metrics:nil
                                                views:@{@"shootingButton" : self.shootingButton}]];
+    
+    
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:self.shootingButton
+                                  attribute:NSLayoutAttributeCenterX
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.recordingTimeCounter
+                                  attribute:NSLayoutAttributeCenterX
+                                 multiplier:1
+                                   constant:0]];
+    
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:self.shootingButton
+                                  attribute:NSLayoutAttributeCenterY
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.recordingTimeCounter
+                                  attribute:NSLayoutAttributeCenterY
+                                 multiplier:1
+                                   constant:0]];
+    
 }
 
 - (void) setupRemoveVideoButtonConstraint {
@@ -254,10 +286,17 @@
                                    constant:0]];
     
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-40-[removeVideoButton]-40-[shootingButton]"
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-31-[removeVideoButton]-31-[shootingButton]-32-[completeShootingButton]-32-|"
                                              options:0
                                              metrics:nil
-                                               views:@{@"removeVideoButton" : self.removeVideoButton, @"shootingButton" : self.shootingButton}]];
+                                               views:@{@"removeVideoButton" : self.removeVideoButton, @"shootingButton" : self.shootingButton, @"completeShootingButton" : self.completeShootingButton}]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[removeVideoButton(==38)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"removeVideoButton" : self.removeVideoButton}]];
+
 }
 
 - (void) setupCompleteShootingButtonConstraints {
@@ -271,10 +310,10 @@
                                    constant:0]];
     
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[shootingButton]-40-[completeShootingButton]-40-|"
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[completeShootingButton(==38)]"
                                              options:0
                                              metrics:nil
-                                               views:@{@"completeShootingButton" : self.completeShootingButton, @"shootingButton" : self.shootingButton}]];
+                                               views:@{@"completeShootingButton" : self.completeShootingButton}]];
 }
 
 - (void)setupRecordingStateMarkConstraints {
@@ -312,6 +351,18 @@
 //shootingButton을 long tap할 때 마다 tap 하는 시간 동안 동영상이 녹화되고, button에서 손을 떼면 녹화가 종료된다.
 - (void)shootingButtonLongPress:(UILongPressGestureRecognizer*)gesture {
     if (gesture.state == UIGestureRecognizerStateBegan) {
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:0.01
+                                                      target:self
+                                                    selector:@selector(updateProgressing)
+                                                    userInfo:nil
+                                                     repeats:YES]; // 0.01마다 updateProgressing 호출
+        
+        self.countDownTimer = [NSTimer scheduledTimerWithTimeInterval:1
+                                                          target:self
+                                                        selector:@selector(countdownProgressing)
+                                                        userInfo:nil
+                                                         repeats:YES]; // 1초마다 countdownProgressing 호출
+        
         [self.videoHelper startRecording];
         self.backButton.hidden = YES;
         self.recordingStateMark.hidden = NO;
@@ -321,6 +372,25 @@
         [self.videoHelper stopRecording];
         self.backButton.hidden = NO;
         self.recordingStateMark.hidden = YES;
+        
+        [self.timer invalidate]; //progressing을 멈춘다.
+        [self.countDownTimer invalidate]; // progressing을 멈춘다.
+    }
+}
+
+// circular progress bar 상태를 업데이트 시킨다.
+- (void)updateProgressing {
+    double videoRunningTime = 30;
+    double eachProgress = 0.01 / videoRunningTime;
+    
+    self.shootingButton.progress += eachProgress;
+}
+
+// time 값이 0이 될 때 까지 초 단위로 카운트 다운 한다.
+- (void)countdownProgressing {
+    if(self.time > 0) {
+        self.time--;
+        self.recordingTimeCounter.text = [NSString stringWithFormat:@"%d", self.time];
     }
 }
 
