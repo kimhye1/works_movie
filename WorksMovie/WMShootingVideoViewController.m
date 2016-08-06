@@ -29,6 +29,7 @@
 @property (nonatomic, strong) NSTimer *countDownTimer;
 @property (nonatomic, strong) UILabel *recordingTimeCounter;
 @property (nonatomic, assign) int time;
+@property (nonatomic, strong) NSMutableArray *progressArray;
 
 
 
@@ -150,6 +151,8 @@
 - (void)prepareRecording {
     [self.videoHelper setupCaptureSession];
     [self.videoHelper setupPreviewLayerInView:self.cameraView];
+    
+    self.progressArray = [[NSMutableArray alloc] init];
 }
 
 #pragma mark - Setup Constraints Methods
@@ -345,7 +348,7 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-
+int count = 0;
 #pragma mark - Shooting Button Event Handler Methods
 
 //shootingButton을 long tap할 때 마다 tap 하는 시간 동안 동영상이 녹화되고, button에서 손을 떼면 녹화가 종료된다.
@@ -356,6 +359,8 @@
                                                     selector:@selector(updateProgressing)
                                                     userInfo:nil
                                                      repeats:YES]; // 0.01마다 updateProgressing 호출
+
+        
         
         self.countDownTimer = [NSTimer scheduledTimerWithTimeInterval:1
                                                           target:self
@@ -369,6 +374,14 @@
     }
     
     if (gesture.state == UIGestureRecognizerStateEnded) {
+        float allProcessValue;
+        for(int i = 0 ; i < self.progressArray.count ; i++) {
+            allProcessValue += [self.progressArray[i] floatValue];
+        }
+        
+        [self.progressArray addObject:[NSNumber numberWithDouble:self.shootingButton.progress - allProcessValue]];
+        
+
         [self.videoHelper stopRecording];
         self.backButton.hidden = NO;
         self.recordingStateMark.hidden = YES;
@@ -384,6 +397,7 @@
     double eachProgress = 0.01 / videoRunningTime;
     
     self.shootingButton.progress += eachProgress;
+    
 }
 
 // time 값이 0이 될 때 까지 초 단위로 카운트 다운 한다.
@@ -412,6 +426,13 @@
 
 - (void)removeVideoButtonClicked:(UIButton *)sender {
     [self.modelManager removeLastVideo];
+    self.shootingButton.progress -= [[self.progressArray lastObject] floatValue];
+    
+    if(self.shootingButton.progress < 0 ) {
+        self.shootingButton.progress = 0;
+    }
+    
+    [self.progressArray removeLastObject];
 }
 
 @end
