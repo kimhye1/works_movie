@@ -11,6 +11,12 @@
 #import "WMShowVideosViewController.h"
 #import "WMShootingVideoViewController.h"
 
+@interface WMViewController ()
+
+@property (nonatomic, strong) AVPlayer *player;
+
+@end
+
 NSString *const shootingVideoButtonTitle = @"동영상 촬영";
 NSString *const showVideoButtonTitle = @"동영상 가져오기";
 
@@ -21,6 +27,8 @@ NSString *const showVideoButtonTitle = @"동영상 가져오기";
     
     [self setupViewComponents];
     [self setupConstraints];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:nil];
 }
 
 
@@ -33,9 +41,8 @@ NSString *const showVideoButtonTitle = @"동영상 가져오기";
 }
 
 - (void)setupBackgroundView {
-    AVPlayer *avPlayer = [self setupBackgroundVideo];
-    [self playVideo:avPlayer];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:) name:AVPlayerItemDidPlayToEndTimeNotification object:[avPlayer currentItem]];
+    self.player = [self setupBackgroundVideo];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:) name:AVPlayerItemDidPlayToEndTimeNotification object:[self.player currentItem]];
 }
 
 - (void)setupShootingVideoButton {
@@ -119,6 +126,11 @@ NSString *const showVideoButtonTitle = @"동영상 가져오기";
                                                views:@{
                                                        @"shootingVideoButton" : self.shootingVideoButton,
                                                        @"showVideosButton" : self.showVideosButton}]];
+}
+
+
+- (void)appDidBecomeActive:(NSNotification *)notification {
+    [self playVideo:self.player];
 }
 
 
