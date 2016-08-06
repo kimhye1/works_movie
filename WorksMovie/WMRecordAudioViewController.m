@@ -38,6 +38,7 @@
 @property (nonatomic, assign) CGFloat progress;
 @property (nonatomic, strong) NSTimer *recordPorgresstimer;
 @property (nonatomic, strong) NSTimer *recordMarkTimer;
+@property (nonatomic, assign) double videoRunningTime;
 
 @end
 
@@ -488,12 +489,17 @@
     }
 }
 
-// record progress의 현재 상태를 업데이트 한다.
-- (void)updateProgressBar {
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
     AVURLAsset *avUrl = [AVURLAsset URLAssetWithURL:self.videoURL options:nil];
     CMTime time = [avUrl duration];
-    double videoRunningTime = ceil(time.value/time.timescale);
-    double eachProgress = 0.01 / videoRunningTime;
+    self.videoRunningTime = ceil(time.value/time.timescale);
+}
+
+// record progress의 현재 상태를 업데이트 한다.
+- (void)updateProgressBar {
+    double eachProgress = 0.01 / self.videoRunningTime;
     
     self.progress += eachProgress;
     self.progressView.progress = self.progress;
