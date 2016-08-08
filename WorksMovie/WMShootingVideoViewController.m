@@ -29,6 +29,8 @@
 @property (nonatomic, strong) NSTimer *countDownTimer;
 @property (nonatomic, strong) UILabel *recordingTimeCounter;
 @property (nonatomic, assign) int time;
+@property (nonatomic, assign) int countOutTime;
+@property (nonatomic, strong) NSMutableArray *countOutTimeArray;
 @property (nonatomic, strong) NSMutableArray *progressArray;
 
 
@@ -153,6 +155,7 @@
     [self.videoHelper setupPreviewLayerInView:self.cameraView];
     
     self.progressArray = [[NSMutableArray alloc] init];
+    self.countOutTimeArray = [[NSMutableArray alloc] init];
 }
 
 #pragma mark - Setup Constraints Methods
@@ -348,7 +351,7 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-int count = 0;
+
 #pragma mark - Shooting Button Event Handler Methods
 
 //shootingButton을 long tap할 때 마다 tap 하는 시간 동안 동영상이 녹화되고, button에서 손을 떼면 녹화가 종료된다.
@@ -381,6 +384,8 @@ int count = 0;
         
         [self.progressArray addObject:[NSNumber numberWithDouble:self.shootingButton.progress - allProcessValue]];
         
+        [self.countOutTimeArray addObject:[NSNumber numberWithInt:self.countOutTime]];
+        self.countOutTime = 0;
 
         [self.videoHelper stopRecording];
         self.backButton.hidden = NO;
@@ -405,6 +410,7 @@ int count = 0;
     if(self.time > 0) {
         self.time--;
         self.recordingTimeCounter.text = [NSString stringWithFormat:@"%d", self.time];
+        self.countOutTime++;
     }
 }
 
@@ -426,11 +432,22 @@ int count = 0;
 
 - (void)removeVideoButtonClicked:(UIButton *)sender {
     [self.modelManager removeLastVideo];
-    self.shootingButton.progress -= [[self.progressArray lastObject] floatValue];
     
-    if(self.shootingButton.progress < 0 ) {
+    // progress bar 업데이트
+    double result = self.shootingButton.progress - [[self.progressArray lastObject] floatValue];
+    if(result < 0) {
         self.shootingButton.progress = 0;
     }
+    else {
+        self.shootingButton.progress -= [[self.progressArray lastObject] floatValue];
+
+    }
+    
+    // count 업데이트
+    self.time += [[self.countOutTimeArray lastObject] intValue];
+    [self.countOutTimeArray removeLastObject];
+    self.recordingTimeCounter.text = [NSString stringWithFormat:@"%d", self.time];
+    self.countOutTime = 0;
     
     [self.progressArray removeLastObject];
 }
