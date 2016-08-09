@@ -71,7 +71,7 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
 
 - (void)setupTitleView {
     self.titleView = [[UIView alloc] init];
-    self.titleView.backgroundColor = [UIColor colorWithRed:0.09 green:0.63 blue:0.53 alpha:1.00];
+    self.titleView.backgroundColor = [UIColor colorWithRed:0.21 green:0.62 blue:0.13 alpha:1.00];
     self.titleView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.titleView];
     

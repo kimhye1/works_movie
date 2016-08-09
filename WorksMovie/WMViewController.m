@@ -14,6 +14,7 @@
 @interface WMViewController ()
 
 @property (nonatomic, strong) AVPlayer *player;
+@property (nonatomic, strong) UIImageView *logoImage;
 
 @end
 
@@ -36,6 +37,7 @@ NSString *const showVideoButtonTitle = @"동영상 가져오기";
 
 - (void)setupViewComponents {
     [self setupBackgroundView];
+    [self setupLogoImage];
     [self setupShootingVideoButton];
     [self setupShowVideosButton];
 }
@@ -43,6 +45,12 @@ NSString *const showVideoButtonTitle = @"동영상 가져오기";
 - (void)setupBackgroundView {
     self.player = [self setupBackgroundVideo];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:) name:AVPlayerItemDidPlayToEndTimeNotification object:[self.player currentItem]];
+}
+
+- (void)setupLogoImage {    
+    self.logoImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo"]];
+    self.logoImage.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:self.logoImage];
 }
 
 - (void)setupShootingVideoButton {
@@ -73,12 +81,37 @@ NSString *const showVideoButtonTitle = @"동영상 가져오기";
 #pragma mark - Setup Constraints Methods
 
 - (void)setupConstraints {
+    [self setupLogoImageConstraints];
     [self setupShootingVideoButtonAlignConstraint];
     [self setupShootingVideoButtonHorizontalConstraints];
     [self setupShowVideoButtonAlignConstraint];
     [self setupShowVideosButtonHorizontalConstraints];
     
     [self setupButtonsVerticalConstraints];
+}
+
+- (void)setupLogoImageConstraints {
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:self.view
+                                  attribute:NSLayoutAttributeCenterX
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.logoImage
+                                  attribute:NSLayoutAttributeCenterX
+                                 multiplier:1
+                                   constant:0]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[logoImage(==170)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"logoImage" : self.logoImage}]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-120-[logoImage(==170)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"logoImage" : self.logoImage}]];
+
 }
 
 - (void)setupShootingVideoButtonAlignConstraint {

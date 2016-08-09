@@ -66,7 +66,7 @@
     [self setupSwitchCameraButton];
     [self setupBackButton];
     [self setupVideoShootingMenuContainerView];
-    [self setupRecordingStateMark];
+    [self setupRecordingStateMark]; 
 }
 
 - (void)setupCameraView {
