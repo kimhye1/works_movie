@@ -16,7 +16,7 @@
 
 @interface WMPlayAndStoreVideoViewController : UIViewController
 
-- (instancetype)initWithVideoModelManager:(WMModelManager *) videoManager;
+- (instancetype)initWithVideoModelManager:(WMModelManager *)videoManager;
 
 - (void)savedAlert;
 

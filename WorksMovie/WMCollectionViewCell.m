@@ -36,6 +36,4 @@
                                                                    views:@{@"imageView" : self.imageView}]];
 }
 
-
-
 @end

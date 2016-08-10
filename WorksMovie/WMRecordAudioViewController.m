@@ -47,7 +47,7 @@
 - (instancetype)initWithVideoURL:(NSURL *)videoURL {
     self = [super init];
     
-    if(self) {
+    if (self) {
         self.videoURL = videoURL;
         self.audioHelper = [[WMAudioHelper alloc] init];
     }
@@ -113,7 +113,7 @@
 
 - (void)setupProgressView {
     self.progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
-    self.progressView.frame = CGRectMake(0, self.view.frame.size.height-200, self.view.frame.size.width, 7);
+    self.progressView.frame = CGRectMake(0, self.view.frame.size.height - 200, self.view.frame.size.width, 7);
     self.progressView.progress = 0.0f;
     self.progressView.transform = CGAffineTransformMakeScale(1.0, 2.0);
     self.progressView.trackTintColor = [UIColor colorWithRed:0.13 green:0.13 blue:0.13 alpha:1.00];
@@ -135,9 +135,9 @@
     self.recordButton.frame = CGRectMake(0, 0, 70, 70);
     self.recordButton.backgroundColor = [UIColor redColor];
     self.recordButton.clipsToBounds = YES;
-    self.recordButton.layer.cornerRadius = 70/2.0f;
-    self.recordButton.layer.borderColor=[UIColor whiteColor].CGColor;
-    self.recordButton.layer.borderWidth=2.0f;
+    self.recordButton.layer.cornerRadius = 70 / 2.0f;
+    self.recordButton.layer.borderColor = [UIColor whiteColor].CGColor;
+    self.recordButton.layer.borderWidth = 2.0f;
     self.recordButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.recordAudioContainerView addSubview:self.recordButton];
     
@@ -156,7 +156,7 @@
     
     self.recordingMark.backgroundColor = [UIColor redColor];
     self.recordingMark.clipsToBounds = YES;
-    self.recordingMark.layer.cornerRadius = 7/2.0f;
+    self.recordingMark.layer.cornerRadius = 7 / 2.0f;
     self.recordingMark.translatesAutoresizingMaskIntoConstraints = NO;
     [self.recordAudioContainerView addSubview:self.recordingMark];
     
@@ -275,7 +275,7 @@
                                                views:@{@"RecordAudioContainerView" : self.recordAudioContainerView}]];
 }
 
-- (void) setupRecordButtonConstraints {
+- (void)setupRecordButtonConstraints {
     [self.view addConstraint:
      [NSLayoutConstraint constraintWithItem:self.view
                                   attribute:NSLayoutAttributeCenterX
@@ -355,7 +355,7 @@
                                                views:@{@"recordingTimeLabel" : self.recordingTimeLabel}]];
 }
 
-- (void) setupRemoveAudioButtonConstraint {
+- (void)setupRemoveAudioButtonConstraint {
     [self.view addConstraint:
      [NSLayoutConstraint constraintWithItem:self.recordAudioContainerView
                                   attribute:NSLayoutAttributeCenterY
@@ -372,7 +372,7 @@
                                                views:@{@"removeAudioButton" : self.removeAudioButton, @"recordButton" : self.recordButton, @"completeRecordingButton" : self.completeRecordingButton}]];
 }
 
-- (void) setupCompleteRecordingButtonConstraints {
+- (void)setupCompleteRecordingButtonConstraints {
     [self.view addConstraint:
      [NSLayoutConstraint constraintWithItem:self.recordAudioContainerView
                                   attribute:NSLayoutAttributeCenterY
@@ -406,7 +406,6 @@
     self.playerLayer.frame = self.videoView.frame;
 }
 
-
 - (void)preparePlayVideoWhenRocorded {
     AVURLAsset *avAsset = [AVURLAsset URLAssetWithURL:self.videoURL options:nil];
     AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:avAsset];
@@ -428,13 +427,12 @@
 #pragma mark - Video View Tapped Event Handler Methods
 
 // viewView를 tap하면 비디오의 재생 상태에 따라 play또는 pause시킨다.
-- (void)videoViewTapped:(UITapGestureRecognizer*)sender {
-    if(self.player.rate == 1.0) { // 재생 중일 때 실행
+- (void)videoViewTapped:(UITapGestureRecognizer *)sender {
+    if (self.player.rate == 1.0) { // 재생 중일 때 실행
         self.playVideoButton.hidden = NO;
         self.backToCellectionViewButton.hidden = NO;
         [self.player pause];
-    }
-    else if(self.player.rate == 0.0) { // 정지 상태일 때 실행
+    } else if (self.player.rate == 0.0) { // 정지 상태일 때 실행
         self.playVideoButton.hidden = YES;
         self.backToCellectionViewButton.hidden = YES;
         [self.videoView.layer insertSublayer:self.playerLayer below:self.playVideoButton.layer];
@@ -448,7 +446,7 @@
 - (void)recordButtonClicked:(UIButton *)sender {
     self.videoView.userInteractionEnabled = NO; // 녹음을 진행하는 동안 viewView 클릭 이벤트가 발생해 video가 play되는 것을 막는다.
     
-    if(![self.audioHelper isRecording]) {
+    if (![self.audioHelper isRecording]) {
         self.recordButton.backgroundColor = [UIColor colorWithRed:0.15 green:0.16 blue:0.17 alpha:1.00];
         self.recordingSquare.hidden = NO;
         self.recordingSquare.userInteractionEnabled = NO;
@@ -470,8 +468,7 @@
                                                               selector:@selector(updateRecordingProgress)
                                                               userInfo:nil
                                                                repeats:YES]; //1초마다 updateRecordingProgress 호출
-    }
-    else {
+    } else {
         self.recordButton.backgroundColor = [UIColor redColor];
         self.recordingSquare.hidden = YES;
         
@@ -494,7 +491,7 @@
     
     AVURLAsset *avUrl = [AVURLAsset URLAssetWithURL:self.videoURL options:nil];
     CMTime time = [avUrl duration];
-    self.videoRunningTime = ceil(time.value/time.timescale);
+    self.videoRunningTime = ceil(time.value / time.timescale);
 }
 
 // record progress의 현재 상태를 업데이트 한다.
@@ -514,7 +511,7 @@
 - (void)updateRecordingTime {
     self.time++;
     self.recordingTimeLabel.text = [NSString stringWithFormat:@"%@%d%@", @"0", self.time, @" sec"];
-    if(self.time >= 10) {
+    if (self.time >= 10) {
         self.recordingTimeLabel.text = [NSString stringWithFormat:@"%d%@", self.time, @" sec"];
     }
 
@@ -538,14 +535,14 @@
 #pragma mark - Video Play End Event
 
 // 비디오 재생이 끝나면 리플레이를 위해 preparePlayVideo를 호출한다.
--(void)itemDidFinishPlaying:(NSNotification *) notification {
+- (void)itemDidFinishPlaying:(NSNotification *)notification {
     [self preparePlayVideo];
     
     self.playVideoButton.hidden = NO;
     self.backToCellectionViewButton.hidden = NO;
 }
 
-- (void)itemDidFinishPlayingWithRecord:(NSNotification *) notification {
+- (void)itemDidFinishPlayingWithRecord:(NSNotification *)notification {
     [self showCompleteButton];
     
     [self.recordMarkTimer invalidate];
@@ -570,6 +567,7 @@
     } ];
 }
 
+
 #pragma mark - Remove Audio Button Event Handler Methods
 
 - (void)removeAudioButtonClicked:(UIButton *)sender {
@@ -578,23 +576,23 @@
 
 // audio를 reset할 것인지 alert 창을 띄워 확인
 - (void)alertResetAudio {
-    UIAlertController * alert = [UIAlertController alertControllerWithTitle:@"음성 녹음을 취소하겠습니까?"
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"음성 녹음을 취소하겠습니까?"
                                   message:nil
                                   preferredStyle:UIAlertControllerStyleAlert];
     
-    UIAlertAction* ok = [UIAlertAction
+    UIAlertAction *ok = [UIAlertAction
                          actionWithTitle:@"아니요"
                          style:UIAlertActionStyleDefault
-                         handler:^(UIAlertAction * action) {
+                         handler:^(UIAlertAction *action) {
                              [alert dismissViewControllerAnimated:YES completion:nil];
                              
                          }];
     
      __weak typeof(self) weakSelf = self;
-    UIAlertAction* cancel = [UIAlertAction
+    UIAlertAction *cancel = [UIAlertAction
                              actionWithTitle:@"예"
                              style:UIAlertActionStyleDefault
-                             handler:^(UIAlertAction * action) {
+                             handler:^(UIAlertAction *action) {
                                  [alert dismissViewControllerAnimated:YES completion:nil];
                                  [weakSelf dismissViewControllerAnimated:NO completion:nil];
                                  

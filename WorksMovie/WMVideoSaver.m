@@ -23,12 +23,11 @@
 - (instancetype)initWithModelManager:(WMModelManager *)modelManager {
     self = [super init];
     
-    if(self) {
+    if (self) {
         self.modelManager = modelManager;
     }
     return self;
 }
-
 
 // 촬영된 1개 이상의 비디오를 하나로 병합시키는 기능
 - (void)mergeVideo {
@@ -43,7 +42,7 @@
     AVMutableCompositionTrack *soundtrackTrack = [self.composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
     CMTime insertTime = kCMTimeZero;
     
-    for(AVAsset *videoAsset in self.assets){    //촬영된 비디오의 asset들을 돌면서 각 compositionVideoTrack과 soundtrackTrack을 하나의 track으로 연속해 이어붙임
+    for (AVAsset *videoAsset in self.assets) {    //촬영된 비디오의 asset들을 돌면서 각 compositionVideoTrack과 soundtrackTrack을 하나의 track으로 연속해 이어붙임
         [compositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, videoAsset.duration) ofTrack:[[videoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0] atTime:insertTime error:nil];
         [soundtrackTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, videoAsset.duration) ofTrack:[[videoAsset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0] atTime:insertTime error:nil];
         
@@ -55,7 +54,7 @@
 - (void)convertVideoDatasToAssets {
     self.assets = [[NSMutableArray alloc] init];
     
-    for(int i = 0 ; i < [self.modelManager.videoDatas count] ; i++) {
+    for (int i = 0 ; i < [self.modelManager.videoDatas count] ; i++) {
         [self.assets addObject:[AVAsset assetWithURL:[(WMModel *)self.modelManager.videoDatas[i] videoURL]]];
     }
 }
@@ -77,7 +76,7 @@
     
     AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset:self.composition presetName:AVAssetExportPresetHighestQuality];
     
-    exporter.outputURL=outputVideoURL;
+    exporter.outputURL = outputVideoURL;
     exporter.outputFileType = AVFileTypeQuickTimeMovie;
     exporter.shouldOptimizeForNetworkUse = YES;
     
@@ -93,22 +92,19 @@
             case AVAssetExportSessionStatusCompleted:
                 UISaveVideoAtPathToSavedPhotosAlbum(outputVideoPath, self, @selector(video:didFinishSavingWithError:contextInfo:), nil); // 카메라 롤에 저장
                 break;
-            default :
+            default:
                 break;
         }
     }];
     return outputVideoURL;
 }
 
-- (void)video:(NSString*)videoPath didFinishSavingWithError:(NSError*)error contextInfo:(void*)contextInfo {
+- (void)video:(NSString *)videoPath didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
     if (error) {
         NSLog(@"error");
-    }
-    else {
+    } else {
         NSLog(@"finish saving");
     }
 }
-     
-
      
 @end

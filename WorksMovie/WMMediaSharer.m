@@ -19,7 +19,7 @@
 - (UIActivityViewController *)shareVideo:(NSURL *)outputURL {
 
     
-    NSArray* actItems = [NSArray arrayWithObjects:outputURL, nil];
+    NSArray *actItems = [NSArray arrayWithObjects:outputURL, nil];
     
     UIActivityViewController *activityView = [[UIActivityViewController alloc]
                                                initWithActivityItems:actItems

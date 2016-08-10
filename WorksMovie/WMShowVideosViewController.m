@@ -23,8 +23,6 @@
 @property (nonatomic, strong) UIButton *backButton;
 @property (nonatomic, strong) UILabel *titleLabel;
 
-
-
 @end
 
 NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identifier";
@@ -34,7 +32,7 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
 - (instancetype)init {
     self = [super init];
     
-    if(self) {
+    if (self) {
         [self fetchAssets];
         [self initializeImageManager];
     }
@@ -51,7 +49,6 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
 - (void)initializeImageManager {
     self.imageManager = [[PHImageManager alloc] init];
 }
-
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -183,7 +180,6 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
                                    constant:0]];
     
 }
-
 
 - (void)setupCollectionViewConstraints {
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[collectionView]|"

@@ -12,7 +12,6 @@
 
 @property (nonatomic, strong) AVAudioRecorder *audioRecorder;
 
-
 @end
 
 @implementation WMAudioRecorder
@@ -36,7 +35,6 @@
     [self.audioRecorder prepareToRecord];
 }
 
-
 // audio session을 정의
 - (void)setupAudioSession {
     AVAudioSession *session = [AVAudioSession sharedInstance];
@@ -49,11 +47,10 @@
     
     [recordSetting setValue:[NSNumber numberWithInt:kAudioFormatMPEG4AAC] forKey:AVFormatIDKey];
     [recordSetting setValue:[NSNumber numberWithFloat:44100.0] forKey:AVSampleRateKey];
-    [recordSetting setValue:[NSNumber numberWithInt: 2] forKey:AVNumberOfChannelsKey];
+    [recordSetting setValue:[NSNumber numberWithInt:2] forKey:AVNumberOfChannelsKey];
     
     return recordSetting;
 }
-
 
 - (void)startRecording {
     [self.audioRecorder record];
@@ -68,19 +65,10 @@
 }
 
 - (BOOL)isRecording {
-    if(self.audioRecorder.recording) {
+    if (self.audioRecorder.recording) {
         return YES;
     }
     return NO;
 }
-
-
-
-
-
-
-
-
-
 
 @end

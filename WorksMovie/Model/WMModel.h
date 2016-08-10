@@ -14,7 +14,6 @@
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 
-
 @interface WMModel : NSObject
 
 @property (nonatomic, strong) NSURL *videoURL;
