@@ -7,7 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "WMMediaModel.h"
 
-@interface WMAudioModel : NSObject
+@interface WMAudioModel : WMMediaModel
 
 @end

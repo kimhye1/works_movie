@@ -8,14 +8,22 @@
 
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
+#import "WMVideoModelManager.h"
+#import "WMAudioModelManager.h"
 
 @interface WMAudioHelper : NSObject
 
+- (instancetype)initWithVideoModelManager:(WMVideoModelManager *)videoModelManager audioModelManager:(WMAudioModelManager *)audioModelManager;
+
 - (NSURL *)setupFile;
+- (void)addVideoToModelManager:(NSURL *)videoURL;
 - (void)setupAudioRecorder:(NSURL *)outputFileURL;
 - (void)startRecording;
 - (void)pauseRecording;
 - (void)stopRecording;
 - (BOOL)isRecording;
+
+- (AVMutableComposition *)mergeAudio:(NSURL *)audioURL withVideo:(NSURL *)videoURL;
+- (NSURL *)storeVideo:(AVMutableComposition *)composition;
 
 @end

@@ -13,14 +13,14 @@
 
 @property (nonatomic, strong) NSMutableArray *assets;
 @property (nonatomic, strong) AVMutableComposition *composition;
-@property (nonatomic, strong) WMModelManager *modelManager;
+@property (nonatomic, strong) WMVideoModelManager *modelManager;
 
 @end
 
 @implementation WMVideoSaver
 
 
-- (instancetype)initWithModelManager:(WMModelManager *)modelManager {
+- (instancetype)initWithVideoModelManager:(WMVideoModelManager *)modelManager {
     self = [super init];
     
     if (self) {
@@ -54,8 +54,8 @@
 - (void)convertVideoDatasToAssets {
     self.assets = [[NSMutableArray alloc] init];
     
-    for (int i = 0 ; i < [self.modelManager.videoDatas count] ; i++) {
-        [self.assets addObject:[AVAsset assetWithURL:[(WMModel *)self.modelManager.videoDatas[i] videoURL]]];
+    for (int i = 0 ; i < [[self.modelManager.mediaDatas copy] count] ; i++) {
+        [self.assets addObject:[AVAsset assetWithURL:[(WMMediaModel *)self.modelManager.mediaDatas[i] mediaURL]]];
     }
 }
 

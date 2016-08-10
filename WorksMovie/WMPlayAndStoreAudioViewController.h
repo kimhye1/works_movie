@@ -7,9 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "WMAudioModelManager.h"
+#import "WMVideoModelManager.h"
 
 @interface WMPlayAndStoreAudioViewController : UIViewController
 
-- (instancetype)initWithAudioURL:(NSURL *)audioURL videoURL:(NSURL *)videoURL;
+- (instancetype)initWithVideoModelManager:(WMVideoModelManager *)videoModelManager audioModelManager:(WMAudioModelManager *)audioModelManager;
 
 @end

@@ -9,11 +9,16 @@
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 #import "WMMultiMediaRecordProtocol.h"
+#import "WMAudioModelManager.h"
+#import "WMVideoModelManager.h"
 
 @interface WMAudioRecorder : NSObject <AVAudioRecorderDelegate, AVAudioPlayerDelegate, WMMultiMediaRecordProtocol>
 
+- (instancetype)initWithVideoModelManager:(WMVideoModelManager *)videoModelManager audioModelManager:(WMAudioModelManager *)audioModelManager;
+
 - (NSURL *)setupFile;
 - (void)setupAudioRecorder:(NSURL *)outputFileURL;
+- (void)addVideoToVideoModelManager:(NSURL *)videoURL;
 
 - (void)startRecording;
 - (void)pauseRecording;

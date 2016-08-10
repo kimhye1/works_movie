@@ -7,20 +7,20 @@
 //
 
 #import "WMVideoRecorder.h"
-#import "WMModel.h"
+#import "WMVideoModel.h"
 
 @interface WMVideoRecorder ()
 
 @property (nonatomic, strong) AVCaptureSession *session;
 @property (nonatomic, strong) AVCaptureMovieFileOutput *output;
 @property (nonatomic) bool recording; //비디오가 녹화 중 인지를 추적하기 위한 변수
-@property (nonatomic, strong) WMModelManager *modelManager;
+@property (nonatomic, strong) WMVideoModelManager *modelManager;
 
 @end
 
 @implementation WMVideoRecorder
 
-- (instancetype)initWithModelManager:(WMModelManager *)modelManager {
+- (instancetype)initWithVideoModelManager:(WMVideoModelManager *)modelManager {
     self = [super init];
     
     if (self) {
@@ -127,11 +127,11 @@
 - (void)startRecording {
     self.recording = YES;
         
-    WMModel *videoData = [[WMModel alloc] init];
-    videoData.videoURL = [self createTempURL];
-    [self.output startRecordingToOutputFileURL:videoData.videoURL recordingDelegate:self];
+    WMVideoModel *videoData = [[WMVideoModel alloc] init];
+    videoData.mediaURL = [self createTempURL];
+    [self.output startRecordingToOutputFileURL:videoData.mediaURL recordingDelegate:self];
     
-    [self.modelManager addvideoData:videoData]; // modelManager의 프로퍼티인 videosURLArray에 촬영된 비디오에 대한 URL 추가
+    [self.modelManager addMediaData:videoData]; // modelManager의 프로퍼티인 videosURLArray에 촬영된 비디오에 대한 URL 추가
 }
 
 //디바이스에 임시 저장된 비디오에 대한 유일한 경로를 반환한다. 이미 파일이 저장되어 있는 경우 그 파일을 삭제한다
