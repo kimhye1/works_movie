@@ -6,12 +6,20 @@
 //  Copyright © 2016년 worksmobile. All rights reserved.
 //
 
+#import <AVFoundation/AVFoundation.h>
 #import "WMViewController.h"
 #import "WMShowVideosViewController.h"
 #import "WMShootingVideoViewController.h"
 
-NSString *const kShootingVideoButtonTitle = @"동영상 촬영";
-NSString *const kShowVideoButtonTitle = @"내 동영상 보기";
+@interface WMViewController ()
+
+@property (nonatomic, strong) AVPlayer *player;
+@property (nonatomic, strong) UIImageView *logoImage;
+
+@end
+
+NSString *const shootingVideoButtonTitle = @"동영상 촬영";
+NSString *const showVideoButtonTitle = @"동영상 가져오기";
 
 @implementation WMViewController
 
@@ -20,20 +28,38 @@ NSString *const kShowVideoButtonTitle = @"내 동영상 보기";
     
     [self setupViewComponents];
     [self setupConstraints];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:nil];
 }
 
 
 #pragma mark - Create Views Methods
 
 - (void)setupViewComponents {
+    [self setupBackgroundView];
+    [self setupLogoImage];
     [self setupShootingVideoButton];
     [self setupShowVideosButton];
 }
 
+- (void)setupBackgroundView {
+    self.player = [self setupBackgroundVideo];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:) name:AVPlayerItemDidPlayToEndTimeNotification object:[self.player currentItem]];
+}
+
+- (void)setupLogoImage {    
+    self.logoImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo"]];
+    self.logoImage.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:self.logoImage];
+}
+
 - (void)setupShootingVideoButton {
     self.shootingVideoButton = [[UIButton alloc] init];
-    [self.shootingVideoButton setTitle:kShootingVideoButtonTitle forState:UIControlStateNormal];
-    self.shootingVideoButton.backgroundColor = [UIColor greenColor];
+    [self.shootingVideoButton setTitle:shootingVideoButtonTitle forState:UIControlStateNormal];
+    self.shootingVideoButton.backgroundColor = [UIColor whiteColor];
+    [self.shootingVideoButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    self.shootingVideoButton.layer.cornerRadius = 4;
+    self.shootingVideoButton.clipsToBounds = YES;
     self.shootingVideoButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.shootingVideoButton];
     [self.shootingVideoButton addTarget:self action:@selector(shootingVideoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
@@ -41,8 +67,11 @@ NSString *const kShowVideoButtonTitle = @"내 동영상 보기";
 
 - (void)setupShowVideosButton {
     self.showVideosButton = [[UIButton alloc] init];
-    [self.showVideosButton setTitle:kShowVideoButtonTitle forState:UIControlStateNormal];
-    self.showVideosButton.backgroundColor = [UIColor redColor];
+    [self.showVideosButton setTitle:showVideoButtonTitle forState:UIControlStateNormal];
+    self.showVideosButton.backgroundColor = [UIColor whiteColor];
+    [self.showVideosButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    self.showVideosButton.layer.cornerRadius = 4;
+    self.showVideosButton.clipsToBounds = YES;
     self.showVideosButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.showVideosButton];
     [self.showVideosButton addTarget:self action:@selector(showVideosButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
@@ -52,12 +81,37 @@ NSString *const kShowVideoButtonTitle = @"내 동영상 보기";
 #pragma mark - Setup Constraints Methods
 
 - (void)setupConstraints {
+    [self setupLogoImageConstraints];
     [self setupShootingVideoButtonAlignConstraint];
     [self setupShootingVideoButtonHorizontalConstraints];
     [self setupShowVideoButtonAlignConstraint];
     [self setupShowVideosButtonHorizontalConstraints];
     
     [self setupButtonsVerticalConstraints];
+}
+
+- (void)setupLogoImageConstraints {
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:self.view
+                                  attribute:NSLayoutAttributeCenterX
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.logoImage
+                                  attribute:NSLayoutAttributeCenterX
+                                 multiplier:1
+                                   constant:0]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[logoImage(==170)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"logoImage" : self.logoImage}]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-120-[logoImage(==170)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"logoImage" : self.logoImage}]];
+
 }
 
 - (void)setupShootingVideoButtonAlignConstraint {
@@ -72,7 +126,7 @@ NSString *const kShowVideoButtonTitle = @"내 동영상 보기";
 
 - (void)setupShootingVideoButtonHorizontalConstraints {
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[shootingVideoButton(==200)]"
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[shootingVideoButton(==270)]"
                                              options:0
                                              metrics:nil
                                                views:@{@"shootingVideoButton" : self.shootingVideoButton}]];
@@ -91,7 +145,7 @@ NSString *const kShowVideoButtonTitle = @"내 동영상 보기";
 
 - (void)setupShowVideosButtonHorizontalConstraints {
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[showVideosButton(==200)]"
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[showVideosButton(==270)]"
                                              options:0
                                              metrics:nil
                                                views:@{@"showVideosButton" : self.showVideosButton}]];
@@ -99,7 +153,7 @@ NSString *const kShowVideoButtonTitle = @"내 동영상 보기";
 
 - (void)setupButtonsVerticalConstraints {
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-200-[shootingVideoButton(==50)]-30-[showVideosButton(==50)]"
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[shootingVideoButton(==50)]-17-[showVideosButton(==50)]-30-|"
                                              options:0
                                              metrics:nil
                                                views:@{
@@ -107,6 +161,39 @@ NSString *const kShowVideoButtonTitle = @"내 동영상 보기";
                                                        @"showVideosButton" : self.showVideosButton}]];
 }
 
+
+- (void)appDidBecomeActive:(NSNotification *)notification {
+    [self playVideo:self.player];
+}
+
+
+#pragma mark - Play Background Video
+
+- (AVPlayer *)setupBackgroundVideo {
+    NSString *filepath = [[NSBundle mainBundle] pathForResource:@"works.mov" ofType:nil];
+    NSURL *fileURL = [NSURL fileURLWithPath:filepath];
+    AVPlayer *avPlayer = [AVPlayer playerWithURL:fileURL];
+    avPlayer.actionAtItemEnd = AVPlayerActionAtItemEndNone;
+    
+    AVPlayerLayer *videoLayer = [AVPlayerLayer playerLayerWithPlayer:avPlayer];
+    videoLayer.frame = self.view.bounds;
+    videoLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
+    [self.view.layer addSublayer:videoLayer];
+    
+    return avPlayer;
+}
+
+- (void)playVideo:(AVPlayer *)avPlayer {
+    [avPlayer play];
+}
+
+
+#pragma mark - Background Video End Event Handler
+
+- (void)itemDidFinishPlaying:(NSNotification *)notification {
+    AVPlayerItem *player = [notification object];
+    [player seekToTime:kCMTimeZero];
+}
 
 #pragma mark - Button Event Handler Methods
 
