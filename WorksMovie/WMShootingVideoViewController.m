@@ -33,8 +33,6 @@
 @property (nonatomic, strong) NSMutableArray *countOutTimeArray;
 @property (nonatomic, strong) NSMutableArray *progressArray;
 
-
-
 @end
 
 @implementation WMShootingVideoViewController
@@ -42,7 +40,7 @@
 - (instancetype)init {
     self = [super init];
     
-    if(self) {
+    if (self) {
         self.modelManager = [[WMModelManager alloc] init];
         self.videoHelper = [[WMVideoHelper alloc] initWithModelManager:self.modelManager];
     }
@@ -158,6 +156,7 @@
     self.countOutTimeArray = [[NSMutableArray alloc] init];
 }
 
+
 #pragma mark - Setup Constraints Methods
 
 - (void)setupConstraints {
@@ -211,7 +210,7 @@
                                                views:@{@"backButton" : self.backButton}]];
 }
 
-- (void) setupVideoShootingMenuContainerViewConstraints {
+- (void)setupVideoShootingMenuContainerViewConstraints {
     [self.view addConstraints:
      [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[videoShootingMenuContainerView]|"
                                              options:0
@@ -229,7 +228,7 @@
     [self setupCompleteShootingButtonConstraints];
 }
 
-- (void) setupShootingButtonConstraints {
+- (void)setupShootingButtonConstraints {
     [self.view addConstraint:
      [NSLayoutConstraint constraintWithItem:self.view
                                   attribute:NSLayoutAttributeCenterX
@@ -281,7 +280,7 @@
     
 }
 
-- (void) setupRemoveVideoButtonConstraint {
+- (void)setupRemoveVideoButtonConstraint {
     [self.view addConstraint:
      [NSLayoutConstraint constraintWithItem:self.videoShootingMenuContainerView
                                   attribute:NSLayoutAttributeCenterY
@@ -305,7 +304,7 @@
 
 }
 
-- (void) setupCompleteShootingButtonConstraints {
+- (void)setupCompleteShootingButtonConstraints {
     [self.view addConstraint:
      [NSLayoutConstraint constraintWithItem:self.videoShootingMenuContainerView
                                   attribute:NSLayoutAttributeCenterY
@@ -337,7 +336,6 @@
 }
 
 
-
 #pragma mark - Switch Camera Button Event Handler Methods
 
 - (void)switchCameraButtonClicked:(UIButton *)sender {
@@ -355,7 +353,7 @@
 #pragma mark - Shooting Button Event Handler Methods
 
 //shootingButton을 long tap할 때 마다 tap 하는 시간 동안 동영상이 녹화되고, button에서 손을 떼면 녹화가 종료된다.
-- (void)shootingButtonLongPress:(UILongPressGestureRecognizer*)gesture {
+- (void)shootingButtonLongPress:(UILongPressGestureRecognizer *)gesture {
     if (gesture.state == UIGestureRecognizerStateBegan) {
         self.timer = [NSTimer scheduledTimerWithTimeInterval:0.01
                                                       target:self
@@ -378,7 +376,7 @@
     
     if (gesture.state == UIGestureRecognizerStateEnded) {
         float allProcessValue;
-        for(int i = 0 ; i < self.progressArray.count ; i++) {
+        for (int i = 0 ; i < self.progressArray.count ; i++) {
             allProcessValue += [self.progressArray[i] floatValue];
         }
         
@@ -407,7 +405,7 @@
 
 // time 값이 0이 될 때 까지 초 단위로 카운트 다운 한다.
 - (void)countdownProgressing {
-    if(self.time > 0) {
+    if (self.time > 0) {
         self.time--;
         self.recordingTimeCounter.text = [NSString stringWithFormat:@"%d", self.time];
         self.countOutTime++;
@@ -435,10 +433,9 @@
     
     // progress bar 업데이트
     double result = self.shootingButton.progress - [[self.progressArray lastObject] floatValue];
-    if(result < 0) {
+    if (result < 0) {
         self.shootingButton.progress = 0;
-    }
-    else {
+    } else {
         self.shootingButton.progress -= [[self.progressArray lastObject] floatValue];
 
     }

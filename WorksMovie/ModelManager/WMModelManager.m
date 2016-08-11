@@ -13,7 +13,7 @@
 - (instancetype)init {
     self = [super init];
     
-    if(self) {
+    if (self) {
         self.videoDatas = [[NSMutableArray alloc] init];
     }
     return self;

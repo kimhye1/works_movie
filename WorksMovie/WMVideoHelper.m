@@ -13,7 +13,6 @@
 #import "WMMediaSharer.h"
 #import "WMMediaUtils.h"
 
-
 @interface WMVideoHelper ()
 
 @property (nonatomic, strong) WMVideoRecorder *videoRecorder;
@@ -77,7 +76,5 @@
 - (UIActivityViewController *)shareVideo:(NSURL *)outputURL {
     return [self.VideoSharer shareVideo:outputURL];
 }
-
-
 
 @end

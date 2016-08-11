@@ -37,7 +37,7 @@
 - (instancetype)initWithVideoModelManager:(WMModelManager *)modelManager {
     self = [super init];
     
-    if(self) {
+    if (self) {
         self.modelManager = modelManager;
         self.videoHelper = [[WMVideoHelper alloc] initWithModelManager:self.modelManager];
     }
@@ -79,7 +79,6 @@
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(videoViewTapped:)];
     [self.videoView addGestureRecognizer:tapRecognizer];
 }
-
 
 - (void)setupBackToCameraViewButton {
     self.backToCameraViewButton = [[UIButton alloc] init];
@@ -166,6 +165,7 @@
     [self.videoView addSubview:self.saveAlertLabel];
     self.saveAlertLabel.hidden = YES;
 }
+
 
 #pragma mark - Setup Constraints Methods
 
@@ -377,8 +377,8 @@
 #pragma mark - Video View Tapped Event Handler Methods
 
 // viewView를 tap하면 비디오의 재생 상태에 따라 play또는 pause시킨다.
-- (void)videoViewTapped:(UITapGestureRecognizer*)sender {
-    if([self isPlaying]) {
+- (void)videoViewTapped:(UITapGestureRecognizer *)sender {
+    if ([self isPlaying]) {
         self.playVideoButton.hidden = NO;
         self.backButton.hidden = NO;
         [self.player pause];
@@ -399,15 +399,13 @@
     return YES;
 }
 
-
 // 비디오 재생이 끝나면 리플레이를 위해 preparePlayVideo를 호출한다.
--(void)itemDidFinishPlaying:(NSNotification *) notification {
+- (void)itemDidFinishPlaying:(NSNotification *)notification {
     [self preparePlayVideo];
        
     self.playVideoButton.hidden = NO;
     self.backButton.hidden = NO;
 }
-
 
 
 #pragma mark - back To Camera View Button Event Handler Methods
@@ -427,23 +425,23 @@
 
 // 촬영된 모든 비디오를 reset할 것인지 alert 창을 띄워 확인
 - (void)alertResetVideo {
-    UIAlertController * alert = [UIAlertController alertControllerWithTitle:@"완성된 무비를 저장하지 않고 새로 시작하겠습니까?"
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"완성된 무비를 저장하지 않고 새로 시작하겠습니까?"
                                                                     message:nil
                                                              preferredStyle:UIAlertControllerStyleAlert];
     
-    UIAlertAction* cancel = [UIAlertAction
+    UIAlertAction *cancel = [UIAlertAction
                          actionWithTitle:@"취소"
                          style:UIAlertActionStyleDefault
-                         handler:^(UIAlertAction * action) {
+                         handler:^(UIAlertAction *action) {
                              [alert dismissViewControllerAnimated:YES completion:nil];
                              
                          }];
     
     __weak typeof(self) weakSelf = self;
-    UIAlertAction* reset = [UIAlertAction
+    UIAlertAction *reset = [UIAlertAction
                              actionWithTitle:@"신규촬영"
                              style:UIAlertActionStyleDefault
-                             handler:^(UIAlertAction * action) {
+                             handler:^(UIAlertAction *action) {
                                  [alert dismissViewControllerAnimated:YES completion:nil];
                                 
                                  [weakSelf.modelManager.videoDatas removeAllObjects];
@@ -477,6 +475,7 @@
         } completion:nil];
     }];
 }
+
 
 #pragma mark - Share Video Button Event Handler Methods
 

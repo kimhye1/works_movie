@@ -23,7 +23,7 @@
 - (instancetype)initWithModelManager:(WMModelManager *)modelManager {
     self = [super init];
     
-    if(self) {
+    if (self) {
         self.modelManager = modelManager;
     }
     return self;
@@ -65,19 +65,19 @@
 
 // 전방 또는 후방 카메라로 카메라 모드 전환
 - (void)switchCamera {
-    if(self.session) {
+    if (self.session) {
         [self.session beginConfiguration]; // session에 변경이 생길 것이라고 명시
         
         // 현재 존재하는 input중 camera를 제거
         AVCaptureInput *currentInput = nil;
         BOOL didFound = NO;
         
-        for(NSInteger index = 0 ; index < self.session.inputs.count ; index ++) {
+        for (NSInteger index = 0 ; index < self.session.inputs.count ; index ++) {
             currentInput = [self.session.inputs objectAtIndex:index];
             NSArray *inputPorts = currentInput.ports;
             
-            for(AVCaptureInputPort *port in inputPorts) {
-                if(port.mediaType == AVMediaTypeVideo) {
+            for (AVCaptureInputPort *port in inputPorts) {
+                if (port.mediaType == AVMediaTypeVideo) {
                     didFound = YES;
                     break;
                 }
@@ -85,28 +85,28 @@
             if (didFound) break;
         }
         
-        if(!currentInput) {
+        if (!currentInput) {
             NSLog(@"발견된 camera 없음.");
             return;
         }
         
         [self.session removeInput:currentInput];
         
-        if(((AVCaptureDeviceInput *)currentInput).device.position == AVCaptureDevicePositionUnspecified) {
+        if (((AVCaptureDeviceInput *)currentInput).device.position == AVCaptureDevicePositionUnspecified) {
             NSLog(@"The capture device’s position relative to the system hardware is unspecified.");
         }
         
         // 새로운 input device 생성
         AVCaptureDevice *newInputDevice = nil;
-        if(((AVCaptureDeviceInput *)currentInput).device.position == AVCaptureDevicePositionBack) {
+        if (((AVCaptureDeviceInput *)currentInput).device.position == AVCaptureDevicePositionBack) {
             newInputDevice = [self cameraWithPosition:AVCaptureDevicePositionFront];
-        }else {
+        } else {
             newInputDevice = [self cameraWithPosition:AVCaptureDevicePositionBack];
         }
         
         NSError *err = nil;
         AVCaptureDeviceInput *newDeviceInput = [[AVCaptureDeviceInput alloc] initWithDevice:newInputDevice error:&err];
-        if(!newDeviceInput || err) {
+        if (!newDeviceInput || err) {
             NSLog(@"Error creating capture device input: %@", err.localizedDescription);
         } else {
             [self.session addInput:newDeviceInput]; // input을 session에 추가
@@ -116,14 +116,13 @@
 }
 
 // AVCaptureDevicePosition을 찾아서 반환. device를 발견하지 못하면 nil을 반환
-- (AVCaptureDevice *)cameraWithPosition:(AVCaptureDevicePosition) position {
+- (AVCaptureDevice *)cameraWithPosition:(AVCaptureDevicePosition)position {
     NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
     for (AVCaptureDevice *device in devices) {
         if ([device position] == position) return device;
     }
     return nil;
 }
-
 
 - (void)startRecording {
     self.recording = YES;
@@ -144,12 +143,11 @@
     NSURL *outputURL = [[NSURL alloc] initFileURLWithPath:outputPath];
     NSFileManager *manager = [[NSFileManager alloc] init];
     
-    if([manager fileExistsAtPath:outputPath]) {
+    if ([manager fileExistsAtPath:outputPath]) {
         [manager removeItemAtPath:outputPath error:nil];
     }
     return outputURL;
 }
-
 
 - (void)captureOutput:(AVCaptureFileOutput *)captureOutput didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL fromConnections:(NSArray *)connections error:(NSError *)error {
 }
