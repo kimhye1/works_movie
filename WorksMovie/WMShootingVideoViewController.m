@@ -10,8 +10,8 @@
 #import "WMPlayAndStoreVideoViewController.h"
 #import "WMModelManager.h"
 #import "WMVideoHelper.h"
-#import "DACircularProgressView.h"
 #import "DALabeledCircularProgressView.h"
+#import "WMEditVideoViewController.h"
 
 @interface WMShootingVideoViewController ()
 
@@ -24,14 +24,8 @@
 @property (nonatomic, strong) UIButton *removeVideoButton;
 @property (nonatomic, strong) UIButton *completeShootingButton;
 @property (nonatomic, strong) UIImageView *recordingStateMark;
-@property (nonatomic, strong) DACircularProgressView *shootingButton;
 @property (nonatomic, strong) NSTimer *timer;
 @property (nonatomic, strong) NSTimer *countDownTimer;
-@property (nonatomic, strong) UILabel *recordingTimeCounter;
-@property (nonatomic, assign) int time;
-@property (nonatomic, assign) int countOutTime;
-@property (nonatomic, strong) NSMutableArray *countOutTimeArray;
-@property (nonatomic, strong) NSMutableArray *progressArray;
 
 @end
 
@@ -419,10 +413,10 @@
     [self presentWMPlayAndStoreVideoViewController];
 }
 
-- (void)presentWMPlayAndStoreVideoViewController {
-    WMPlayAndStoreVideoViewController *playAndStoreVideoVeiwController =
-    [[WMPlayAndStoreVideoViewController alloc] initWithVideoModelManager:self.modelManager];
-    [self presentViewController:playAndStoreVideoVeiwController animated:YES completion:nil];
+- (void)presentWMPlayAndStoreVideoViewController {    
+    WMEditVideoViewController *editVideoViewController =
+    [[WMEditVideoViewController alloc] initWithVideoModelManager:self.modelManager shootingVideoViewController:self];
+    [self presentViewController:editVideoViewController animated:YES completion:nil];
 }
 
 

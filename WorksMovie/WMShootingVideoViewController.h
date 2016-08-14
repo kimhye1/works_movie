@@ -11,7 +11,15 @@
  */
 
 #import <UIKit/UIKit.h>
+#import "DACircularProgressView.h"
 
 @interface WMShootingVideoViewController : UIViewController
+
+@property (nonatomic, strong) DACircularProgressView *shootingButton;
+@property (nonatomic, strong) NSMutableArray *progressArray;
+@property (nonatomic, strong) UILabel *recordingTimeCounter;
+@property (nonatomic, assign) int time;
+@property (nonatomic, assign) int countOutTime;
+@property (nonatomic, strong) NSMutableArray *countOutTimeArray;
 
 @end

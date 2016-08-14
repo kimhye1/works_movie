@@ -26,5 +26,9 @@
 - (void)removeLastVideo {
     [self.videoDatas removeLastObject];
 }
+
+- (void)removeObjectAtIndex:(NSUInteger)index {
+    [self.videoDatas removeObjectAtIndex:index];
+}
  
 @end

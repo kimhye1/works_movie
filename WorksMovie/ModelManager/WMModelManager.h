@@ -19,5 +19,6 @@
 
 - (void)addvideoData:(WMModel *)videoData;
 - (void)removeLastVideo;
+- (void)removeObjectAtIndex:(NSUInteger)index;
 
 @end
