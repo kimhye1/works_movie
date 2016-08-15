@@ -10,6 +10,7 @@
 #import "WMVideoCollectionViewCell.h"
 #import "WMVideoHelper.h"
 #import "WMPlayAndStoreVideoViewController.h"
+#import "WMPlayAndApplyFilterViewController.h"
 
 @interface WMEditVideoViewController ()
 
@@ -23,7 +24,7 @@
 
 @end
 
-NSString *const collectionViewCellIdentifier = @"wm_collection_view_cell_identifier";
+NSString *const collectionViewCellIdentifier_3 = @"wm_collection_view_cell_identifier_3";
 
 @implementation WMEditVideoViewController
 
@@ -94,7 +95,7 @@ NSString *const collectionViewCellIdentifier = @"wm_collection_view_cell_identif
     
     //UICollectionView 객체에 register class 메소드로 재사용할 컬렉션뷰 셀을 설정
     //forCellWithReuseIdentifier를 사용해서 재사용할 셀의 식별자를 등록
-    [self.collectionView registerClass:[WMVideoCollectionViewCell class] forCellWithReuseIdentifier:collectionViewCellIdentifier];
+    [self.collectionView registerClass:[WMVideoCollectionViewCell class] forCellWithReuseIdentifier:collectionViewCellIdentifier_3];
     
     [self.view addSubview:self.collectionView];
 }
@@ -141,13 +142,13 @@ NSString *const collectionViewCellIdentifier = @"wm_collection_view_cell_identif
 
 - (void)setupCompleteEditButtonConstraints {
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[completeEditButton(==35)]-20-|"
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[completeEditButton(==33)]-20-|"
                                              options:0
                                              metrics:nil
                                                views:@{@"completeEditButton" : self.completeEditButton}]];
     
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-7-[completeEditButton(==35)]"
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-7-[completeEditButton(==33)]"
                                              options:0
                                              metrics:nil
                                                views:@{@"completeEditButton" : self.completeEditButton}]];
@@ -177,12 +178,12 @@ NSString *const collectionViewCellIdentifier = @"wm_collection_view_cell_identif
 // 참조되는 인덱스에 대한 적절한 셀 객체를 반환
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     // 재사용 큐에 셀을 가져온다
-    WMVideoCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:collectionViewCellIdentifier forIndexPath:indexPath];
+    WMVideoCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:collectionViewCellIdentifier_3 forIndexPath:indexPath];
     
     // 셀의 비디오 썸네일 설정
     cell.imageView.image = [self.videoHelper gettingThumbnailFromVideoInView:cell.imageView withURL:[(WMMediaModel *)self.modelManager.mediaDatas[indexPath.row] mediaURL]].image;
     
-    cell.videoNumberLabel.text = [NSString stringWithFormat:@"%ld%@", indexPath.row + 1, @"번째 영상"];
+    cell.videoNumberLabel.text = [NSString stringWithFormat:@"%zd%@", indexPath.row + 1, @"번째 영상"];
     
     [cell.removeVideoButton addTarget:self action:@selector(removeVideoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     
@@ -292,15 +293,17 @@ NSString *const collectionViewCellIdentifier = @"wm_collection_view_cell_identif
 
 - (void)backButtonClicked:(UIButton *)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"WMEditVideoViewController dismiss" object:nil];
 }
 
 
 #pragma mark - Complete Edit Button Event Handler Methods
 
 - (void)completeEditButtonButtonClicked:(UIButton *)sender {
-    WMPlayAndStoreVideoViewController *playAndStoreVideoVeiwController =
-    [[WMPlayAndStoreVideoViewController alloc] initWithVideoModelManager:self.modelManager];
-    [self presentViewController:playAndStoreVideoVeiwController animated:YES completion:nil];
+    WMPlayAndApplyFilterViewController *playAndApplyFilterViewController =
+    [[WMPlayAndApplyFilterViewController alloc] initWithVideoModelManager:self.modelManager];
+    [self presentViewController:playAndApplyFilterViewController animated:YES completion:nil];
 }
 
 @end

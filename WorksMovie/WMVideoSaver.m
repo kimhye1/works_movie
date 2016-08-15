@@ -8,17 +8,20 @@
 
 #import <Photos/Photos.h>
 #import "WMVideoSaver.h"
+#import "WMVideoModelManager.h"
+#import "WMPlayAndApplyFilterViewController.h"
 
 @interface WMVideoSaver ()
 
 @property (nonatomic, strong) NSMutableArray *assets;
 @property (nonatomic, strong) AVMutableComposition *composition;
 @property (nonatomic, strong) WMVideoModelManager *modelManager;
+//@property (nonatomic, strong) AVVideoComposition *videoComposition;
+@property (nonatomic, strong) UILabel *saveAlertLabel;
 
 @end
 
 @implementation WMVideoSaver
-
 
 - (instancetype)initWithVideoModelManager:(WMVideoModelManager *)modelManager {
     self = [super init];
@@ -30,7 +33,7 @@
 }
 
 // 촬영된 1개 이상의 비디오를 하나로 병합시키는 기능
-- (void)mergeVideo {
+- (AVMutableComposition *)mergeVideo {
     [self convertVideoDatasToAssets];
     
     self.composition = [[AVMutableComposition alloc] init];
@@ -48,7 +51,9 @@
         
         insertTime = CMTimeAdd(insertTime, videoAsset.duration); // 다음 insert를 위해 insertTime을 갱신
     }
+    return self.composition;
 }
+
 
 // modalManager의 videoData들을(촬영된 비디오들의 url) asset으로 생성
 - (void)convertVideoDatasToAssets {
@@ -70,15 +75,17 @@
 }
 
 //카메라 롤에 merge된 비디오를 저장하는 메소드 
-- (NSURL *)storeVideo {
+- (NSURL *)storeVideo:(AVVideoComposition *)videoComposition outputURL:(NSURL *)outputURL alertLabel:(UILabel *)saveAlertLabel {
+    self.saveAlertLabel = saveAlertLabel;
     NSString *outputVideoPath = [self outputPath];
     NSURL *outputVideoURL = [NSURL fileURLWithPath:outputVideoPath];
     
-    AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset:self.composition presetName:AVAssetExportPresetHighestQuality];
+    AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset:[AVAsset assetWithURL:outputURL] presetName:AVAssetExportPresetHighestQuality];
     
     exporter.outputURL = outputVideoURL;
     exporter.outputFileType = AVFileTypeQuickTimeMovie;
     exporter.shouldOptimizeForNetworkUse = YES;
+    exporter.videoComposition = videoComposition;
     
     [exporter exportAsynchronouslyWithCompletionHandler:^{
         NSLog (@"created exporter. supportedFileTypes: %@", exporter.supportedFileTypes);
@@ -104,7 +111,23 @@
         NSLog(@"error");
     } else {
         NSLog(@"finish saving");
+        [self savedAlert:self.saveAlertLabel];
     }
 }
+
+- (void)savedAlert:(UILabel *)saveAlertLabel {
+    saveAlertLabel.hidden = NO;
+    
+    [saveAlertLabel setAlpha:0.0f];
+    
+    [UIView animateWithDuration:1.0f animations:^{ // fade in
+        [saveAlertLabel setAlpha:1.0f];
+    } completion:^(BOOL finished) {
+        [UIView animateWithDuration:1.0f animations:^{ // fade out
+            [saveAlertLabel setAlpha:0.0f];
+        } completion:nil];
+    }];
+}
+
      
 @end

@@ -29,7 +29,13 @@ NSString *const showVideoButtonTitle = @"동영상 가져오기";
     [self setupViewComponents];
     [self setupConstraints];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(appDidBecomeActive:)
+                                                 name:UIApplicationDidBecomeActiveNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(appDidBecomeActiveWhenDismissed:)
+                                                 name:@"WMShootingVideoViewController dismiss" object:nil];
 }
 
 
@@ -44,7 +50,9 @@ NSString *const showVideoButtonTitle = @"동영상 가져오기";
 
 - (void)setupBackgroundView {
     self.player = [self setupBackgroundVideo];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:) name:AVPlayerItemDidPlayToEndTimeNotification object:[self.player currentItem]];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:)
+                                                 name:AVPlayerItemDidPlayToEndTimeNotification
+                                               object:[self.player currentItem]];
 }
 
 - (void)setupLogoImage {    
@@ -190,14 +198,16 @@ NSString *const showVideoButtonTitle = @"동영상 가져오기";
 #pragma mark - Background Video End Event Handler
 
 - (void)itemDidFinishPlaying:(NSNotification *)notification {
-    AVPlayerItem *player = [notification object];
-    [player seekToTime:kCMTimeZero];
+    AVPlayerItem *playerItem = [notification object];
+    [playerItem seekToTime:kCMTimeZero];
 }
 
 
 #pragma mark - Button Event Handler Methods
 
 - (void)shootingVideoButtonClicked:(UIButton *)sender {
+    [self.player pause];
+    
     [self presentWMShootingVideoViewController];
 }
 
@@ -207,12 +217,29 @@ NSString *const showVideoButtonTitle = @"동영상 가져오기";
 }
 
 - (void)showVideosButtonClicked:(UIButton *)sender {
+    [self.player pause];
+    
     [self presentWMShowVideosViewController];
 }
 
 - (void)presentWMShowVideosViewController {
     WMShowVideosViewController *showVideosViewController = [[WMShowVideosViewController alloc] init];
     [self presentViewController:showVideosViewController animated:YES completion:nil];
+}
+
+
+-(void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    [self.player pause];
+}
+
+- (void)appDidBecomeActiveWhenDismissed:(NSNotification *)notice { 
+    [self.player play];
 }
 
 @end

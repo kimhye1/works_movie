@@ -19,12 +19,14 @@
 - (void)switchCamera;
 - (void)startRecording;
 - (void)stopRecording;
+- (void)stopSession;
+- (void)startSession;
 
 - (UIImageView *)gettingThumbnailFromVideoInView:(UIView *)videoView withURL:(NSURL *)url;
 - (void)playVideo:(UIView *)videoView;
 
-- (void)mergeVideo;
-- (NSURL *)storeVideo;
+- (AVMutableComposition *)mergeVideo;
+- (NSURL *)storeVideo:(AVVideoComposition *)videoComposition outputURL:(NSURL *)outputURL alertLabel:(UILabel *)saveAlertLabel;
 
 - (UIActivityViewController *)shareVideo:(NSURL *)outputURL;
 

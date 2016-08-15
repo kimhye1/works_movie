@@ -7,7 +7,7 @@
 //
 
 #import "WMShootingVideoViewController.h"
-#import "WMPlayAndStoreVideoViewController.h"
+#import "WMPlayAndApplyFilterViewController.h"
 #import "WMVideoModelManager.h"
 #import "WMVideoHelper.h"
 #import "DALabeledCircularProgressView.h"
@@ -48,6 +48,10 @@
     [self setupConstraints];
     
     [self prepareRecording];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(appDidBecomeActiveWhenDismissed:)
+                                                 name:@"WMEditVideoViewController dismiss" object:nil];
 }
 
 
@@ -62,7 +66,7 @@
 }
 
 - (void)setupCameraView {
-    self.cameraView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height-200)];
+    self.cameraView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height-170)];
     self.cameraView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.cameraView];
 }
@@ -169,7 +173,7 @@
                                                views:@{@"cameraView" : self.cameraView}]];
     
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[cameraView]-200-|"
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[cameraView]-170-|"
                                              options:0
                                              metrics:nil
                                                views:@{@"cameraView" : self.cameraView}]];
@@ -212,7 +216,7 @@
                                                views:@{@"videoShootingMenuContainerView" : self.videoShootingMenuContainerView}]];
     
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[videoShootingMenuContainerView(==200)]|"
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[videoShootingMenuContainerView(==170)]|"
                                              options:0
                                              metrics:nil
                                                views:@{@"cameraView" : self.cameraView, @"videoShootingMenuContainerView" : self.videoShootingMenuContainerView}]];
@@ -341,6 +345,8 @@
 
 - (void)backButtonClicked:(UIButton *)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"WMShootingVideoViewController dismiss" object:nil];
 }
 
 
@@ -370,8 +376,9 @@
     
     if (gesture.state == UIGestureRecognizerStateEnded) {
         float allProcessValue;
-        for (int i = 0 ; i < self.progressArray.count ; i++) {
-            allProcessValue += [self.progressArray[i] floatValue];
+        
+        for (NSNumber *progressNum in self.progressArray) {
+            allProcessValue += [progressNum floatValue];
         }
         
         [self.progressArray addObject:[NSNumber numberWithDouble:self.shootingButton.progress - allProcessValue]];
@@ -410,10 +417,12 @@
 #pragma mark - Complete Shooting Button Event Handler Methods
 
 - (void)completeShootingButtonClicked:(UIButton *)sender {
-    [self presentWMPlayAndStoreVideoViewController];
+    [self.videoHelper stopSession];
+    
+    [self presentWMEditVideoViewController];
 }
 
-- (void)presentWMPlayAndStoreVideoViewController {    
+- (void)presentWMEditVideoViewController {
     WMEditVideoViewController *editVideoViewController =
     [[WMEditVideoViewController alloc] initWithVideoModelManager:self.modelManager shootingVideoViewController:self];
     [self presentViewController:editVideoViewController animated:YES completion:nil];
@@ -442,5 +451,11 @@
     
     [self.progressArray removeLastObject];
 }
+
+
+- (void)appDidBecomeActiveWhenDismissed:(NSNotification *)notice {
+    [self.videoHelper startSession];
+}
+
 
 @end

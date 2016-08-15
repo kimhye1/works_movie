@@ -263,6 +263,8 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
 
 - (void)backButtonClicked:(UIButton *)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"WMShootingVideoViewController dismiss" object:nil];
 }
 
 
