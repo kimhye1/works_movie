@@ -8,11 +8,11 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "WMModelManager.h"
+#import "WMVideoModelManager.h"
 
 @interface WMVideoHelper : NSObject
 
-- (instancetype)initWithModelManager:(WMModelManager *)modelManager;
+- (instancetype)initWithVideoModelManager:(WMVideoModelManager *)modelManager;
 
 - (void)setupCaptureSession;
 - (void)setupPreviewLayerInView:(UIView *)view;
@@ -28,6 +28,6 @@
 
 - (UIActivityViewController *)shareVideo:(NSURL *)outputURL;
 
-@property (nonatomic, strong) WMModelManager *modelManager;
+@property (nonatomic, strong) WMVideoModelManager *modelManager;
 
 @end

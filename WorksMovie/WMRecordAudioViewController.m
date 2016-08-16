@@ -11,10 +11,14 @@
 #import <AVFoundation/AVFoundation.h>
 #import "WMAudioHelper.h"
 #import "WMMediaUtils.h"
+#import "WMVideoModelManager.h"
+#import "WMAudioModelManager.h"
 
 @interface WMRecordAudioViewController ()
 
 @property (nonatomic, strong) WMAudioHelper *audioHelper;
+@property (nonatomic, strong) WMVideoModelManager *videoModelManager;
+@property (nonatomic, strong) WMAudioModelManager *audioModelManager;
 @property (nonatomic, strong) UIView *videoView;
 @property (nonatomic, strong) UIButton *backToCellectionViewButton;
 @property (nonatomic, strong) UIButton *playVideoButton;
@@ -49,7 +53,11 @@
     
     if (self) {
         self.videoURL = videoURL;
-        self.audioHelper = [[WMAudioHelper alloc] init];
+        
+        self.videoModelManager = [[WMVideoModelManager alloc] init];
+        self.audioModelManager = [[WMAudioModelManager alloc] init];
+        
+        self.audioHelper = [[WMAudioHelper alloc] initWithVideoModelManager:self.videoModelManager audioModelManager:self.audioModelManager];
     }
     return self;
   
@@ -392,6 +400,8 @@
 }
 
 - (void)preparePlayVideo {
+    [self.audioHelper addVideoToModelManager:self.videoURL];
+    
     AVURLAsset *avAsset = [AVURLAsset URLAssetWithURL:self.videoURL options:nil];
     AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:avAsset];
     
@@ -609,7 +619,7 @@
 - (void)completeRecordingButtonClicked:(UIButton *)sender {
     [self.audioHelper stopRecording];
     
-    WMPlayAndStoreAudioViewController *playAndStoreViewController = [[WMPlayAndStoreAudioViewController alloc] initWithAudioURL:self.outputFileURL videoURL:self.videoURL];
+    WMPlayAndStoreAudioViewController *playAndStoreViewController = [[WMPlayAndStoreAudioViewController alloc] initWithVideoModelManager:self.videoModelManager audioModelManager:self.audioModelManager];
     [self presentViewController:playAndStoreViewController animated:YES completion:nil];
 }
 

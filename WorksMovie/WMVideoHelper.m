@@ -24,14 +24,14 @@
 
 @implementation WMVideoHelper
 
-- (instancetype)initWithModelManager:(WMModelManager *)modelManager {
+- (instancetype)initWithVideoModelManager:(WMVideoModelManager *)modelManager {
     
     self = [super self];
     
     if (self) {
-        self.videoRecorder = [[WMVideoRecorder alloc] initWithModelManager:modelManager];
-        self.videoPlayer = [[WMMediaPlayer alloc] initWithModelManager:modelManager];
-        self.videoSaver = [[WMVideoSaver alloc] initWithModelManager:modelManager];
+        self.videoRecorder = [[WMVideoRecorder alloc] initWithVideoModelManager:modelManager];
+        self.videoPlayer = [[WMMediaPlayer alloc] initWithVideoModelManager:modelManager];
+        self.videoSaver = [[WMVideoSaver alloc] initWithVideoModelManager:modelManager];
         self.VideoSharer = [[WMMediaSharer  alloc] init];
     }
     return self;
