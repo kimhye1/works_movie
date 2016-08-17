@@ -19,5 +19,6 @@
 
 - (void)addMediaData:(WMMediaModel *)mediaData;
 - (void)removeLastMedia;
+- (void)removeObjectAtIndex:(NSUInteger)index;
 
 @end

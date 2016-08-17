@@ -26,5 +26,9 @@
 - (void)removeLastMedia {
     [self.mediaDatas removeLastObject];
 }
- 
+
+- (void)removeObjectAtIndex:(NSUInteger)index {
+    [self.mediaDatas removeObjectAtIndex:index];
+}
+
 @end

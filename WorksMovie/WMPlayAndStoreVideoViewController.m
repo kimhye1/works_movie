@@ -8,6 +8,7 @@
 
 #import "WMPlayAndStoreVideoViewController.h"
 #import "WMShowVideosViewController.h"
+#import "WMShootingVideoViewController.h"
 #import "WMVideoHelper.h"
 
 @interface WMPlayAndStoreVideoViewController ()
@@ -442,10 +443,15 @@
                              actionWithTitle:@"신규촬영"
                              style:UIAlertActionStyleDefault
                              handler:^(UIAlertAction *action) {
+                                 __strong typeof(weakSelf) strongSelf = weakSelf;
                                  [alert dismissViewControllerAnimated:YES completion:nil];
                                 
-                                 [weakSelf.modelManager.mediaDatas removeAllObjects];
-                                 [weakSelf dismissViewControllerAnimated:YES completion:nil];
+                                 [strongSelf.modelManager.mediaDatas removeAllObjects];
+                                 
+                                 dispatch_async(dispatch_get_main_queue(), ^{
+                                     WMShootingVideoViewController *shootingVideoViewController = [[WMShootingVideoViewController alloc] init];
+                                     [strongSelf presentViewController:shootingVideoViewController animated:YES completion:nil];
+                                 });
                              }];
     [alert addAction:cancel];
     [alert addAction:reset];
