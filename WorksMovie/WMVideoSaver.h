@@ -7,11 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "WMModelManager.h"
+#import "WMVideoModelManager.h"
 
 @interface WMVideoSaver : NSObject
 
-- (instancetype)initWithModelManager:(WMModelManager *)modelManager;
+- (instancetype)initWithVideoModelManager:(WMVideoModelManager *)modelManager;
 - (void)mergeVideo;
 - (NSURL *)storeVideo;
 

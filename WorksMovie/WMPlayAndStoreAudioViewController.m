@@ -9,11 +9,13 @@
 #import <AVFoundation/AVFoundation.h>
 #import "WMPlayAndStoreAudioViewController.h"
 #import "WMMediaUtils.h"
+#import "WMAudioHelper.h"
 
 @interface WMPlayAndStoreAudioViewController ()
 
-@property (nonatomic, strong) NSURL *videoURL;
-@property (nonatomic, strong) NSURL *audioURL;
+@property (nonatomic, strong) WMAudioHelper *audioHelper;
+@property (nonatomic, strong) WMVideoModelManager *videoModelManager;
+@property (nonatomic, strong) WMAudioModelManager *audioModelManager;
 @property (nonatomic, strong) UIView *videoView;
 @property (nonatomic, strong) UIButton *backButton;
 @property (nonatomic, strong) UIButton *playVideoAndAudioButton;
@@ -32,15 +34,15 @@
 
 @implementation WMPlayAndStoreAudioViewController
 
-- (instancetype)initWithAudioURL:(NSURL *)audioURL videoURL:(NSURL *)videoURL {
+- (instancetype)initWithVideoModelManager:(WMVideoModelManager *)videoModelManager audioModelManager:(WMAudioModelManager *)audioModelManager {
     self = [super init];
     
     if (self) {
-        self.audioURL = audioURL;
-        self.videoURL = videoURL;
+        self.videoModelManager = videoModelManager;
+        self.audioModelManager = audioModelManager;
+        self.audioHelper = [[WMAudioHelper alloc] initWithVideoModelManager:self.videoModelManager audioModelManager:self.audioModelManager];
     }
     return self;
-    
 }
 
 - (void)viewDidLoad {
@@ -69,7 +71,8 @@
     self.videoView.translatesAutoresizingMaskIntoConstraints = NO;
     
     // thumbnail 추출
-    UIImageView *imageView = [WMMediaUtils gettingThumbnailFromVideoInView:self.videoView withURL:self.videoURL];
+    UIImageView *imageView = [WMMediaUtils gettingThumbnailFromVideoInView:self.videoView withURL:[(WMMediaModel *)self.videoModelManager.mediaDatas[0] mediaURL]];
+    
     
     [self.videoView addSubview:imageView];
     [self.view addSubview:self.videoView];
@@ -106,7 +109,7 @@
      setImage:[UIImage imageNamed:@"saveButton"] forState:UIControlStateNormal];
     self.storeVideoButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.videoStoreMenuContainerView addSubview:self.storeVideoButton];
-//    [self.storeVideoButton addTarget:self action:@selector(storeVideoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [self.storeVideoButton addTarget:self action:@selector(storeVideoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     
     [self setupStoreVideoButtonLabel];
 }
@@ -282,7 +285,7 @@
 }
 
 - (void)preparePlayVideo {
-    AVURLAsset *avAsset = [AVURLAsset URLAssetWithURL:self.videoURL options:nil];
+    AVURLAsset *avAsset = [AVURLAsset URLAssetWithURL:[(WMMediaModel *)self.videoModelManager.mediaDatas[0] mediaURL] options:nil];
     AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:avAsset];
     
     // 동영상 play가 끝나면 불릴 notification 등록
@@ -297,7 +300,7 @@
 }
 
 - (void)preparePlayAudio {
-    self.audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:self.audioURL error:nil];
+    self.audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:[(WMMediaModel *)self.audioModelManager.mediaDatas[0] mediaURL] error:nil];
 }
 
 
@@ -332,6 +335,17 @@
 
 - (void)backButtonClicked:(UIButton *)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+
+#pragma mark - Store Video Button Event Handler Methods
+
+- (void)storeVideoButtonClicked:(UIButton *)sender {
+    NSURL *audioURL = [self.audioModelManager.mediaDatas.firstObject mediaURL];
+    NSURL *videoURL = [self.videoModelManager.mediaDatas.firstObject mediaURL];
+    
+    AVMutableComposition *composition = [self.audioHelper mergeAudio:audioURL withVideo:videoURL];
+    [self.audioHelper storeVideo:composition];
 }
 
 @end

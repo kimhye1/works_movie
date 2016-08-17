@@ -7,22 +7,42 @@
 //
 
 #import "WMAudioRecorder.h"
+#import "WMAudioModel.h"
+#import "WMVideoModel.h"
 
 @interface WMAudioRecorder ()
 
 @property (nonatomic, strong) AVAudioRecorder *audioRecorder;
+@property (nonatomic, strong) WMAudioModelManager *audioModelManager;
+@property (nonatomic, strong) WMVideoModelManager *videoModelManager;
 
 @end
 
 @implementation WMAudioRecorder
 
+- (instancetype)initWithVideoModelManager:(WMVideoModelManager *)videoModelManager audioModelManager:(WMAudioModelManager *)audioModelManager {
+    self = [super init];
+    
+    if (self) {
+        self.videoModelManager = videoModelManager;
+        self.audioModelManager = audioModelManager;
+    }
+    return self;
+}
+
 // 저장될 audio 파일명, 경로 지정
 - (NSURL *)setupFile {
-    NSArray *pathComponents = [NSArray arrayWithObjects:
-                               [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject],
-                               @"MyAudioMemo.m4a",
-                               nil];
-    return [NSURL fileURLWithPathComponents:pathComponents];
+    NSString *uuid = [[NSUUID UUID] UUIDString];
+    
+    NSString *outputPath = [[NSString alloc] initWithFormat:@"%@%@%@", NSTemporaryDirectory(), uuid, @".m4a"];
+    
+    NSURL *outputURL = [[NSURL alloc] initFileURLWithPath:outputPath];
+    NSFileManager *manager = [[NSFileManager alloc] init];
+    
+    if ([manager fileExistsAtPath:outputPath]) {
+        [manager removeItemAtPath:outputPath error:nil];
+    }
+    return outputURL;
 }
 
 - (void)setupAudioRecorder:(NSURL *)outputFileURL {
@@ -33,6 +53,8 @@
     self.audioRecorder.delegate = self;
     self.audioRecorder.meteringEnabled = YES;
     [self.audioRecorder prepareToRecord];
+    
+    [self addAudioFileToAudioModelManager:outputFileURL];
 }
 
 // audio session을 정의
@@ -50,6 +72,18 @@
     [recordSetting setValue:[NSNumber numberWithInt:2] forKey:AVNumberOfChannelsKey];
     
     return recordSetting;
+}
+
+- (void)addAudioFileToAudioModelManager:(NSURL *)outputFileURL {
+    WMAudioModel *audioData = [[WMAudioModel alloc] init];
+    audioData.mediaURL = outputFileURL;
+    [self.audioModelManager addMediaData:audioData];
+}
+
+- (void)addVideoToVideoModelManager:(NSURL *)videoURL {
+    WMVideoModel *videoData = [[WMVideoModel alloc] init];
+    videoData.mediaURL = videoURL;
+    [self.videoModelManager addMediaData:videoData];
 }
 
 - (void)startRecording {

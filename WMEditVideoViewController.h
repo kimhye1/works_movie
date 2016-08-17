@@ -7,11 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "WMModelManager.h"
+#import "WMMediaModelManager.h"
 #import "WMShootingVideoViewController.h"
 
 @interface WMEditVideoViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate>
 
-- (instancetype)initWithVideoModelManager:(WMModelManager *)videoManager shootingVideoViewController:(WMShootingVideoViewController *)shootingVideoViewController;
+- (instancetype)initWithVideoModelManager:(WMMediaModelManager *)videoManager shootingVideoViewController:(WMShootingVideoViewController *)shootingVideoViewController;
 
 @end

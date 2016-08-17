@@ -13,7 +13,7 @@
 
 @interface WMPlayAndStoreVideoViewController ()
 
-@property (nonatomic, strong) WMModelManager *modelManager;
+@property (nonatomic, strong) WMVideoModelManager *modelManager;
 @property (nonatomic, strong) WMVideoHelper *videoHelper;
 @property (nonatomic, strong) UIView *videoView;
 @property (nonatomic, strong) UIButton *backToCameraViewButton;
@@ -35,12 +35,12 @@
 
 @implementation WMPlayAndStoreVideoViewController
 
-- (instancetype)initWithVideoModelManager:(WMModelManager *)modelManager {
+- (instancetype)initWithVideoModelManager:(WMVideoModelManager *)modelManager {
     self = [super init];
     
     if (self) {
         self.modelManager = modelManager;
-        self.videoHelper = [[WMVideoHelper alloc] initWithModelManager:self.modelManager];
+        self.videoHelper = [[WMVideoHelper alloc] initWithVideoModelManager:self.modelManager];
     }
     return self;
 }
@@ -72,7 +72,7 @@
     self.videoView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height-200)];
     self.videoView.translatesAutoresizingMaskIntoConstraints = NO;
     
-    UIImageView *imageView = [self.videoHelper gettingThumbnailFromVideoInView:self.videoView withURL:[(WMModel *)self.modelManager.videoDatas[0] videoURL]];
+    UIImageView *imageView = [self.videoHelper gettingThumbnailFromVideoInView:self.videoView withURL:[(WMMediaModel *)self.modelManager.mediaDatas[0] mediaURL]];
     
     [self.videoView addSubview:imageView];
     [self.view addSubview:self.videoView];
@@ -353,8 +353,8 @@
 - (NSMutableArray *)fetchPlayerItem {
     NSMutableArray *videoItems = [[NSMutableArray alloc] init];
     
-    for (int i = 0 ; i < self.modelManager.videoDatas.count; i++) {
-        self.playerItem = [AVPlayerItem playerItemWithURL:[(WMModel *)self.modelManager.videoDatas[i] videoURL]];
+    for (int i = 0 ; i < self.modelManager.mediaDatas.count; i++) {
+        self.playerItem = [AVPlayerItem playerItemWithURL:[(WMMediaModel *)self.modelManager.mediaDatas[i] mediaURL]];
         [videoItems addObject:self.playerItem];
     }
     return videoItems;
@@ -446,7 +446,7 @@
                                  __strong typeof(weakSelf) strongSelf = weakSelf;
                                  [alert dismissViewControllerAnimated:YES completion:nil];
                                 
-                                 [strongSelf.modelManager.videoDatas removeAllObjects];
+                                 [strongSelf.modelManager.mediaDatas removeAllObjects];
                                  
                                  dispatch_async(dispatch_get_main_queue(), ^{
                                      WMShootingVideoViewController *shootingVideoViewController = [[WMShootingVideoViewController alloc] init];

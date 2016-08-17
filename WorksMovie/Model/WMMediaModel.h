@@ -1,5 +1,5 @@
 //
-//  WMModel.h
+//  WMMediaModel.h
 //  WorksMovie
 //
 //  Created by Naver on 2016. 7. 12..
@@ -14,8 +14,8 @@
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 
-@interface WMModel : NSObject
+@interface WMMediaModel : NSObject
 
-@property (nonatomic, strong) NSURL *videoURL;
+@property (nonatomic, strong) NSURL *mediaURL;
 
 @end

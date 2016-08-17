@@ -13,7 +13,7 @@
 
 @interface WMEditVideoViewController ()
 
-@property (nonatomic, strong) WMModelManager *modelManager;
+@property (nonatomic, strong) WMVideoModelManager *modelManager;
 @property (nonatomic, strong) WMVideoHelper *videoHelper;
 @property (nonatomic, strong) UIView *titleView;
 @property (nonatomic, strong) UIButton *backButton;
@@ -27,12 +27,12 @@ NSString *const collectionViewCellIdentifier = @"wm_collection_view_cell_identif
 
 @implementation WMEditVideoViewController
 
-- (instancetype)initWithVideoModelManager:(WMModelManager *)modelManager shootingVideoViewController:(WMShootingVideoViewController *)shootingVideoViewController {
+- (instancetype)initWithVideoModelManager:(WMVideoModelManager *)modelManager shootingVideoViewController:(WMShootingVideoViewController *)shootingVideoViewController {
     self = [super init];
     
     if (self) {
         self.modelManager = modelManager;
-        self.videoHelper = [[WMVideoHelper alloc] initWithModelManager:self.modelManager];
+        self.videoHelper = [[WMVideoHelper alloc] initWithVideoModelManager:self.modelManager];
         self.shootingVideoViewController = shootingVideoViewController;
     }
     return self;
@@ -171,7 +171,7 @@ NSString *const collectionViewCellIdentifier = @"wm_collection_view_cell_identif
 
 // 섹션에 있는 아이템 수 반환
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return [self.modelManager.videoDatas count];
+    return [self.modelManager.mediaDatas count];
 }
 
 // 참조되는 인덱스에 대한 적절한 셀 객체를 반환
@@ -180,7 +180,7 @@ NSString *const collectionViewCellIdentifier = @"wm_collection_view_cell_identif
     WMVideoCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:collectionViewCellIdentifier forIndexPath:indexPath];
     
     // 셀의 비디오 썸네일 설정
-    cell.imageView.image = [self.videoHelper gettingThumbnailFromVideoInView:cell.imageView withURL:[(WMModel *)self.modelManager.videoDatas[indexPath.row] videoURL]].image;
+    cell.imageView.image = [self.videoHelper gettingThumbnailFromVideoInView:cell.imageView withURL:[(WMMediaModel *)self.modelManager.mediaDatas[indexPath.row] mediaURL]].image;
     
     cell.videoNumberLabel.text = [NSString stringWithFormat:@"%ld%@", indexPath.row + 1, @"번째 영상"];
     
@@ -245,7 +245,7 @@ NSString *const collectionViewCellIdentifier = @"wm_collection_view_cell_identif
             snapshot.center = center;
             
             if (indexPath && ![indexPath isEqual:sourceIndexPath]) {
-                [self.modelManager.videoDatas exchangeObjectAtIndex:indexPath.row withObjectAtIndex:sourceIndexPath.row]; // 데이터 업데이트
+                [self.modelManager.mediaDatas exchangeObjectAtIndex:indexPath.row withObjectAtIndex:sourceIndexPath.row]; // 데이터 업데이트
                 [self.collectionView moveItemAtIndexPath:sourceIndexPath toIndexPath :indexPath]; // 셀 이동
                 sourceIndexPath = indexPath;
             }

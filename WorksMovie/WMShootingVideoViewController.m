@@ -8,7 +8,7 @@
 
 #import "WMShootingVideoViewController.h"
 #import "WMPlayAndStoreVideoViewController.h"
-#import "WMModelManager.h"
+#import "WMVideoModelManager.h"
 #import "WMVideoHelper.h"
 #import "DALabeledCircularProgressView.h"
 #import "WMEditVideoViewController.h"
@@ -16,7 +16,7 @@
 @interface WMShootingVideoViewController ()
 
 @property (nonatomic, strong) WMVideoHelper *videoHelper;
-@property (nonatomic, strong) WMModelManager *modelManager;
+@property (nonatomic, strong) WMVideoModelManager *modelManager;
 @property (nonatomic, strong) UIView *cameraView;
 @property (nonatomic, strong) UIButton *backButton;
 @property (nonatomic, strong) UIButton *switchCameraButton;
@@ -35,8 +35,8 @@
     self = [super init];
     
     if (self) {
-        self.modelManager = [[WMModelManager alloc] init];
-        self.videoHelper = [[WMVideoHelper alloc] initWithModelManager:self.modelManager];
+        self.modelManager = [[WMVideoModelManager alloc] init];
+        self.videoHelper = [[WMVideoHelper alloc] initWithVideoModelManager:self.modelManager];
     }
     return self;
 }
@@ -423,7 +423,7 @@
 #pragma mark - Remove Video Button Event Handler Methods
 
 - (void)removeVideoButtonClicked:(UIButton *)sender {
-    [self.modelManager removeLastVideo];
+    [self.modelManager removeLastMedia];
     
     // progress bar 업데이트
     double result = self.shootingButton.progress - [[self.progressArray lastObject] floatValue];

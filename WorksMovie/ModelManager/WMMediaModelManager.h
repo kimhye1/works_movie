@@ -1,5 +1,5 @@
 //
-//  WMModelManager.h
+//  WMMediaModelManager.h
 //  WorksMovie
 //
 //  Created by Naver on 2016. 7. 12..
@@ -11,14 +11,14 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "WMModel.h"
+#import "WMMediaModel.h"
 
-@interface WMModelManager : NSObject
+@interface WMMediaModelManager : NSObject
 
-@property (nonatomic, strong) NSMutableArray *videoDatas;
+@property (nonatomic, strong) NSMutableArray *mediaDatas;
 
-- (void)addvideoData:(WMModel *)videoData;
-- (void)removeLastVideo;
+- (void)addMediaData:(WMMediaModel *)mediaData;
+- (void)removeLastMedia;
 - (void)removeObjectAtIndex:(NSUInteger)index;
 
 @end

@@ -10,13 +10,13 @@
 
 @interface WMMediaPlayer ()
 
-@property (nonatomic, strong) WMModelManager *modelManager;
+@property (nonatomic, strong) WMVideoModelManager *modelManager;
 
 @end
 
 @implementation WMMediaPlayer
 
-- (instancetype)initWithModelManager:(WMModelManager *)modelManager {
+- (instancetype)initWithVideoModelManager:(WMVideoModelManager *)modelManager {
     self = [super init];
     
     if (self) {
@@ -41,8 +41,8 @@
 - (void)playVideo:(UIView *)videoView {
     NSMutableArray *videoItems = [[NSMutableArray alloc] init];
     
-    for (int i = 0 ; i < self.modelManager.videoDatas.count; i++) {
-        AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:[(WMModel *)self.modelManager.videoDatas[i] videoURL]];
+    for (int i = 0 ; i < self.modelManager.mediaDatas.count; i++) {
+        AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:[(WMMediaModel *)self.modelManager.mediaDatas[i] mediaURL]];
         [videoItems addObject:playerItem];
     }
     AVQueuePlayer *player = [[AVQueuePlayer alloc] initWithItems:videoItems];

@@ -12,11 +12,11 @@
 
 
 #import <UIKit/UIKit.h>
-#import "WMModelManager.h"
+#import "WMVideoModelManager.h"
 
 @interface WMPlayAndStoreVideoViewController : UIViewController
 
-- (instancetype)initWithVideoModelManager:(WMModelManager *)videoManager;
+- (instancetype)initWithVideoModelManager:(WMVideoModelManager *)videoManager;
 
 - (void)savedAlert;
 
