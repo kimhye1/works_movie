@@ -42,7 +42,7 @@
     
     //마이크에 대한 AVCaptureDevice로 인스턴스 생성하고 AVCaptureDeviceInput을 생성한 후 세션에 추가한다.
     NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeAudio];
-    AVCaptureDeviceInput *mic = [[AVCaptureDeviceInput alloc] initWithDevice:[devices objectAtIndex:0] error:nil];
+    AVCaptureDeviceInput *mic = [[AVCaptureDeviceInput alloc] initWithDevice:[devices firstObject] error:nil];
     if ([self.session canAddInput:mic]) {
         [self.session addInput:mic];
     }
