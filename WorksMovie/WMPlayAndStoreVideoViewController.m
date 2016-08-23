@@ -381,7 +381,6 @@
     [p seekToTime:kCMTimeZero];
 }
 
-
 - (void)removeTemporarydirectoryFiles {
     NSFileManager *manager = [[NSFileManager alloc] init];
     
@@ -391,6 +390,7 @@
         }
     }
 }
+
 
 #pragma mark - back To Camera View Button Event Handler Methods
 
@@ -475,7 +475,6 @@
     UIActivityViewController *activityView = [self.videoHelper shareVideo:url];
     [self presentViewController:activityView animated:YES completion:nil];
 }
-
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];

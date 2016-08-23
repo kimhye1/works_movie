@@ -227,8 +227,7 @@ NSString *const showVideoButtonTitle = @"동영상 가져오기";
     [self presentViewController:showVideosViewController animated:YES completion:nil];
 }
 
-
--(void)dealloc {
+- (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 

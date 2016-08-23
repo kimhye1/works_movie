@@ -54,7 +54,6 @@
     return self.composition;
 }
 
-
 // modalManager의 videoData들을(촬영된 비디오들의 url) asset으로 생성
 - (void)convertVideoDatasToAssets {
     self.assets = [[NSMutableArray alloc] init];
@@ -129,5 +128,4 @@
     }];
 }
 
-     
 @end

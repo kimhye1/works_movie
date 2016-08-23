@@ -452,10 +452,8 @@
     [self.progressArray removeLastObject];
 }
 
-
 - (void)appDidBecomeActiveWhenDismissed:(NSNotification *)notice {
     [self.videoHelper startSession];
 }
-
 
 @end

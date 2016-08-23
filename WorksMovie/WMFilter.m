@@ -16,7 +16,7 @@
     if (self) {
         self.title = title;
         self.imageName = imageName;
-        self.ciFilter = [CIFilter filterWithName: self.imageName];
+        self.ciFilter = [CIFilter filterWithName:self.imageName];
     }
     
     return self;

@@ -348,10 +348,8 @@
     [self.audioHelper storeVideo:composition];
 }
 
-
--(void)dealloc {
+- (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
-
 
 @end

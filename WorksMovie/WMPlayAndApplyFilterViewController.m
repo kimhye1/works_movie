@@ -215,7 +215,6 @@ NSString *const collectionViewCellIdentifier = @"wm_collection_view_cell_identif
                                                views:@{@"filterCollectionView" : self.filterCollectionView}]];
 }
 
-
 - (void)exportVideo {
     NSString *outputVideoPath = [self outputPath];
     self.outputVideoURL = [NSURL fileURLWithPath:outputVideoPath];
@@ -389,15 +388,12 @@ NSString *const collectionViewCellIdentifier = @"wm_collection_view_cell_identif
     [self presentViewController:playAndStoreVideoViewController animated:YES completion:nil];
 }
 
-
--(void)dealloc {
+- (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-
--(void)appDidBecomeActiveWhenDismissed:(NSNotification *)notice{
+- (void)appDidBecomeActiveWhenDismissed:(NSNotification *)notice {
     [self.player play];
 }
-
 
 @end
