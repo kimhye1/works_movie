@@ -190,11 +190,11 @@
 - (void)setupCompleteRecordingButton {
     self.completeRecordingButton = [[UIButton alloc] init];
     [self.completeRecordingButton setTitle:@"완료" forState:UIControlStateNormal];
-    [self.completeRecordingButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [self.completeRecordingButton setTitleColor:[UIColor colorWithRed:0.15 green:0.16 blue:0.17 alpha:1.00] forState:UIControlStateNormal];
     [self.completeRecordingButton.titleLabel setFont:[UIFont systemFontOfSize:20]];
     self.completeRecordingButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.recordAudioContainerView addSubview:self.completeRecordingButton];
-    self.completeRecordingButton.hidden = YES;
+    self.completeRecordingButton.userInteractionEnabled = NO;
     [self.completeRecordingButton addTarget:self action:@selector(completeRecordingButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
 }
 
@@ -456,6 +456,9 @@
 - (void)recordButtonClicked:(UIButton *)sender {
     self.videoView.userInteractionEnabled = NO; // 녹음을 진행하는 동안 viewView 클릭 이벤트가 발생해 video가 play되는 것을 막는다.
     
+    self.completeRecordingButton.userInteractionEnabled = YES;
+    [self.completeRecordingButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    
     if (![self.audioHelper isRecording]) {
         self.recordButton.backgroundColor = [UIColor colorWithRed:0.15 green:0.16 blue:0.17 alpha:1.00];
         self.recordingSquare.hidden = NO;
@@ -617,10 +620,31 @@
 #pragma mark - Complete Recording Button Event Handler Methods
 
 - (void)completeRecordingButtonClicked:(UIButton *)sender {
-    [self.audioHelper stopRecording];
+    [self stopRecording];
     
     WMPlayAndStoreAudioViewController *playAndStoreViewController = [[WMPlayAndStoreAudioViewController alloc] initWithVideoModelManager:self.videoModelManager audioModelManager:self.audioModelManager];
     [self presentViewController:playAndStoreViewController animated:YES completion:nil];
+}
+
+- (void)stopRecording {
+    [self.audioHelper stopRecording];
+    
+    [self.player pause];
+    
+    self.recordButton.backgroundColor = [UIColor redColor];
+    self.recordingSquare.hidden = YES;
+    
+    [self.videoView addSubview:self.playVideoButton];
+    self.playVideoButton.hidden = NO;
+    [self.playerWithAudio pause];
+    
+    [self.audioHelper pauseRecording];
+    
+    [self.progressView setProgress:self.progress animated:NO];
+    
+    [self.recordPorgresstimer invalidate]; //timer 진행을 멈춘다.
+    
+    [self.recordMarkTimer invalidate];
 }
 
 

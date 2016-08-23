@@ -29,24 +29,35 @@
     return self;
 }
 
-- (AVMutableComposition *)mergeAudio:(NSURL *)audioURL withVideo:(NSURL *)videoURL {
+- (AVMutableComposition *)mergeAudio:(NSURL *)audioURL withVideo:(NSURL *)videoURL audioAvailable:(BOOL)audioAvailable {
     self.composition = [AVMutableComposition composition];
     
     AVURLAsset *audioAsset = [[AVURLAsset alloc]initWithURL:audioURL options:nil];
     CMTimeRange audioTimeRange = CMTimeRangeMake(kCMTimeZero, audioAsset.duration);
     
     AVMutableCompositionTrack *audioCompositionAudioTrack = [self.composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
-    [audioCompositionAudioTrack insertTimeRange:audioTimeRange ofTrack:[[audioAsset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0] atTime:kCMTimeZero error:nil];
+    [audioCompositionAudioTrack insertTimeRange:audioTimeRange ofTrack:[[audioAsset tracksWithMediaType:AVMediaTypeAudio] firstObject] atTime:kCMTimeZero error:nil];
     
     AVURLAsset *videoAsset = [[AVURLAsset alloc]initWithURL:videoURL options:nil];
-    CMTimeRange video_timeRange = CMTimeRangeMake(kCMTimeZero, audioAsset.duration);
+    CMTimeRange videoTimeRange = CMTimeRangeMake(kCMTimeZero, videoAsset.duration);
     
     AVMutableCompositionTrack *videoCompositionVideoTrack = [self.composition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
     
     CGAffineTransform transform = CGAffineTransformMakeRotation((90 * M_PI ) / 180);
     videoCompositionVideoTrack.preferredTransform = transform;
     
-    [videoCompositionVideoTrack insertTimeRange:video_timeRange ofTrack:[[videoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0] atTime:kCMTimeZero error:nil];
+    [videoCompositionVideoTrack insertTimeRange:videoTimeRange ofTrack:[[videoAsset tracksWithMediaType:AVMediaTypeVideo] firstObject] atTime:kCMTimeZero error:nil];
+    
+     AVMutableCompositionTrack *videoCompositionAuidoTrack = [self.composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
+    
+    if (audioAvailable) {
+        [videoCompositionAuidoTrack insertTimeRange:videoTimeRange ofTrack:[[videoAsset tracksWithMediaType:AVMediaTypeAudio] firstObject] atTime:kCMTimeZero error:nil];
+    }
+    
+    if (!audioAvailable) {
+        AVMutableAudioMixInputParameters *trackMix =[AVMutableAudioMixInputParameters audioMixInputParametersWithTrack:videoCompositionAuidoTrack];
+        [trackMix setVolume:0 atTime:kCMTimeZero];
+    }
     
     return self.composition;
 }
@@ -84,8 +95,8 @@
 
 // 저장된 파일을 내보낼 path생성
 - (NSString *)outputPath {
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths firstObject];
     NSString *uuid = [[NSUUID UUID] UUIDString];
     NSString *outputVideoPath =  [documentsDirectory stringByAppendingPathComponent:
                                   [NSString stringWithFormat:@"%@%@", uuid, @".mov"]];

@@ -29,6 +29,8 @@
 @property (nonatomic, strong) AVPlayer *playerWithAudio;
 @property (nonatomic, strong) AVPlayerLayer *playerLayerWithAudio;
 @property (nonatomic, strong) AVAudioPlayer *audioPlayer;
+@property (nonatomic, strong) UIButton *audioButton;
+@property (nonatomic, assign) BOOL audioAvailable;
 
 @end
 
@@ -64,6 +66,7 @@
     [self setupVideoStoreMenuContainerView];
     [self setupStoreVideoButton];
     [self setupShareVideoButton];
+    [self setupAudioButton];
 }
 
 - (void)setupVideoView {
@@ -129,7 +132,7 @@
      setImage:[UIImage imageNamed:@"shareButton"] forState:UIControlStateNormal];
     self.shareVideoButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.videoStoreMenuContainerView addSubview:self.shareVideoButton];
-//    [self.shareVideoButton addTarget:self action:@selector(shareVideoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [self.shareVideoButton addTarget:self action:@selector(shareVideoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     
     [self setupShareVideoButtonLabel];
 }
@@ -143,6 +146,16 @@
     [self.videoStoreMenuContainerView addSubview:self.shareLabel];
 }
 
+- (void)setupAudioButton {
+    self.audioButton = [[UIButton alloc] init];
+    [self.audioButton setImage:[UIImage imageNamed:@"audio"] forState:UIControlStateNormal];
+    [self.audioButton setImage:[UIImage imageNamed:@"noaudio"] forState:UIControlStateSelected];
+    self.audioAvailable = YES;
+    self.audioButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.videoView addSubview:self.audioButton];
+    [self.audioButton addTarget:self action:@selector(audioButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+}
+
 
 #pragma mark - Setup Constraints Methods
 
@@ -153,6 +166,7 @@
     [self setupVideoStoreMenuContainerViewConstraints];
     [self setupStoreVideoButtonConstraints];
     [self setupShareVideoButtonConstraints];
+    [self setupAudioButtonConstraints];
 }
 
 - (void)setupVideoViewConstraints {
@@ -276,6 +290,21 @@
                                                views:@{@"shareVideoButton" : self.shareVideoButton, @"shareLabel" : self.shareLabel}]];
 }
 
+- (void)setupAudioButtonConstraints {
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-10-[audioButton(==45)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"audioButton" : self.audioButton}]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[audioButton(==45)]-10-|"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"audioButton" : self.audioButton}]];
+
+}
+
 
 #pragma mark - Prepare Play Video And Audio Method
 
@@ -338,13 +367,30 @@
 }
 
 
+#pragma mark - Audio Button Event Handler Methods
+
+- (void)audioButtonClicked:(UIButton *)sender {
+    UIButton *button = (UIButton *)sender;
+    button.selected = !button.selected;
+    
+    if(!self.audioAvailable) {
+        self.audioAvailable = YES;
+    }
+    else {
+        self.audioAvailable = NO;
+    }
+}
+
+
 #pragma mark - Store Video Button Event Handler Methods
 
 - (void)storeVideoButtonClicked:(UIButton *)sender {
+    [self.player pause];
+    
     NSURL *audioURL = [self.audioModelManager.mediaDatas.firstObject mediaURL];
     NSURL *videoURL = [self.videoModelManager.mediaDatas.firstObject mediaURL];
     
-    AVMutableComposition *composition = [self.audioHelper mergeAudio:audioURL withVideo:videoURL];
+    AVMutableComposition *composition = [self.audioHelper mergeAudio:audioURL withVideo:videoURL audioAvailable:self.audioAvailable];
     [self.audioHelper storeVideo:composition];
 }
 

@@ -13,7 +13,7 @@
 @interface WMAudioSaver : NSObject
 
 - (instancetype)initWithVideoModelManager:(WMVideoModelManager *)modelManager audioModelManager:(WMAudioModelManager *)audioModelManager;
-- (AVMutableComposition *)mergeAudio:(NSURL *)audioURL withVideo:(NSURL *)videoURL;
+- (AVMutableComposition *)mergeAudio:(NSURL *)audioURL withVideo:(NSURL *)videoURL audioAvailable:(BOOL)audioAvailable;
 - (NSURL *)storeVideo:(AVMutableComposition *)composition;
 
 @end

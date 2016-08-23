@@ -62,8 +62,8 @@
     return [self.audioRecorder isRecording];
 }
 
-- (AVMutableComposition *)mergeAudio:(NSURL *)audioURL withVideo:(NSURL *)videoURL {
-    return [self.audioSaver mergeAudio:audioURL withVideo:videoURL];
+- (AVMutableComposition *)mergeAudio:(NSURL *)audioURL withVideo:(NSURL *)videoURL audioAvailable:(BOOL)audioAvailable {
+    return [self.audioSaver mergeAudio:audioURL withVideo:videoURL audioAvailable:audioAvailable];
 }
 
 - (NSURL *)storeVideo:(AVMutableComposition *)composition {
