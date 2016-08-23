@@ -11,6 +11,7 @@
 #import "WMShootingVideoViewController.h"
 #import "WMMediaUtils.h"
 #import "WMVideoHelper.h"
+#import "WMNotificationStrings.h"
 
 @interface WMPlayAndStoreVideoViewController ()
 
@@ -398,7 +399,7 @@
 - (void)backToCameraViewButtonClicked:(UIButton *)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"WMPlayAndStoreVideoViewController dismiss" object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WMPlayAndStoreVideoViewControllerDidDismissedNotification object:nil];
 }
 
 

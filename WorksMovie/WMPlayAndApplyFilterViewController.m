@@ -12,6 +12,7 @@
 #import "WMFilterCollectionViewCell.h"
 #import "WMFilters.h"
 #import "WMFilter.h"
+#import "WMNotificationStrings.h"
 
 @interface WMPlayAndApplyFilterViewController ()
 
@@ -63,7 +64,7 @@ NSString *const collectionViewCellIdentifier = @"wm_collection_view_cell_identif
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(appDidBecomeActiveWhenDismissed:)
-                                                 name:@"WMPlayAndStoreVideoViewController dismiss" object:nil];
+                                                 name:WMPlayAndStoreVideoViewControllerDidDismissedNotification object:nil];
 }
 
 
@@ -219,7 +220,7 @@ NSString *const collectionViewCellIdentifier = @"wm_collection_view_cell_identif
     NSString *outputVideoPath = [self outputPath];
     self.outputVideoURL = [NSURL fileURLWithPath:outputVideoPath];
     
-    AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset:self.composition presetName:AVAssetExportPresetHighestQuality];
+    AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset:self.composition presetName:AVAssetExportPresetMediumQuality];
     
     exporter.outputURL = self.outputVideoURL;
     exporter.outputFileType = AVFileTypeQuickTimeMovie;

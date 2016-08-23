@@ -79,7 +79,7 @@
     NSString *outputVideoPath = [self outputPath];
     NSURL *outputVideoURL = [NSURL fileURLWithPath:outputVideoPath];
     
-    AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset:[AVAsset assetWithURL:outputURL] presetName:AVAssetExportPresetHighestQuality];
+    AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset:[AVAsset assetWithURL:outputURL] presetName:AVAssetExportPresetMediumQuality];
     
     exporter.outputURL = outputVideoURL;
     exporter.outputFileType = AVFileTypeQuickTimeMovie;

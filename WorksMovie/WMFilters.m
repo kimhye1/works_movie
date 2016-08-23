@@ -23,15 +23,13 @@
 
 - (void)setupFilters {
     self.filters = [[NSMutableArray alloc] init];
-    [self.filters addObject:[[WMFilter alloc] initWithTitle:@"Original" imageName:@"CIColorControls"]];
-    [self.filters addObject:[[WMFilter alloc] initWithTitle:@"Chrome" imageName:@"CIPhotoEffectChrome"]];
-    [self.filters addObject:[[WMFilter alloc] initWithTitle:@"Fade" imageName:@"CIPhotoEffectFade"]];
-    [self.filters addObject:[[WMFilter alloc] initWithTitle:@"Instant" imageName:@"CIPhotoEffectInstant"]];
-    [self.filters addObject:[[WMFilter alloc] initWithTitle:@"Mono" imageName:@"CIPhotoEffectMono"]];
-    [self.filters addObject:[[WMFilter alloc] initWithTitle:@"Noir" imageName:@"CIPhotoEffectNoir"]];
-    [self.filters addObject:[[WMFilter alloc] initWithTitle:@"Process" imageName:@"CIPhotoEffectProcess"]];
-    [self.filters addObject:[[WMFilter alloc] initWithTitle:@"Tonal" imageName:@"CIPhotoEffectTonal"]];
-    [self.filters addObject:[[WMFilter alloc] initWithTitle:@"Transfer" imageName:@"CIPhotoEffectTransfer"]];
+    
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"filters"ofType:@"plist"];
+    NSArray *filtersFromPList = [[NSArray alloc] initWithContentsOfFile:path];
+    
+    for (NSMutableArray *filter in filtersFromPList) {
+        [self.filters addObject:[[WMFilter alloc] initWithTitle:filter[0] imageName:filter[1]]];
+    }
 }
 
 - (NSInteger)count {

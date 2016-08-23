@@ -9,7 +9,21 @@
 #import "WMMediaUtils.h"
 #import <AVFoundation/AVFoundation.h>
 
+#if TARGET_IPHONE_SIMULATOR
+NSString *const DeviceMode = @"Simulator";
+#else
+NSString *const DeviceMode = @"Device";
+#endif
+
 @implementation WMMediaUtils
+
++ (BOOL)isSimulator {
+    if ([DeviceMode  isEqual: @"Simulator"]) {
+        return YES;
+    } else {
+        return NO;
+    }
+}
 
 // 촬영된 비디오로부터 썸네일을 추출하여 추출된 still 이미지를 imageView에 추가한 후 imageView를 반환
 + (UIImageView *)gettingThumbnailFromVideoInView:(UIView *)videoView URL:(NSURL *)url filter:(WMFilter *)filter {

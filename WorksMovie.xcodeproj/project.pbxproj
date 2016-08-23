@@ -28,6 +28,8 @@
 		4A5C06CB1D680E1C00F770B1 /* WMFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A5C06CA1D680E1C00F770B1 /* WMFilter.m */; };
 		4A5DED1B1D61D51600B55CEB /* WMPlayAndApplyFilterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A5DED1A1D61D51600B55CEB /* WMPlayAndApplyFilterViewController.m */; };
 		4A5E15271D545D9200782A0C /* works.mov in Resources */ = {isa = PBXBuildFile; fileRef = 4A5E15261D545D9200782A0C /* works.mov */; };
+		4A6B53441D6BEAB500E93D09 /* filters.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4A6B53431D6BEAB500E93D09 /* filters.plist */; };
+		4A6B534F1D6C6A9E00E93D09 /* WMNotificationStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6B534E1D6C6A9E00E93D09 /* WMNotificationStrings.m */; };
 		4A7612A81D502E4400DEB65A /* WMAudioHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A7612A71D502E4400DEB65A /* WMAudioHelper.m */; };
 		4A7612B11D50319100DEB65A /* WMAudioRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A7612B01D50319100DEB65A /* WMAudioRecorder.m */; };
 		4A7612B41D509AC500DEB65A /* WMAudioSaver.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A7612B31D509AC500DEB65A /* WMAudioSaver.m */; };
@@ -85,6 +87,9 @@
 		4A5DED191D61D51600B55CEB /* WMPlayAndApplyFilterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMPlayAndApplyFilterViewController.h; sourceTree = "<group>"; };
 		4A5DED1A1D61D51600B55CEB /* WMPlayAndApplyFilterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMPlayAndApplyFilterViewController.m; sourceTree = "<group>"; };
 		4A5E15261D545D9200782A0C /* works.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = works.mov; sourceTree = "<group>"; };
+		4A6B53431D6BEAB500E93D09 /* filters.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = filters.plist; sourceTree = "<group>"; };
+		4A6B534D1D6C6A9E00E93D09 /* WMNotificationStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMNotificationStrings.h; sourceTree = "<group>"; };
+		4A6B534E1D6C6A9E00E93D09 /* WMNotificationStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMNotificationStrings.m; sourceTree = "<group>"; };
 		4A7612A61D502E4400DEB65A /* WMAudioHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMAudioHelper.h; sourceTree = "<group>"; };
 		4A7612A71D502E4400DEB65A /* WMAudioHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WMAudioHelper.m; sourceTree = "<group>"; };
 		4A7612A91D502E6C00DEB65A /* WMMultiMediaHelperProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMMultiMediaHelperProtocol.h; sourceTree = "<group>"; };
@@ -240,6 +245,9 @@
 				4A4A0FF41D2350330019E8FD /* LaunchScreen.storyboard */,
 				4A4A0FF71D2350330019E8FD /* Info.plist */,
 				4A4A0FE61D2350330019E8FD /* Supporting Files */,
+				4A6B53431D6BEAB500E93D09 /* filters.plist */,
+				4A6B534D1D6C6A9E00E93D09 /* WMNotificationStrings.h */,
+				4A6B534E1D6C6A9E00E93D09 /* WMNotificationStrings.m */,
 			);
 			path = WorksMovie;
 			sourceTree = "<group>";
@@ -433,6 +441,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A6B53441D6BEAB500E93D09 /* filters.plist in Resources */,
 				4A4A0FF61D2350330019E8FD /* LaunchScreen.storyboard in Resources */,
 				4A5E15271D545D9200782A0C /* works.mov in Resources */,
 				4A4A0FF31D2350330019E8FD /* Assets.xcassets in Resources */,
@@ -486,6 +495,7 @@
 				4A44CFC71D473B8600C3CC7C /* WMRecordAudioViewController.m in Sources */,
 				4A1B555B1D2E4BF000267C67 /* WMPlayAndStoreVideoViewController.m in Sources */,
 				4A4813761D34C562003DEBF1 /* WMVideoModel.m in Sources */,
+				4A6B534F1D6C6A9E00E93D09 /* WMNotificationStrings.m in Sources */,
 				4A90B5321D65A7EB002DB2A2 /* WMEditVideoViewController.m in Sources */,
 				4A4A0FFF1D2354FC0019E8FD /* WMShowVideosViewController.m in Sources */,
 				4A50B79F1D517FBA004B94B3 /* WMMediaUtils.m in Sources */,

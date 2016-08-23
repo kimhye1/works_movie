@@ -10,6 +10,7 @@
 #import "WMViewController.h"
 #import "WMShowVideosViewController.h"
 #import "WMShootingVideoViewController.h"
+#import "WMNotificationStrings.h"
 
 @interface WMViewController ()
 
@@ -35,7 +36,7 @@ NSString *const showVideoButtonTitle = @"동영상 가져오기";
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(appDidBecomeActiveWhenDismissed:)
-                                                 name:@"WMShootingVideoViewController dismiss" object:nil];
+                                                 name:WMShootingVideoViewControllerDidDismissedNotification object:nil];
 }
 
 
@@ -235,6 +236,12 @@ NSString *const showVideoButtonTitle = @"동영상 가져오기";
     [super viewWillDisappear:animated];
     
     [self.player pause];
+    
+    NSArray* tmpDirectory = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:NSTemporaryDirectory() error:NULL];
+    for (NSString *file in tmpDirectory) {
+        [[NSFileManager defaultManager] removeItemAtPath:[NSString stringWithFormat:@"%@%@", NSTemporaryDirectory(), file] error:NULL];
+    }
+
 }
 
 - (void)appDidBecomeActiveWhenDismissed:(NSNotification *)notice { 

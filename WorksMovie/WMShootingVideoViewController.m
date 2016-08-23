@@ -12,6 +12,8 @@
 #import "WMVideoHelper.h"
 #import "DALabeledCircularProgressView.h"
 #import "WMEditVideoViewController.h"
+#import "WMNotificationStrings.h"
+#import "WMMediaUtils.h"
 
 @interface WMShootingVideoViewController ()
 
@@ -51,7 +53,11 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(appDidBecomeActiveWhenDismissed:)
-                                                 name:@"WMEditVideoViewController dismiss" object:nil];
+                                                 name:WMEditVideoViewControllerDidDismissedNotification object:nil];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [self checkDevice];
 }
 
 
@@ -334,6 +340,27 @@
 }
 
 
+- (void)checkDevice {
+    if([WMMediaUtils isSimulator]) {
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"현재 기기에서는 동영상 촬영을 지원하지 않습니다."
+                                                                       message:nil
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction *ok = [UIAlertAction
+                             actionWithTitle:@"확인"
+                             style:UIAlertActionStyleDefault
+                             handler:^(UIAlertAction *action) {
+                                 [alert dismissViewControllerAnimated:YES completion:nil];
+                                 
+                             }];
+        
+        [alert addAction:ok];
+        
+        [self presentViewController:alert animated:YES completion:nil];
+    }
+}
+
+
 #pragma mark - Switch Camera Button Event Handler Methods
 
 - (void)switchCameraButtonClicked:(UIButton *)sender {
@@ -346,7 +373,7 @@
 - (void)backButtonClicked:(UIButton *)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"WMShootingVideoViewController dismiss" object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WMShootingVideoViewControllerDidDismissedNotification object:nil];
 }
 
 
