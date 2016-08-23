@@ -11,6 +11,7 @@
 #import "WMVideoHelper.h"
 #import "WMPlayAndStoreVideoViewController.h"
 #import "WMPlayAndApplyFilterViewController.h"
+#import "WMNotificationStrings.h"
 
 @interface WMEditVideoViewController ()
 
@@ -294,7 +295,7 @@ NSString *const collectionViewCellIdentifier_3 = @"wm_collection_view_cell_ident
 - (void)backButtonClicked:(UIButton *)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"WMEditVideoViewController dismiss" object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WMEditVideoViewControllerDidDismissedNotification object:nil];
 }
 
 

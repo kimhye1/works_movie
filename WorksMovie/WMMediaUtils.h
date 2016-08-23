@@ -11,6 +11,7 @@
 
 @interface WMMediaUtils : NSObject
 
++ (BOOL)isSimulator;
 + (UIImageView *)gettingThumbnailFromVideoInView:(UIView *)videoView URL:(NSURL *)url filter:(WMFilter *)filter;
 
 @end
