@@ -7,9 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "WMFilter.h"
 
 @interface WMMediaUtils : NSObject
 
-+ (UIImageView *)gettingThumbnailFromVideoInView:(UIView *)videoView withURL:(NSURL *)url;
++ (BOOL)isSimulator;
++ (UIImageView *)gettingThumbnailFromVideoInView:(UIView *)videoView URL:(NSURL *)url filter:(WMFilter *)filter;
 
 @end

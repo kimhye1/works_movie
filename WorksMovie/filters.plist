@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<array>
+		<string>Original</string>
+		<string>CIColorControls</string>
+	</array>
+	<array>
+		<string>Chrome</string>
+		<string>CIPhotoEffectChrome</string>
+	</array>
+	<array>
+		<string>Fade</string>
+		<string>CIPhotoEffectFade</string>
+	</array>
+	<array>
+		<string>Instant</string>
+		<string>CIPhotoEffectInstant</string>
+	</array>
+	<array>
+		<string>Mono</string>
+		<string>CIPhotoEffectMono</string>
+	</array>
+	<array>
+		<string>Noir</string>
+		<string>CIPhotoEffectNoir</string>
+	</array>
+	<array>
+		<string>Process</string>
+		<string>CIPhotoEffectProcess</string>
+	</array>
+	<array>
+		<string>Tonal</string>
+		<string>CIPhotoEffectTonal</string>
+	</array>
+	<array>
+		<string>Transfer</string>
+		<string>CIPhotoEffectTransfer</string>
+	</array>
+</array>
+</plist>

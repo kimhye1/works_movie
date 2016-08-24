@@ -13,11 +13,16 @@
 
 #import <UIKit/UIKit.h>
 #import "WMVideoModelManager.h"
+#import "WMFilter.h"
 
 @interface WMPlayAndStoreVideoViewController : UIViewController
 
-- (instancetype)initWithVideoModelManager:(WMVideoModelManager *)videoManager;
+@property (nonatomic, strong) WMFilter *filter;
 
+- (instancetype)initWithVideoModelManager:(WMVideoModelManager *)modelManager
+                              composition:(AVVideoComposition *)composition
+                                outputURL:(NSURL *)outputURL
+                                   filter:(WMFilter *)filter;
 - (void)savedAlert;
 
 @end

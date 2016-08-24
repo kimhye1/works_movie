@@ -36,7 +36,7 @@
     CMTimeRange audioTimeRange = CMTimeRangeMake(kCMTimeZero, audioAsset.duration);
     
     AVMutableCompositionTrack *audioCompositionAudioTrack = [self.composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
-    [audioCompositionAudioTrack insertTimeRange:audioTimeRange ofTrack:[[audioAsset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0] atTime:kCMTimeZero error:nil];
+    [audioCompositionAudioTrack insertTimeRange:audioTimeRange ofTrack:[[audioAsset tracksWithMediaType:AVMediaTypeAudio] firstObject] atTime:kCMTimeZero error:nil];
     
     AVURLAsset *videoAsset = [[AVURLAsset alloc]initWithURL:videoURL options:nil];
     CMTimeRange video_timeRange = CMTimeRangeMake(kCMTimeZero, audioAsset.duration);
@@ -46,7 +46,7 @@
     CGAffineTransform transform = CGAffineTransformMakeRotation((90 * M_PI ) / 180);
     videoCompositionVideoTrack.preferredTransform = transform;
     
-    [videoCompositionVideoTrack insertTimeRange:video_timeRange ofTrack:[[videoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0] atTime:kCMTimeZero error:nil];
+    [videoCompositionVideoTrack insertTimeRange:video_timeRange ofTrack:[[videoAsset tracksWithMediaType:AVMediaTypeVideo] firstObject] atTime:kCMTimeZero error:nil];
     
     return self.composition;
 }
@@ -56,7 +56,7 @@
     NSString *outputVideoPath = [self outputPath];
     NSURL *outputVideoURL = [NSURL fileURLWithPath:outputVideoPath];
     
-    AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset:composition presetName:AVAssetExportPresetHighestQuality];
+    AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset:composition presetName:AVAssetExportPresetMediumQuality];
     
     exporter.outputURL = outputVideoURL;
     exporter.outputFileType = AVFileTypeQuickTimeMovie;
@@ -85,7 +85,7 @@
 // 저장된 파일을 내보낼 path생성
 - (NSString *)outputPath {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *documentsDirectory = [paths firstObject];
     NSString *uuid = [[NSUUID UUID] UUIDString];
     NSString *outputVideoPath =  [documentsDirectory stringByAppendingPathComponent:
                                   [NSString stringWithFormat:@"%@%@", uuid, @".mov"]];
