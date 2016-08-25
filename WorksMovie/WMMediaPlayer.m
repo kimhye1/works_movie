@@ -51,6 +51,7 @@
     [playerLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
     playerLayer.frame = videoView.frame;
     
+    [playerLayer removeFromSuperlayer];
     [videoView.layer addSublayer:playerLayer];
     
     [player play];

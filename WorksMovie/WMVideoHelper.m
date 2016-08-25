@@ -77,8 +77,8 @@
     return [self.videoSaver mergeVideo];
 }
 
-- (NSURL *)storeVideo:(AVVideoComposition *)videoComposition outputURL:(NSURL *)outputURL alertLabel:(UILabel *)saveAlertLabel {
-    return [self.videoSaver storeVideo:videoComposition outputURL:outputURL alertLabel:saveAlertLabel];
+- (NSURL *)storeVideo:(AVVideoComposition *)videoComposition outputURL:(NSURL *)outputURL alertLabel:(UILabel *)saveAlertLabel savigView:(UIView *)savingView {
+    return [self.videoSaver storeVideo:videoComposition outputURL:outputURL alertLabel:saveAlertLabel savigView:savingView];
 }
 
 - (UIActivityViewController *)shareVideo:(NSURL *)outputURL {

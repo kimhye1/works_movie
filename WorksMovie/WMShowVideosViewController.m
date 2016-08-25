@@ -10,6 +10,7 @@
 #import "WMCollectionViewCell.h"
 #import <Photos/Photos.h>
 #import "WMRecordAudioViewController.h"
+#import "WMNotificationStrings.h"
 
 @interface WMShowVideosViewController ()
 
@@ -69,7 +70,7 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
 
 - (void)setupTitleView {
     self.titleView = [[UIView alloc] init];
-    self.titleView.backgroundColor = [UIColor colorWithRed:0.21 green:0.62 blue:0.13 alpha:1.00];
+    self.titleView.backgroundColor = [UIColor colorWithRed:0.15 green:0.16 blue:0.17 alpha:1.00];
     self.titleView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.titleView];
     
@@ -99,7 +100,7 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
     
     self.collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
     self.collectionView.translatesAutoresizingMaskIntoConstraints = NO;
-    self.collectionView.backgroundColor = [UIColor whiteColor];
+    self.collectionView.backgroundColor = [UIColor colorWithRed:0.15 green:0.16 blue:0.17 alpha:1.00];
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self;
     
@@ -245,7 +246,7 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
     WMCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kCollectionViewCellIdentifier forIndexPath:indexPath];
     
     // 선택 상태에 따른 셀UI 업데이트
-    cell.layer.borderColor = (cell.selected) ? [UIColor yellowColor].CGColor : nil;
+    cell.layer.borderColor = (cell.selected) ? [UIColor colorWithRed:0.21 green:0.62 blue:0.13 alpha:1.00].CGColor : nil;
     cell.layer.borderWidth = (cell.selected) ? 5.0f : 0.0f;
     cell.imageView.image = nil;
     
@@ -264,7 +265,7 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     self.cell = [collectionView cellForItemAtIndexPath:indexPath];
     
-    self.cell.layer.borderColor = [UIColor yellowColor].CGColor;
+    self.cell.layer.borderColor = [UIColor colorWithRed:0.21 green:0.62 blue:0.13 alpha:1.00].CGColor;
     self.cell.layer.borderWidth = 5.0f;
     self.selectButton.hidden = NO;
 
@@ -304,7 +305,7 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
 - (void)backButtonClicked:(UIButton *)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"WMShootingVideoViewController dismiss" object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WMShootingVideoViewControllerDidDismissedNotification object:nil];
 }
 
 

@@ -67,8 +67,8 @@
     return [self.audioSaver mergeAudio:audioURL withVideo:videoURL audioAvailable:audioAvailable];
 }
 
-- (NSURL *)storeVideo:(AVMutableComposition *)composition videoComposition:(AVVideoComposition *)videoComposition {
-    return [self.audioSaver storeVideo:composition videoComposition:videoComposition];
+- (NSURL *)storeVideo:(AVMutableComposition *)composition videoComposition:(AVVideoComposition *)videoComposition alertLabel:(UILabel *)saveAlertLabel savigView:(UIView *)savingView {
+    return [self.audioSaver storeVideo:composition videoComposition:videoComposition alertLabel:saveAlertLabel savigView:savingView];
 }
 
 - (UIActivityViewController *)shareVideo:(NSURL *)outputURL {

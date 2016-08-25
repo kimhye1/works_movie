@@ -10,6 +10,7 @@
 #import "WMPlayAndStoreAudioViewController.h"
 #import "WMMediaUtils.h"
 #import "WMAudioHelper.h"
+#import "WMNotificationStrings.h"
 
 @interface WMPlayAndStoreAudioViewController ()
 
@@ -33,6 +34,11 @@
 @property (nonatomic, assign) BOOL audioAvailable;
 @property (nonatomic, strong) AVVideoComposition *videoComposition;
 @property (nonatomic, strong) UILabel *userGuideLabel;
+@property (nonatomic, strong) UIButton *goHomeButton;
+@property (nonatomic, strong) UILabel *saveAlertLabel;
+@property (nonatomic, strong) UIView *savingView;
+@property (nonatomic, strong) UILabel *savigLabel;
+@property (nonatomic, strong) UIActivityIndicatorView *indicatorView;
 
 @end
 
@@ -86,17 +92,16 @@
     [self setupStoreVideoButton];
     [self setupShareVideoButton];
     [self setupAudioButton];
+    [self setupGoToHomeButton];
+    [self setupSaveAlertView];
 }
 
 - (void)setupVideoView {
-    self.videoView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height-200)];
+    self.videoView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - 170)];
     self.videoView.translatesAutoresizingMaskIntoConstraints = NO;
     
     // thumbnail 추출
-    //    UIImageView *imageView = [WMMediaUtils gettingThumbnailFromVideoInView:self.videoView URL:[(WMMediaModel *)self.videoModelManager.mediaDatas.firstObject mediaURL] filter:nil];
     UIImageView *imageView = [WMMediaUtils gettingThumbnailFromVideoInView:self.videoView URL:[self.videoModelManager.mediaDatas.firstObject mediaURL] filter:self.filter];
-
-    
     
     [self.videoView addSubview:imageView];
     [self.view addSubview:self.videoView];
@@ -113,11 +118,20 @@
     [self.backButton addTarget:self action:@selector(backButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
 }
 
+- (void)setupGoToHomeButton {
+    self.goHomeButton = [[UIButton alloc] init];
+    [self.goHomeButton setImage:[UIImage imageNamed:@"Home-100"] forState:UIControlStateNormal];
+    self.goHomeButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.videoView addSubview:self.goHomeButton];
+    [self.goHomeButton addTarget:self action:@selector(goToHomeButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+}
+
 - (void)setupPlayVideoAndAudioButton {
     self.playVideoAndAudioButton = [[UIButton alloc] init];
     [self.playVideoAndAudioButton setImage:[UIImage imageNamed:@"Play"] forState:UIControlStateNormal];
     self.playVideoAndAudioButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.videoView addSubview:self.playVideoAndAudioButton];
+        self.playVideoAndAudioButton.enabled = NO;
 }
 
 - (void)setupVideoStoreMenuContainerView {
@@ -191,6 +205,50 @@
     [self.videoView addSubview:self.userGuideLabel];
 }
 
+- (void)setupSaveAlertView {
+    self.saveAlertLabel = [[UILabel alloc] init];
+    self.saveAlertLabel.text = @"영상을 저장했습니다.";
+    self.saveAlertLabel.textColor = [UIColor whiteColor];
+    self.saveAlertLabel.textAlignment = NSTextAlignmentCenter;
+    self.saveAlertLabel.backgroundColor = [UIColor colorWithRed:0.15 green:0.16 blue:0.17 alpha:1.00];
+    [self.saveAlertLabel setFont:[UIFont systemFontOfSize:15]];
+    self.saveAlertLabel.layer.cornerRadius = 8;
+    self.saveAlertLabel.clipsToBounds = YES;
+    self.saveAlertLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.videoView addSubview:self.saveAlertLabel];
+    self.saveAlertLabel.hidden = YES;
+}
+
+- (void)setupSavingView {
+    self.savingView = [[UIView alloc] init];
+    self.savingView.layer.cornerRadius = 15;
+    self.savingView.layer.masksToBounds = YES;
+    self.savingView.backgroundColor = [[UIColor colorWithRed:0.15 green:0.16 blue:0.17 alpha:1.00] colorWithAlphaComponent:0.7f];
+    self.savingView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:self.savingView];
+    
+    [self setupSavigLabel];
+    [self setupActivitiIndicatorView];
+}
+
+- (void)setupSavigLabel {
+    self.savigLabel = [[UILabel alloc] init];
+    self.savigLabel.text = @"저장 중 입니다";
+    self.savigLabel.textColor = [UIColor whiteColor];
+    self.savigLabel.textAlignment = NSTextAlignmentCenter;
+    [self.savigLabel setFont:[UIFont systemFontOfSize:16]];
+    self.savigLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.savingView addSubview:self.savigLabel];
+}
+
+- (void)setupActivitiIndicatorView {
+    self.indicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+    self.indicatorView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.indicatorView.transform = CGAffineTransformMakeScale(1.5, 1.5);
+    [self.indicatorView startAnimating];
+    [self.savingView addSubview:self.indicatorView];
+}
+
 
 #pragma mark - Setup Constraints Methods
 
@@ -202,6 +260,8 @@
     [self setupStoreVideoButtonConstraints];
     [self setupShareVideoButtonConstraints];
     [self setupAudioButtonConstraints];
+    [self setupGoToHomeButtonConstraints];
+    [self setupSaveAlertViewConstraints];
 }
 
 - (void)setupVideoViewConstraints {
@@ -212,7 +272,7 @@
                                                views:@{@"videoView" : self.videoView}]];
     
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[videoView]-200-|"
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[videoView]-170-|"
                                              options:0
                                              metrics:nil
                                                views:@{@"videoView" : self.videoView}]];
@@ -260,7 +320,7 @@
                                                views:@{@"videoStoreMenuContainerView" : self.videoStoreMenuContainerView}]];
     
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[videoStoreMenuContainerView(==200)]|"
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[videoStoreMenuContainerView(==170)]|"
                                              options:0
                                              metrics:nil
                                                views:@{@"videoView" : self.videoView, @"videoStoreMenuContainerView" : self.videoStoreMenuContainerView}]];
@@ -272,16 +332,6 @@
                                              options:0
                                              metrics:nil
                                                views:@{@"storeVideoButton" : self.storeVideoButton}]];
-    
-    [self.view addConstraint:
-     [NSLayoutConstraint constraintWithItem:self.videoStoreMenuContainerView
-                                  attribute:NSLayoutAttributeCenterY
-                                  relatedBy:NSLayoutRelationEqual
-                                     toItem:self.storeVideoButton
-                                  attribute:NSLayoutAttributeCenterY
-                                 multiplier:1
-                                   constant:0]];
-    
     [self.view addConstraints:
      [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-84-[storeLabel]"
                                              options:0
@@ -289,11 +339,10 @@
                                                views:@{@"storeLabel" : self.storeLabel}]];
     
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[storeVideoButton]-10-[storeLabel]"
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-47-[storeVideoButton]-10-[storeLabel]"
                                              options:0
                                              metrics:nil
                                                views:@{@"storeVideoButton" : self.storeVideoButton, @"storeLabel" : self.storeLabel}]];
-    
 }
 
 - (void)setupShareVideoButtonConstraints {
@@ -303,15 +352,6 @@
                                              metrics:nil
                                                views:@{@"shareVideoButton" : self.shareVideoButton}]];
     
-    [self.view addConstraint:
-     [NSLayoutConstraint constraintWithItem:self.videoStoreMenuContainerView
-                                  attribute:NSLayoutAttributeCenterY
-                                  relatedBy:NSLayoutRelationEqual
-                                     toItem:self.shareVideoButton
-                                  attribute:NSLayoutAttributeCenterY
-                                 multiplier:1
-                                   constant:0]];
-    
     [self.view addConstraints:
      [NSLayoutConstraint constraintsWithVisualFormat:@"H:[shareLabel]-84-|"
                                              options:0
@@ -319,7 +359,7 @@
                                                views:@{@"shareLabel" : self.shareLabel}]];
     
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[shareVideoButton]-10-[shareLabel]"
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-47-[shareVideoButton]-10-[shareLabel]"
                                              options:0
                                              metrics:nil
                                                views:@{@"shareVideoButton" : self.shareVideoButton, @"shareLabel" : self.shareLabel}]];
@@ -350,6 +390,111 @@
                                                                       options:0
                                                                       metrics:nil
                                                                         views:@{@"userGuideLabel" : self.userGuideLabel}]];
+}
+
+- (void)setupGoToHomeButtonConstraints {
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[goHomeButton(==33)]-20-|"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"goHomeButton" : self.goHomeButton}]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-20-[goHomeButton(==30)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"goHomeButton" : self.goHomeButton}]];
+}
+
+- (void)setupSaveAlertViewConstraints {
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:self.videoView
+                                  attribute:NSLayoutAttributeCenterX
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.saveAlertLabel
+                                  attribute:NSLayoutAttributeCenterX
+                                 multiplier:1
+                                   constant:0]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[saveAlertLabel(==150)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"saveAlertLabel" : self.saveAlertLabel}]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[saveAlertLabel(==40)]-50-|"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"saveAlertLabel" : self.saveAlertLabel}]];
+}
+
+- (void)setupSavingViewConstraints {
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:self.view
+                                  attribute:NSLayoutAttributeCenterX
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.savingView
+                                  attribute:NSLayoutAttributeCenterX
+                                 multiplier:1
+                                   constant:0]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[savingView(==170)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"savingView" : self.savingView}]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-190-[savingView(==105)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"savingView" : self.savingView}]];
+    
+    [self setupSavigLabelConstraints];
+    [self setupActivitiIndicatorViewConstraints];
+}
+
+- (void)setupSavigLabelConstraints {
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:self.savingView
+                                  attribute:NSLayoutAttributeCenterX
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.savigLabel
+                                  attribute:NSLayoutAttributeCenterX
+                                 multiplier:1
+                                   constant:0]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[savigLabel(==120)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"savigLabel" : self.savigLabel}]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-20-[savigLabel(==20)]-15-[indicatorView(==30)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"savigLabel" : self.savigLabel, @"indicatorView" : self.indicatorView}]];
+    
+}
+
+- (void)setupActivitiIndicatorViewConstraints {
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:self.savingView
+                                  attribute:NSLayoutAttributeCenterX
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.indicatorView
+                                  attribute:NSLayoutAttributeCenterX
+                                 multiplier:1
+                                   constant:0]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[indicatorView(==30)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"indicatorView" : self.indicatorView}]];
+    
 }
 
 
@@ -399,13 +544,17 @@
 // viewView를 tap하면 비디오의 재생 상태에 따라 play또는 pause시킨다.
 - (void)videoViewTapped:(UITapGestureRecognizer *)sender {
     if (self.player.rate == 1.0) { // 재생 중일 때 실행
+        [self.videoView addSubview:self.backButton];
+        [self.videoView addSubview:self.goHomeButton];
         self.playVideoAndAudioButton.hidden = NO;
         self.backButton.hidden = NO;
+        self.goHomeButton.hidden = NO;
         [self.player pause];
         [self.audioPlayer pause];
     } else if (self.player.rate == 0.0) { // 정지 상태일 때 실행
         self.playVideoAndAudioButton.hidden = YES;
         self.backButton.hidden = YES;
+        self.goHomeButton.hidden = YES;
         [self.videoView.layer insertSublayer:self.playerLayer below:self.playVideoAndAudioButton.layer];
         [self.player play];
         [self.audioPlayer play];
@@ -463,6 +612,9 @@
 #pragma mark - Store Video Button Event Handler Methods
 
 - (void)storeVideoButtonClicked:(UIButton *)sender {
+    [self setupSavingView];
+    [self setupSavingViewConstraints];
+
     [self.player pause];
     
     [self.videoView addSubview:self.backButton];
@@ -481,7 +633,7 @@
     NSURL *videoURL = [self.videoModelManager.mediaDatas.firstObject mediaURL];
     
     AVMutableComposition *composition = [self.audioHelper mergeAudio:audioURL withVideo:videoURL audioAvailable:self.audioAvailable];
-    [self.audioHelper storeVideo:composition videoComposition:self.videoComposition];
+    [self.audioHelper storeVideo:composition videoComposition:self.videoComposition alertLabel:self.saveAlertLabel savigView:self.savingView];
 
 }
 
@@ -489,18 +641,68 @@
 #pragma mark - Share Video Button Event Handler Methods
 
 - (void)shareVideoButtonClicked:(UIButton *)sender {
-//    self.saveAlertLabel = nil;
+    self.saveAlertLabel = nil;
+
     [self.player pause];
     
     NSURL *audioURL = [self.audioModelManager.mediaDatas.firstObject mediaURL];
     NSURL *videoURL = [self.videoModelManager.mediaDatas.firstObject mediaURL];
 
     AVMutableComposition *composition = [self.audioHelper mergeAudio:audioURL withVideo:videoURL audioAvailable:self.audioAvailable];
-    NSURL *url = [self.audioHelper storeVideo:composition videoComposition:self.videoComposition];
+    NSURL *url = [self.audioHelper storeVideo:composition videoComposition:self.videoComposition alertLabel:(UILabel *)self.saveAlertLabel savigView:(UIView *)self.savingView];
     
     UIActivityViewController *activityView = [self.audioHelper shareVideo:url];
     [self presentViewController:activityView animated:YES completion:nil];
 }
+
+
+#pragma mark - Go To Home Button Event Handler Methods
+
+//goToHomeButto을 누르면 홈화면으로 되돌아간다.
+- (void)goToHomeButtonClicked:(UIButton *)sender {
+    [self alertResetVideo];
+}
+
+- (void)alertResetVideo {
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"홈 화면으로 이동하겠습니까?"
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *cancel = [UIAlertAction
+                             actionWithTitle:@"취소"
+                             style:UIAlertActionStyleDefault
+                             handler:^(UIAlertAction *action) {
+                                 [alert dismissViewControllerAnimated:YES completion:nil];
+                                 
+                             }];
+    
+    __weak typeof(self) weakSelf = self;
+    UIAlertAction *reset = [UIAlertAction
+                            actionWithTitle:@"이동"
+                            style:UIAlertActionStyleDefault
+                            handler:^(UIAlertAction *action) {
+                                __strong typeof(weakSelf) strongSelf = weakSelf;
+                                [alert dismissViewControllerAnimated:YES completion:nil];
+                                
+                                [strongSelf.videoModelManager.mediaDatas removeAllObjects];
+                                [strongSelf.audioModelManager.mediaDatas removeAllObjects];
+                                
+                                dispatch_async(dispatch_get_main_queue(), ^{
+                                    UIViewController *vc = strongSelf.presentingViewController;
+                                    while (vc.presentingViewController) {
+                                        vc = vc.presentingViewController;
+                                    }
+                                    
+                                    [vc dismissViewControllerAnimated:YES completion:NULL];
+                                    [[NSNotificationCenter defaultCenter] postNotificationName:WMShootingVideoViewControllerDidDismissedNotification object:nil];
+                                });
+                            }];
+    [alert addAction:cancel];
+    [alert addAction:reset];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
 
 
 - (void)dealloc {

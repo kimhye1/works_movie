@@ -24,7 +24,7 @@
 - (BOOL)isRecording;
 
 - (AVMutableComposition *)mergeAudio:(NSURL *)audioURL withVideo:(NSURL *)videoURL audioAvailable:(BOOL)audioAvailable;
-- (NSURL *)storeVideo:(AVMutableComposition *)composition videoComposition:(AVVideoComposition *)videoComposition;
+- (NSURL *)storeVideo:(AVMutableComposition *)composition videoComposition:(AVVideoComposition *)videoComposition alertLabel:(UILabel *)saveAlertLabel savigView:(UIView *)savingView;
 - (UIActivityViewController *)shareVideo:(NSURL *)outputURL;
 
 @end

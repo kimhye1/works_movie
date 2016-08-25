@@ -33,6 +33,9 @@
 @property (nonatomic, strong) UILabel *saveAlertLabel;
 @property (nonatomic, strong) AVVideoComposition *composition;
 @property (nonatomic, strong) NSURL *outputURL;
+@property (nonatomic, strong) UIView *savingView;
+@property (nonatomic, strong) UILabel *savigLabel;
+@property (nonatomic, strong) UIActivityIndicatorView *indicatorView;
 
 @end
 
@@ -61,6 +64,14 @@
     [self setupConstraints];
     
     [self preparePlayVideo];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applicationWillResignActive:)
+                                                 name:UIApplicationWillResignActiveNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(appDidBecomeActive:)
+                                                 name:UIApplicationDidBecomeActiveNotification object:nil];
 }
 
 
@@ -101,7 +112,7 @@
 
 - (void)setupResetAndbackToCameraButton {
     self.resetAndbackToCameraButton = [[UIButton alloc] init];
-    [self.resetAndbackToCameraButton setImage:[UIImage imageNamed:@"videoButton"] forState:UIControlStateNormal];
+    [self.resetAndbackToCameraButton setImage:[UIImage imageNamed:@"Home-100"] forState:UIControlStateNormal];
     self.resetAndbackToCameraButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.videoView addSubview:self.resetAndbackToCameraButton];
     [self.resetAndbackToCameraButton addTarget:self action:@selector(resetAndbackToCameraButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
@@ -176,6 +187,36 @@
     self.saveAlertLabel.hidden = YES;
 }
 
+- (void)setupSavingView {
+    self.savingView = [[UIView alloc] init];
+    self.savingView.layer.cornerRadius = 15;
+    self.savingView.layer.masksToBounds = YES;
+    self.savingView.backgroundColor = [[UIColor colorWithRed:0.15 green:0.16 blue:0.17 alpha:1.00] colorWithAlphaComponent:0.7f];
+    self.savingView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:self.savingView];
+    
+    [self setupSavigLabel];
+    [self setupActivitiIndicatorView];
+}
+
+- (void)setupSavigLabel {
+    self.savigLabel = [[UILabel alloc] init];
+    self.savigLabel.text = @"저장 중 입니다";
+    self.savigLabel.textColor = [UIColor whiteColor];
+    self.savigLabel.textAlignment = NSTextAlignmentCenter;
+    [self.savigLabel setFont:[UIFont systemFontOfSize:16]];
+    self.savigLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.savingView addSubview:self.savigLabel];
+}
+
+- (void)setupActivitiIndicatorView {
+    self.indicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+    self.indicatorView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.indicatorView.transform = CGAffineTransformMakeScale(1.5, 1.5);
+    [self.indicatorView startAnimating];
+    [self.savingView addSubview:self.indicatorView];
+}
+
 
 #pragma mark - Setup Constraints Methods
 
@@ -206,13 +247,13 @@
 
 - (void)setupBackToCameraViewButtonConstraints {
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-15-[backToCameraViewButton(==40)]"
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-13-[backToCameraViewButton(==40)]"
                                             options:0
                                             metrics:nil
                                                views:@{@"backToCameraViewButton" : self.backToCameraViewButton}]];
     
      [self.view addConstraints:
-        [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-20-[backToCameraViewButton(==40)]"
+        [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-15-[backToCameraViewButton(==40)]"
                                             options:0
                                             metrics:nil
                                                 views:@{@"backToCameraViewButton" : self.backToCameraViewButton}]];
@@ -220,13 +261,13 @@
 
 - (void)setupResetAndbackToCameraButtonConstraints {
     [self.view addConstraints:
-        [NSLayoutConstraint constraintsWithVisualFormat:@"H:[resetAndbackToCameraButton(==40)]-20-|"
+        [NSLayoutConstraint constraintsWithVisualFormat:@"H:[resetAndbackToCameraButton(==33)]-20-|"
                                                 options:0
                                                 metrics:nil
                                                     views:@{@"resetAndbackToCameraButton" : self.resetAndbackToCameraButton}]];
     
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-20-[resetAndbackToCameraButton(==40)]"
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-20-[resetAndbackToCameraButton(==30)]"
                                              options:0
                                              metrics:nil
                                                views:@{@"resetAndbackToCameraButton" : self.resetAndbackToCameraButton}]];
@@ -328,6 +369,74 @@
                                                views:@{@"saveAlertLabel" : self.saveAlertLabel}]];
 }
 
+- (void)setupSavingViewConstraints {
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:self.view
+                                  attribute:NSLayoutAttributeCenterX
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.savingView
+                                  attribute:NSLayoutAttributeCenterX
+                                 multiplier:1
+                                   constant:0]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[savingView(==170)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"savingView" : self.savingView}]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-190-[savingView(==105)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"savingView" : self.savingView}]];
+    
+    [self setupSavigLabelConstraints];
+    [self setupActivitiIndicatorViewConstraints];
+}
+
+- (void)setupSavigLabelConstraints {
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:self.savingView
+                                  attribute:NSLayoutAttributeCenterX
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.savigLabel
+                                  attribute:NSLayoutAttributeCenterX
+                                 multiplier:1
+                                   constant:0]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[savigLabel(==120)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"savigLabel" : self.savigLabel}]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-20-[savigLabel(==20)]-15-[indicatorView(==30)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"savigLabel" : self.savigLabel, @"indicatorView" : self.indicatorView}]];
+
+}
+
+- (void)setupActivitiIndicatorViewConstraints {
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:self.savingView
+                                  attribute:NSLayoutAttributeCenterX
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.indicatorView
+                                  attribute:NSLayoutAttributeCenterX
+                                 multiplier:1
+                                   constant:0]];
+    
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[indicatorView(==30)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"indicatorView" : self.indicatorView}]];
+
+}
+
 
 #pragma mark - Prepare Play Video
 
@@ -357,12 +466,15 @@
 - (void)videoViewTapped:(UITapGestureRecognizer *)sender {
     if ([self isPlaying]) {
         [self.videoView addSubview:self.backToCameraViewButton];
+        [self.videoView addSubview:self.resetAndbackToCameraButton];
         self.playVideoButton.hidden = NO;
         self.backToCameraViewButton.hidden = NO;
+        self.resetAndbackToCameraButton.hidden = NO;
         [self.player pause];
     } else {
         self.playVideoButton.hidden = YES;
         self.backToCameraViewButton.hidden = YES;
+        self.resetAndbackToCameraButton.hidden = YES;
         
         [self.videoView.layer insertSublayer:self.playerLayer below:self.playVideoButton.layer];
         [self.player play];
@@ -441,7 +553,7 @@
                                      }
                                      
                                      [vc dismissViewControllerAnimated:YES completion:NULL];
-                                     [[NSNotificationCenter defaultCenter] postNotificationName:@"WMShootingVideoViewController dismiss" object:nil];
+                                     [[NSNotificationCenter defaultCenter] postNotificationName:WMShootingVideoViewControllerDidDismissedNotification object:nil];
                                  });
                              }];
     [alert addAction:cancel];
@@ -454,15 +566,21 @@
 #pragma mark - Store Video Button Event Handler Methods
 
 - (void)storeVideoButtonClicked:(UIButton *)sender {
+    [self setupSavingView];
+    [self setupSavingViewConstraints];
+    
+    [self.player pause];
+    self.playerLayer.player = nil;
+    
     [self.videoView addSubview:self.backToCameraViewButton];
     self.playVideoButton.hidden = NO;
     self.backToCameraViewButton.hidden = NO;
-    [self.player pause];
-    [self.playerLayer.player pause];
-    [self.playerLayer removeFromSuperlayer];
-    self.player = nil;
+//    [self.player pause];
+//    [self.playerLayer.player pause];
+//    [self.playerLayer removeFromSuperlayer];
+//    self.player = nil;
  
-    [self.videoHelper storeVideo:self.composition outputURL:self.outputURL alertLabel:self.saveAlertLabel];
+    [self.videoHelper storeVideo:self.composition outputURL:self.outputURL alertLabel:self.saveAlertLabel savigView:self.savingView];
 }
 
 
@@ -471,7 +589,9 @@
 - (void)shareVideoButtonClicked:(UIButton *)sender {
     self.saveAlertLabel = nil;
     [self.player pause];
-    NSURL *url = [self.videoHelper storeVideo:self.composition outputURL:self.outputURL alertLabel:(UILabel *)self.saveAlertLabel];
+    self.playerLayer.player = nil;
+    
+    NSURL *url = [self.videoHelper storeVideo:self.composition outputURL:self.outputURL alertLabel:(UILabel *)self.saveAlertLabel savigView:(UIView *)self.savingView];
 
     UIActivityViewController *activityView = [self.videoHelper shareVideo:url];
     [self presentViewController:activityView animated:YES completion:nil];
@@ -479,6 +599,35 @@
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+
+#pragma mark - Notificatioin Handler Methods
+
+- (void)applicationWillResignActive:(NSNotification *)notification {
+//    if ([self isPlaying]) {
+        [self.player pause];
+        self.playerLayer.player = nil;
+//    }
+
+    
+//        [self.playerLayer.player pause];
+//        [self.playerLayer removeFromSuperlayer];
+//        self.player = nil;
+//    self.playerItem = nil;
+//    self.playerLayer = nil;
+    
+}
+
+- (void)appDidBecomeActive:(NSNotification *)notification {
+//    self.playerLayer.player = self.player;
+//    [self.player play];
+//    if ([self isPlaying]) {
+//        [self preparePlayVideo];
+//    }
+    
+
+
 }
 
 @end

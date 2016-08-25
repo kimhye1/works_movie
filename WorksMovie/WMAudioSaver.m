@@ -14,6 +14,8 @@
 @property (nonatomic, strong) WMVideoModelManager *videoModelManager;
 @property (nonatomic, strong) WMAudioModelManager *audioModelManager;
 @property (nonatomic, strong) AVMutableComposition *composition;
+@property (nonatomic, strong) UILabel *saveAlertLabel;
+@property (nonatomic, strong) UIView *savingView;
 
 @end
 
@@ -75,7 +77,10 @@
 }
 
 // 카메라 롤에 merge된 비디오를 저장하는 메소드
-- (NSURL *)storeVideo:(AVMutableComposition *)composition videoComposition:(AVVideoComposition *)videoComposition {
+- (NSURL *)storeVideo:(AVMutableComposition *)composition videoComposition:(AVVideoComposition *)videoComposition alertLabel:(UILabel *)saveAlertLabel savigView:(UIView *)savingView {
+    self.saveAlertLabel = saveAlertLabel;
+    self.savingView = savingView;
+    
     [self removeTemporarydirectoryFiles];
     
     NSString *outputVideoPath = [self outputPath];
@@ -131,7 +136,23 @@
         NSLog(@"error");
     } else {
         NSLog(@"finish saving");
+        [self savedAlert:self.saveAlertLabel];
+        self.savingView.hidden = YES;
     }
+}
+
+- (void)savedAlert:(UILabel *)saveAlertLabel {
+    saveAlertLabel.hidden = NO;
+    
+    [saveAlertLabel setAlpha:0.0f];
+    
+    [UIView animateWithDuration:1.0f animations:^{ // fade in
+        [saveAlertLabel setAlpha:1.0f];
+    } completion:^(BOOL finished) {
+        [UIView animateWithDuration:1.0f animations:^{ // fade out
+            [saveAlertLabel setAlpha:0.0f];
+        } completion:nil];
+    }];
 }
 
 @end

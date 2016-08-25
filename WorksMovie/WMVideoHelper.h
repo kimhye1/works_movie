@@ -26,7 +26,7 @@
 - (void)playVideo:(UIView *)videoView;
 
 - (AVMutableComposition *)mergeVideo;
-- (NSURL *)storeVideo:(AVVideoComposition *)videoComposition outputURL:(NSURL *)outputURL alertLabel:(UILabel *)saveAlertLabel;
+- (NSURL *)storeVideo:(AVVideoComposition *)videoComposition outputURL:(NSURL *)outputURL alertLabel:(UILabel *)saveAlertLabel savigView:(UIView *)savingView;
 
 - (UIActivityViewController *)shareVideo:(NSURL *)outputURL;
 

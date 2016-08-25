@@ -94,7 +94,7 @@
 }
 
 - (void)setupVideoView {
-    self.videoView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height-200)];
+    self.videoView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - 170)];
     self.videoView.translatesAutoresizingMaskIntoConstraints = NO;
     
     // thumbnail 추출
@@ -125,7 +125,7 @@
 
 - (void)setupProgressView {
     self.progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
-    self.progressView.frame = CGRectMake(0, self.view.frame.size.height - 200, self.view.frame.size.width, 7);
+    self.progressView.frame = CGRectMake(0, self.view.frame.size.height - 170, self.view.frame.size.width, 7);
     self.progressView.progress = 0.0f;
     self.progressView.transform = CGAffineTransformMakeScale(1.0, 2.0);
     self.progressView.trackTintColor = [UIColor colorWithRed:0.13 green:0.13 blue:0.13 alpha:1.00];
@@ -237,7 +237,7 @@
                                                views:@{@"videoView" : self.videoView}]];
     
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[videoView]-200-|"
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[videoView]-170-|"
                                              options:0
                                              metrics:nil
                                                views:@{@"videoView" : self.videoView}]];
@@ -293,7 +293,7 @@
                                                views:@{@"RecordAudioContainerView" : self.recordAudioContainerView}]];
     
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[RecordAudioContainerView(==198)]|"
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[RecordAudioContainerView(==168)]|"
                                              options:0
                                              metrics:nil
                                                views:@{@"RecordAudioContainerView" : self.recordAudioContainerView}]];
@@ -417,7 +417,7 @@
                                  multiplier:1
                                    constant:0]];
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[userGuideLabel(==200)]"
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[userGuideLabel(==170)]"
                                                                       options:0
                                                                       metrics:nil
                                                                         views:@{@"userGuideLabel" : self.userGuideLabel}]];
@@ -517,6 +517,7 @@
         self.recordingSquare.hidden = NO;
         self.recordingSquare.userInteractionEnabled = NO;
         
+        [self.playerLayerWithAudio removeFromSuperlayer];
         [self.videoView.layer addSublayer:self.playerLayerWithAudio];
         self.playVideoButton.hidden = YES;
         [self.playerWithAudio play];

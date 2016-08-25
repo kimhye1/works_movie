@@ -267,6 +267,8 @@ NSString *const collectionViewCellIdentifier_3 = @"wm_collection_view_cell_ident
     [playerLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
     playerLayer.frame = cell.imageView.subviews.firstObject.frame;
 //    [cell.imageView.subviews.firstObject.layer addSublayer:playerLayer];
+    
+    [playerLayer removeFromSuperlayer];
     [cell.imageView.layer addSublayer:playerLayer];
     
     

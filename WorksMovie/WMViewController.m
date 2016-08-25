@@ -16,6 +16,7 @@
 
 @property (nonatomic, strong) AVPlayer *player;
 @property (nonatomic, strong) UIImageView *logoImage;
+@property (nonatomic, strong) AVPlayerLayer *videoLayer;
 
 @end
 
@@ -31,12 +32,17 @@ NSString *const showVideoButtonTitle = @"동영상 가져오기";
     [self setupConstraints];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applicationWillResignActive:)
+                                                 name:UIApplicationWillResignActiveNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(appDidBecomeActive:)
                                                  name:UIApplicationDidBecomeActiveNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(appDidBecomeActiveWhenDismissed:)
                                                  name:WMShootingVideoViewControllerDidDismissedNotification object:nil];
+    
 }
 
 
@@ -170,10 +176,6 @@ NSString *const showVideoButtonTitle = @"동영상 가져오기";
                                                        @"showVideosButton" : self.showVideosButton}]];
 }
 
-- (void)appDidBecomeActive:(NSNotification *)notification {
-    [self playVideo:self.player];
-}
-
 
 #pragma mark - Play Background Video
 
@@ -183,10 +185,12 @@ NSString *const showVideoButtonTitle = @"동영상 가져오기";
     AVPlayer *avPlayer = [AVPlayer playerWithURL:fileURL];
     avPlayer.actionAtItemEnd = AVPlayerActionAtItemEndNone;
     
-    AVPlayerLayer *videoLayer = [AVPlayerLayer playerLayerWithPlayer:avPlayer];
-    videoLayer.frame = self.view.bounds;
-    videoLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
-    [self.view.layer addSublayer:videoLayer];
+    self.videoLayer = [AVPlayerLayer playerLayerWithPlayer:avPlayer];
+    self.videoLayer.frame = self.view.bounds;
+    self.videoLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
+    
+    [self.videoLayer removeFromSuperlayer];
+    [self.view.layer addSublayer:self.videoLayer];
     
     return avPlayer;
 }
@@ -208,7 +212,6 @@ NSString *const showVideoButtonTitle = @"동영상 가져오기";
 
 - (void)shootingVideoButtonClicked:(UIButton *)sender {
     [self.player pause];
-    
     [self presentWMShootingVideoViewController];
 }
 
@@ -219,7 +222,6 @@ NSString *const showVideoButtonTitle = @"동영상 가져오기";
 
 - (void)showVideosButtonClicked:(UIButton *)sender {
     [self.player pause];
-    
     [self presentWMShowVideosViewController];
 }
 
@@ -236,16 +238,31 @@ NSString *const showVideoButtonTitle = @"동영상 가져오기";
     [super viewWillDisappear:animated];
     
     [self.player pause];
+    self.videoLayer.player = nil;
     
     NSArray* tmpDirectory = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:NSTemporaryDirectory() error:NULL];
     for (NSString *file in tmpDirectory) {
         [[NSFileManager defaultManager] removeItemAtPath:[NSString stringWithFormat:@"%@%@", NSTemporaryDirectory(), file] error:NULL];
     }
-
 }
 
-- (void)appDidBecomeActiveWhenDismissed:(NSNotification *)notice { 
+
+#pragma mark - Notificatioin Handler Methods
+
+- (void)applicationWillResignActive:(NSNotification *)notification {
+    [self.player pause];
+    self.videoLayer.player = nil;
+}
+
+- (void)appDidBecomeActive:(NSNotification *)notification {
+    self.videoLayer.player = self.player;
     [self.player play];
 }
+
+- (void)appDidBecomeActiveWhenDismissed:(NSNotification *)notice {
+    self.videoLayer.player = self.player;
+    [self.player play];
+}
+
 
 @end

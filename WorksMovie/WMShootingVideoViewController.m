@@ -28,6 +28,7 @@
 @property (nonatomic, strong) UIImageView *recordingStateMark;
 @property (nonatomic, strong) NSTimer *timer;
 @property (nonatomic, strong) NSTimer *countDownTimer;
+@property (nonatomic) BOOL isRecording;
 
 @end
 
@@ -50,6 +51,14 @@
     [self setupConstraints];
     
     [self prepareRecording];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applicationWillResignActive:)
+                                                 name:UIApplicationWillResignActiveNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(appDidBecomeActive:)
+                                                 name:UIApplicationDidBecomeActiveNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(appDidBecomeActiveWhenDismissed:)
@@ -141,6 +150,7 @@
      setImage:[UIImage imageNamed:@"Checkmark1"] forState:UIControlStateNormal];
     self.completeShootingButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentFill;
     self.completeShootingButton.translatesAutoresizingMaskIntoConstraints = NO;
+    self.completeShootingButton.hidden = YES;
     [self.videoShootingMenuContainerView addSubview:self.completeShootingButton];
     [self.completeShootingButton addTarget:self action:@selector(completeShootingButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
 }
@@ -382,6 +392,10 @@
 //shootingButton을 long tap할 때 마다 tap 하는 시간 동안 동영상이 녹화되고, button에서 손을 떼면 녹화가 종료된다.
 - (void)shootingButtonLongPress:(UILongPressGestureRecognizer *)gesture {
     if (gesture.state == UIGestureRecognizerStateBegan) {
+        self.completeShootingButton.hidden = NO;
+        
+        self.isRecording = YES;
+        
         self.timer = [NSTimer scheduledTimerWithTimeInterval:0.01
                                                       target:self
                                                     selector:@selector(updateProgressing)
@@ -402,6 +416,8 @@
     }
     
     if (gesture.state == UIGestureRecognizerStateEnded) {
+        self.isRecording = NO;
+        
         float allProcessValue;
         
         for (NSNumber *progressNum in self.progressArray) {
@@ -420,6 +436,28 @@
         [self.timer invalidate]; //progressing을 멈춘다.
         [self.countDownTimer invalidate]; // progressing을 멈춘다.
     }
+}
+
+- (void)stopRecording {
+    self.isRecording = NO;
+    
+    float allProcessValue;
+    
+    for (NSNumber *progressNum in self.progressArray) {
+        allProcessValue += [progressNum floatValue];
+    }
+    
+    [self.progressArray addObject:[NSNumber numberWithDouble:self.shootingButton.progress - allProcessValue]];
+    
+    [self.countOutTimeArray addObject:[NSNumber numberWithInt:self.countOutTime]];
+    self.countOutTime = 0;
+    
+    [self.videoHelper stopRecording];
+    self.backButton.hidden = NO;
+    self.recordingStateMark.hidden = YES;
+    
+    [self.timer invalidate]; //progressing을 멈춘다.
+    [self.countDownTimer invalidate]; // progressing을 멈춘다.
 }
 
 // circular progress bar 상태를 업데이트 시킨다.
@@ -477,6 +515,22 @@
     self.countOutTime = 0;
     
     [self.progressArray removeLastObject];
+}
+
+
+
+#pragma mark - Notificatioin Handler Methods
+
+- (void)applicationWillResignActive:(NSNotification *)notification {
+    [self.videoHelper stopSession];
+    
+    if(self.isRecording) {
+        [self stopRecording];
+    }
+}
+
+- (void)appDidBecomeActive:(NSNotification *)notification {
+    [self.videoHelper startSession];
 }
 
 - (void)appDidBecomeActiveWhenDismissed:(NSNotification *)notice {

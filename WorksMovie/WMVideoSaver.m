@@ -18,6 +18,7 @@
 @property (nonatomic, strong) WMVideoModelManager *modelManager;
 //@property (nonatomic, strong) AVVideoComposition *videoComposition;
 @property (nonatomic, strong) UILabel *saveAlertLabel;
+@property (nonatomic, strong) UIView *savingView;
 
 @end
 
@@ -74,8 +75,10 @@
 }
 
 //카메라 롤에 merge된 비디오를 저장하는 메소드 
-- (NSURL *)storeVideo:(AVVideoComposition *)videoComposition outputURL:(NSURL *)outputURL alertLabel:(UILabel *)saveAlertLabel {
+- (NSURL *)storeVideo:(AVVideoComposition *)videoComposition outputURL:(NSURL *)outputURL alertLabel:(UILabel *)saveAlertLabel savigView:(UIView *)savingView {
     self.saveAlertLabel = saveAlertLabel;
+    self.savingView = savingView;
+    
     NSString *outputVideoPath = [self outputPath];
     NSURL *outputVideoURL = [NSURL fileURLWithPath:outputVideoPath];
     
@@ -111,6 +114,7 @@
     } else {
         NSLog(@"finish saving");
         [self savedAlert:self.saveAlertLabel];
+        self.savingView.hidden = YES;
     }
 }
 

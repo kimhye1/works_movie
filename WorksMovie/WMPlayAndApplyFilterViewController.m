@@ -63,6 +63,14 @@ NSString *const collectionViewCellIdentifier = @"wm_collection_view_cell_identif
     [self exportVideo];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applicationWillResignActive:)
+                                                 name:UIApplicationWillResignActiveNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(appDidBecomeActive:)
+                                                 name:UIApplicationDidBecomeActiveNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(appDidBecomeActiveWhenDismissed:)
                                                  name:WMPlayAndStoreVideoViewControllerDidDismissedNotification object:nil];
 }
@@ -373,6 +381,7 @@ NSString *const collectionViewCellIdentifier = @"wm_collection_view_cell_identif
 
 - (void)completeButtonClicked:(UIButton *)sender {
     [self.player pause];
+    self.playerLayer.player = nil;
 //    [self.playerLayer.player pause];
 //    [self.playerLayer removeFromSuperlayer];
 //    self.player = nil;
@@ -393,7 +402,21 @@ NSString *const collectionViewCellIdentifier = @"wm_collection_view_cell_identif
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+
+#pragma mark - Notificatioin Handler Methods
+
+- (void)applicationWillResignActive:(NSNotification *)notification {
+    [self.player pause];
+    self.playerLayer.player = nil;
+}
+
+- (void)appDidBecomeActive:(NSNotification *)notification {
+    self.playerLayer.player = self.player;
+    [self.player play];
+}
+
 - (void)appDidBecomeActiveWhenDismissed:(NSNotification *)notice {
+    self.playerLayer.player = self.player;
     [self.player play];
 }
 
