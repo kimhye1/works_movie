@@ -9,9 +9,18 @@
 #import <UIKit/UIKit.h>
 #import "WMAudioModelManager.h"
 #import "WMVideoModelManager.h"
+#import "WMFilter.h"
 
 @interface WMPlayAndStoreAudioViewController : UIViewController
 
-- (instancetype)initWithVideoModelManager:(WMVideoModelManager *)videoModelManager audioModelManager:(WMAudioModelManager *)audioModelManager;
+@property (nonatomic, strong) WMFilter *filter;
+
+//- (instancetype)initWithVideoModelManager:(WMVideoModelManager *)videoModelManager audioModelManager:(WMAudioModelManager *)audioModelManager;
+
+- (instancetype)initWithVideoModelManager:(WMVideoModelManager *)videoModelManager
+                        audioModelManager:(WMAudioModelManager *)audioModelManager
+                              composition:(AVVideoComposition *)composition
+                                   filter:(WMFilter *)filter;
+
 
 @end

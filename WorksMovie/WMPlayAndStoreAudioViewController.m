@@ -31,18 +31,34 @@
 @property (nonatomic, strong) AVAudioPlayer *audioPlayer;
 @property (nonatomic, strong) UIButton *audioButton;
 @property (nonatomic, assign) BOOL audioAvailable;
+@property (nonatomic, strong) AVVideoComposition *videoComposition;
 
 @end
 
 @implementation WMPlayAndStoreAudioViewController
 
-- (instancetype)initWithVideoModelManager:(WMVideoModelManager *)videoModelManager audioModelManager:(WMAudioModelManager *)audioModelManager {
+//- (instancetype)initWithVideoModelManager:(WMVideoModelManager *)videoModelManager audioModelManager:(WMAudioModelManager *)audioModelManager {
+//    self = [super init];
+//
+//    if (self) {
+//        self.videoModelManager = videoModelManager;
+//        self.audioModelManager = audioModelManager;
+//        self.audioHelper = [[WMAudioHelper alloc] initWithVideoModelManager:self.videoModelManager audioModelManager:self.audioModelManager];
+//    }
+//    return self;
+//}
+
+- (instancetype)initWithVideoModelManager:(WMVideoModelManager *)videoModelManager
+                        audioModelManager:(WMAudioModelManager *)audioModelManager
+                              composition:(AVVideoComposition *)videoComposition
+                                   filter:(WMFilter *)filter {
     self = [super init];
-    
     if (self) {
         self.videoModelManager = videoModelManager;
         self.audioModelManager = audioModelManager;
         self.audioHelper = [[WMAudioHelper alloc] initWithVideoModelManager:self.videoModelManager audioModelManager:self.audioModelManager];
+        self.videoComposition = videoComposition;
+        self.filter = filter;
     }
     return self;
 }
@@ -74,7 +90,9 @@
     self.videoView.translatesAutoresizingMaskIntoConstraints = NO;
     
     // thumbnail 추출
-    UIImageView *imageView = [WMMediaUtils gettingThumbnailFromVideoInView:self.videoView URL:[(WMMediaModel *)self.videoModelManager.mediaDatas.firstObject mediaURL] filter:nil];
+    //    UIImageView *imageView = [WMMediaUtils gettingThumbnailFromVideoInView:self.videoView URL:[(WMMediaModel *)self.videoModelManager.mediaDatas.firstObject mediaURL] filter:nil];
+    UIImageView *imageView = [WMMediaUtils gettingThumbnailFromVideoInView:self.videoView URL:[self.videoModelManager.mediaDatas.firstObject mediaURL] filter:self.filter];
+
     
     
     [self.videoView addSubview:imageView];
@@ -316,6 +334,7 @@
 - (void)preparePlayVideo {
     AVURLAsset *avAsset = [AVURLAsset URLAssetWithURL:[(WMMediaModel *)self.videoModelManager.mediaDatas.firstObject mediaURL] options:nil];
     AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:avAsset];
+    playerItem.videoComposition = self.videoComposition;
     
     // 동영상 play가 끝나면 불릴 notification 등록
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:)
@@ -351,9 +370,9 @@
     }
 }
 
-// 비디오 재생이 끝나면 리플레이를 위해 preparePlayVideo를 호출한다.
 - (void)itemDidFinishPlaying:(NSNotification *)notification {
-    [self preparePlayVideo];
+    AVPlayerItem *p = [notification object];
+    [p seekToTime:kCMTimeZero];
     
     self.playVideoAndAudioButton.hidden = NO;
     self.backButton.hidden = NO;
@@ -387,11 +406,24 @@
 - (void)storeVideoButtonClicked:(UIButton *)sender {
     [self.player pause];
     
+    [self.videoView addSubview:self.backButton];
+    self.playVideoAndAudioButton.hidden = NO;
+    self.backButton.hidden = NO;
+    [self.player pause];
+    [self.playerLayer.player pause];
+    [self.playerLayer removeFromSuperlayer];
+    self.player = nil;
+    
+    [self.audioPlayer stop];
+    self.audioPlayer = nil;
+
+    
     NSURL *audioURL = [self.audioModelManager.mediaDatas.firstObject mediaURL];
     NSURL *videoURL = [self.videoModelManager.mediaDatas.firstObject mediaURL];
     
     AVMutableComposition *composition = [self.audioHelper mergeAudio:audioURL withVideo:videoURL audioAvailable:self.audioAvailable];
-    [self.audioHelper storeVideo:composition];
+    [self.audioHelper storeVideo:composition videoComposition:self.videoComposition];
+
 }
 
 - (void)dealloc {

@@ -13,6 +13,7 @@
 #import "WMMediaUtils.h"
 #import "WMVideoModelManager.h"
 #import "WMAudioModelManager.h"
+#import "WMPlayAndApplyFilterOnStoredVideoViewController.h"
 
 @interface WMRecordAudioViewController ()
 
@@ -36,7 +37,7 @@
 @property (nonatomic, strong) AVPlayerLayer *playerLayer;
 @property (nonatomic, strong) AVPlayer *playerWithAudio;
 @property (nonatomic, strong) AVPlayerLayer *playerLayerWithAudio;
-@property (nonatomic, strong) AVAudioPlayer *audioPlayer;
+//@property (nonatomic, strong) AVAudioPlayer *audioPlayer;
 @property (nonatomic, strong) NSURL *outputFileURL;
 @property (nonatomic, strong) UIProgressView *progressView;
 @property (nonatomic, assign) CGFloat progress;
@@ -425,6 +426,7 @@
                                                  name:AVPlayerItemDidPlayToEndTimeNotification object:playerItem];
     
     self.playerWithAudio = [AVPlayer playerWithPlayerItem:playerItem];
+    self.playerWithAudio.muted = YES;
     
     self.playerLayerWithAudio = [AVPlayerLayer playerLayerWithPlayer:self.playerWithAudio];
     [self.playerLayerWithAudio setVideoGravity:AVLayerVideoGravityResizeAspectFill];
@@ -622,8 +624,19 @@
 - (void)completeRecordingButtonClicked:(UIButton *)sender {
     [self stopRecording];
     
-    WMPlayAndStoreAudioViewController *playAndStoreViewController = [[WMPlayAndStoreAudioViewController alloc] initWithVideoModelManager:self.videoModelManager audioModelManager:self.audioModelManager];
-    [self presentViewController:playAndStoreViewController animated:YES completion:nil];
+    [self.player pause];
+    [self.playerLayer.player pause];
+    [self.playerLayer removeFromSuperlayer];
+    self.player = nil;
+    
+    
+    //    WMPlayAndStoreAudioViewController *playAndStoreViewController = [[WMPlayAndStoreAudioViewController alloc] initWithVideoModelManager:self.videoModelManager audioModelManager:self.audioModelManager];
+    //    [self presentViewController:playAndStoreViewController animated:YES completion:nil];
+    
+    
+    WMPlayAndApplyFilterOnStoredVideoViewController *playAndApplyFilterOnStoredVideoViewController = [[WMPlayAndApplyFilterOnStoredVideoViewController alloc] initWithVideoModelManager:self.videoModelManager audioModelManager:self.audioModelManager];
+    [self presentViewController:playAndApplyFilterOnStoredVideoViewController animated:YES completion:nil];
+    
 }
 
 - (void)stopRecording {

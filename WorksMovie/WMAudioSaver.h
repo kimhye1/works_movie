@@ -14,6 +14,6 @@
 
 - (instancetype)initWithVideoModelManager:(WMVideoModelManager *)modelManager audioModelManager:(WMAudioModelManager *)audioModelManager;
 - (AVMutableComposition *)mergeAudio:(NSURL *)audioURL withVideo:(NSURL *)videoURL audioAvailable:(BOOL)audioAvailable;
-- (NSURL *)storeVideo:(AVMutableComposition *)composition;
+- (NSURL *)storeVideo:(AVMutableComposition *)composition videoComposition:(AVVideoComposition *)videoComposition;
 
 @end

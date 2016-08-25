@@ -24,6 +24,6 @@
 - (BOOL)isRecording;
 
 - (AVMutableComposition *)mergeAudio:(NSURL *)audioURL withVideo:(NSURL *)videoURL audioAvailable:(BOOL)audioAvailable;
-- (NSURL *)storeVideo:(AVMutableComposition *)composition;
+- (NSURL *)storeVideo:(AVMutableComposition *)composition videoComposition:(AVVideoComposition *)videoComposition;
 
 @end

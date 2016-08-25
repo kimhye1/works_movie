@@ -66,8 +66,8 @@
     return [self.audioSaver mergeAudio:audioURL withVideo:videoURL audioAvailable:audioAvailable];
 }
 
-- (NSURL *)storeVideo:(AVMutableComposition *)composition {
-    return [self.audioSaver storeVideo:composition];
+- (NSURL *)storeVideo:(AVMutableComposition *)composition videoComposition:(AVVideoComposition *)videoComposition {
+    return [self.audioSaver storeVideo:composition videoComposition:videoComposition];
 }
 
 @end
