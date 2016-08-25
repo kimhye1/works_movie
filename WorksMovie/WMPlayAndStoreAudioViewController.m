@@ -74,7 +74,7 @@
     self.videoView.translatesAutoresizingMaskIntoConstraints = NO;
     
     // thumbnail 추출
-    UIImageView *imageView = [WMMediaUtils gettingThumbnailFromVideoInView:self.videoView withURL:[(WMMediaModel *)self.videoModelManager.mediaDatas[0] mediaURL]];
+    UIImageView *imageView = [WMMediaUtils gettingThumbnailFromVideoInView:self.videoView URL:[(WMMediaModel *)self.videoModelManager.mediaDatas.firstObject mediaURL] filter:nil];
     
     
     [self.videoView addSubview:imageView];
@@ -314,7 +314,7 @@
 }
 
 - (void)preparePlayVideo {
-    AVURLAsset *avAsset = [AVURLAsset URLAssetWithURL:[(WMMediaModel *)self.videoModelManager.mediaDatas[0] mediaURL] options:nil];
+    AVURLAsset *avAsset = [AVURLAsset URLAssetWithURL:[(WMMediaModel *)self.videoModelManager.mediaDatas.firstObject mediaURL] options:nil];
     AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:avAsset];
     
     // 동영상 play가 끝나면 불릴 notification 등록
@@ -329,7 +329,7 @@
 }
 
 - (void)preparePlayAudio {
-    self.audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:[(WMMediaModel *)self.audioModelManager.mediaDatas[0] mediaURL] error:nil];
+    self.audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:[(WMMediaModel *)self.audioModelManager.mediaDatas.firstObject mediaURL] error:nil];
 }
 
 
@@ -392,6 +392,10 @@
     
     AVMutableComposition *composition = [self.audioHelper mergeAudio:audioURL withVideo:videoURL audioAvailable:self.audioAvailable];
     [self.audioHelper storeVideo:composition];
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end

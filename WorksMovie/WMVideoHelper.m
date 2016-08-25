@@ -57,20 +57,28 @@
     [self.videoRecorder stopRecording];
 }
 
+- (void)stopSession {
+    [self.videoRecorder stopSession];
+}
+
+- (void)startSession {
+    [self.videoRecorder startSession];
+}
+
 - (UIImageView *)gettingThumbnailFromVideoInView:(UIView *)videoView withURL:(NSURL *)url {
-    return [WMMediaUtils gettingThumbnailFromVideoInView:videoView withURL:url];
+    return [WMMediaUtils gettingThumbnailFromVideoInView:videoView URL:url filter:nil];
 }
 
 - (void)playVideo:(UIView *)videoView {
     [self.videoPlayer playVideo:videoView];
 }
 
-- (void)mergeVideo {
-    [self.videoSaver mergeVideo];
+- (AVMutableComposition *)mergeVideo {
+    return [self.videoSaver mergeVideo];
 }
 
-- (NSURL *)storeVideo {
-    return [self.videoSaver storeVideo];
+- (NSURL *)storeVideo:(AVVideoComposition *)videoComposition outputURL:(NSURL *)outputURL alertLabel:(UILabel *)saveAlertLabel {
+    return [self.videoSaver storeVideo:videoComposition outputURL:outputURL alertLabel:saveAlertLabel];
 }
 
 - (UIActivityViewController *)shareVideo:(NSURL *)outputURL {

@@ -94,7 +94,7 @@
     self.videoView.translatesAutoresizingMaskIntoConstraints = NO;
     
     // thumbnail 추출
-    UIImageView *imageView = [WMMediaUtils gettingThumbnailFromVideoInView:self.videoView withURL:self.videoURL];
+    UIImageView *imageView = [WMMediaUtils gettingThumbnailFromVideoInView:self.videoView URL:self.videoURL filter:nil];
     
     [self.videoView addSubview:imageView];
     [self.view addSubview:self.videoView];
@@ -652,6 +652,10 @@
 
 - (void)backToCollectionViewButtonClicked:(UIButton *)sender {
     [self dismissViewControllerAnimated:NO completion:nil];
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end

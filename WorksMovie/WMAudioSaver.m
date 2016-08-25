@@ -48,6 +48,7 @@
     CGAffineTransform transform = CGAffineTransformMakeRotation((90 * M_PI ) / 180);
     videoCompositionVideoTrack.preferredTransform = transform;
     
+
     [videoCompositionVideoTrack insertTimeRange:videoTimeRange ofTrack:[[videoAsset tracksWithMediaType:AVMediaTypeVideo] firstObject] atTime:kCMTimeZero error:nil];
     
     // video's audio
@@ -76,6 +77,7 @@
 //        [audioInputParams1 setVolumeRampFromStartVolume:0 toEndVolume:1 timeRange:fadeInTimeRange];
 //        [self applyAudioMix];
     }
+
     
     return self.composition;
 }
@@ -85,7 +87,7 @@
     NSString *outputVideoPath = [self outputPath];
     NSURL *outputVideoURL = [NSURL fileURLWithPath:outputVideoPath];
     
-    AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset:composition presetName:AVAssetExportPresetHighestQuality];
+    AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset:composition presetName:AVAssetExportPresetMediumQuality];
     
     exporter.outputURL = outputVideoURL;
     exporter.outputFileType = AVFileTypeQuickTimeMovie;
@@ -113,7 +115,9 @@
 
 // 저장된 파일을 내보낼 path생성
 - (NSString *)outputPath {
+
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+
     NSString *documentsDirectory = [paths firstObject];
     NSString *uuid = [[NSUUID UUID] UUIDString];
     NSString *outputVideoPath =  [documentsDirectory stringByAppendingPathComponent:

@@ -7,12 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "WMVideoModelManager.h"
+
+@class WMVideoModelManager;
 
 @interface WMVideoSaver : NSObject
 
 - (instancetype)initWithVideoModelManager:(WMVideoModelManager *)modelManager;
-- (void)mergeVideo;
-- (NSURL *)storeVideo;
+
+- (AVMutableComposition *)mergeVideo;
+- (NSURL *)storeVideo:(AVVideoComposition *)videoComposition outputURL:(NSURL *)outputURL alertLabel:(UILabel *)saveAlertLabel;
 
 @end

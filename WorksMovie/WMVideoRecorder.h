@@ -14,11 +14,12 @@
 @interface WMVideoRecorder : NSObject  <AVCaptureFileOutputRecordingDelegate, WMMultiMediaRecordProtocol>
 
 - (instancetype)initWithVideoModelManager:(WMVideoModelManager *)modelManager;
-
 - (void)setupCaptureSession;
 - (void)setupPreviewLayerInView:(UIView *)view;
 - (void)switchCamera;
 - (void)startRecording;
 - (void)stopRecording;
+- (void)stopSession;
+- (void)startSession;
 
 @end
