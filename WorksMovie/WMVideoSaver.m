@@ -65,7 +65,7 @@
 
 // 저장된 파일을 내보낼 path생성
 - (NSString *)outputPath {
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *uuid = [[NSUUID UUID] UUIDString];
     NSString *outputVideoPath =  [documentsDirectory stringByAppendingPathComponent:

@@ -426,6 +426,24 @@
 
 }
 
+
+#pragma mark - Share Video Button Event Handler Methods
+
+- (void)shareVideoButtonClicked:(UIButton *)sender {
+//    self.saveAlertLabel = nil;
+    [self.player pause];
+    
+    NSURL *audioURL = [self.audioModelManager.mediaDatas.firstObject mediaURL];
+    NSURL *videoURL = [self.videoModelManager.mediaDatas.firstObject mediaURL];
+
+    AVMutableComposition *composition = [self.audioHelper mergeAudio:audioURL withVideo:videoURL audioAvailable:self.audioAvailable];
+    NSURL *url = [self.audioHelper storeVideo:composition videoComposition:self.videoComposition];
+    
+    UIActivityViewController *activityView = [self.audioHelper shareVideo:url];
+    [self presentViewController:activityView animated:YES completion:nil];
+}
+
+
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }

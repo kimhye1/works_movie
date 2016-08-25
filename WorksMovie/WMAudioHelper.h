@@ -6,7 +6,7 @@
 //  Copyright © 2016년 worksmobile. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 #import "WMVideoModelManager.h"
 #import "WMAudioModelManager.h"
@@ -25,5 +25,6 @@
 
 - (AVMutableComposition *)mergeAudio:(NSURL *)audioURL withVideo:(NSURL *)videoURL audioAvailable:(BOOL)audioAvailable;
 - (NSURL *)storeVideo:(AVMutableComposition *)composition videoComposition:(AVVideoComposition *)videoComposition;
+- (UIActivityViewController *)shareVideo:(NSURL *)outputURL;
 
 @end

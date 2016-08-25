@@ -59,7 +59,7 @@
         [videoCompositionAuidoTrack insertTimeRange:videoTimeRange ofTrack:[[videoAsset tracksWithMediaType:AVMediaTypeAudio] firstObject] atTime:kCMTimeZero error:nil];
     }
     
-    [self removeTemporarydirectoryFiles];
+    
     
     return self.composition;
 }
@@ -76,6 +76,8 @@
 
 // 카메라 롤에 merge된 비디오를 저장하는 메소드
 - (NSURL *)storeVideo:(AVMutableComposition *)composition videoComposition:(AVVideoComposition *)videoComposition {
+    [self removeTemporarydirectoryFiles];
+    
     NSString *outputVideoPath = [self outputPath];
     NSURL *outputVideoURL = [NSURL fileURLWithPath:outputVideoPath];
     

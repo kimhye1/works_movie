@@ -9,13 +9,14 @@
 #import "WMAudioHelper.h"
 #import "WMAudioRecorder.h"
 #import "WMAudioSaver.h"
+#import "WMMediaSharer.h"
 
 @interface WMAudioHelper ()
 
 @property (nonatomic, strong) WMAudioRecorder *audioRecorder;
 //@property (nonatomic, strong) WMMediaPlayer *audioPlayer;
 @property (nonatomic, strong) WMAudioSaver *audioSaver;
-//@property (nonatomic, strong) WMMediaSharer *audioSharer;
+@property (nonatomic, strong) WMMediaSharer *audioSharer;
 
 @end
 
@@ -29,7 +30,7 @@
         self.audioRecorder = [[WMAudioRecorder alloc] initWithVideoModelManager:videoModelManager audioModelManager:audioModelManager];
 //        self.audioPlayer = [[WMMediaPlayer alloc] initWithModelManager:modelManager];
         self.audioSaver = [[WMAudioSaver alloc] initWithVideoModelManager:videoModelManager audioModelManager:audioModelManager];
-//        audioSharer = [[WMMediaSharer  alloc] init];
+        self.audioSharer = [[WMMediaSharer alloc] init];
     }
     return self;
 }
@@ -68,6 +69,10 @@
 
 - (NSURL *)storeVideo:(AVMutableComposition *)composition videoComposition:(AVVideoComposition *)videoComposition {
     return [self.audioSaver storeVideo:composition videoComposition:videoComposition];
+}
+
+- (UIActivityViewController *)shareVideo:(NSURL *)outputURL {
+    return [self.audioSharer shareVideo:outputURL];
 }
 
 @end
