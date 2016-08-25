@@ -18,10 +18,13 @@
 @property (nonatomic, strong) WMVideoModelManager *modelManager;
 @property (nonatomic, strong) WMVideoHelper *videoHelper;
 @property (nonatomic, strong) UIView *titleView;
+@property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UIButton *backButton;
 @property (nonatomic, strong) UIButton *completeEditButton;
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, strong) WMShootingVideoViewController *shootingVideoViewController;
+@property (nonatomic, strong) AVPlayer *player;
+//@property (nonatomic, strong) AVPlayerLayer *playerLayer;
 
 @end
 
@@ -52,8 +55,7 @@ NSString *const collectionViewCellIdentifier_3 = @"wm_collection_view_cell_ident
 
 - (void)setupViewComponents {
     [self setupTitleView];
-    [self setupBackButton];
-    [self setupCompleteEditButton];
+    
     [self setupCollectionView];
 }
 
@@ -62,6 +64,20 @@ NSString *const collectionViewCellIdentifier_3 = @"wm_collection_view_cell_ident
     self.titleView.backgroundColor = [UIColor colorWithRed:0.15 green:0.16 blue:0.17 alpha:1.00];
     self.titleView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.titleView];
+    
+    [self setupTitleLabel];
+    [self setupBackButton];
+    [self setupCompleteEditButton];
+}
+
+- (void)setupTitleLabel {
+    self.titleLabel = [[UILabel alloc] init];
+    self.titleLabel.text = @"삭제 및 이동";
+    self.titleLabel.textColor = [UIColor whiteColor];
+    [self.titleLabel setFont:[UIFont systemFontOfSize:14]];
+    self.titleLabel.textAlignment = NSTextAlignmentCenter;
+    self.titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.titleView addSubview:self.titleLabel];
 }
 
 - (void)setupBackButton {
@@ -106,6 +122,7 @@ NSString *const collectionViewCellIdentifier_3 = @"wm_collection_view_cell_ident
 
 - (void)setupConstraints {
     [self setupTitleViewConstraints];
+    [self setupTitleLabelConstraints];
     [self setupBackButtonConstrains];
     [self setupCompleteEditButtonConstraints];
     [self setupCollectionViewConstraints];
@@ -116,6 +133,37 @@ NSString *const collectionViewCellIdentifier_3 = @"wm_collection_view_cell_ident
                                                                       options:0
                                                                       metrics:nil
                                                                         views:@{@"titleView" : self.titleView}]];
+}
+
+- (void)setupTitleLabelConstraints {
+    [self.titleView addConstraint:
+     [NSLayoutConstraint constraintWithItem:self.titleView
+                                  attribute:NSLayoutAttributeCenterX
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.titleLabel
+                                  attribute:NSLayoutAttributeCenterX
+                                 multiplier:1
+                                   constant:0]];
+    
+    [self.titleView addConstraint:
+     [NSLayoutConstraint constraintWithItem:self.titleView
+                                  attribute:NSLayoutAttributeCenterY
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.titleLabel
+                                  attribute:NSLayoutAttributeCenterY
+                                 multiplier:1
+                                   constant:0]];
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"H:[titleLabel(==80)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"titleLabel" : self.titleLabel}]];
+    [self.view addConstraints:
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[titleLabel(==20)]"
+                                             options:0
+                                             metrics:nil
+                                               views:@{@"titleLabel" : self.titleLabel}]];
+    
 }
 
 - (void)setupBackButtonConstrains {
@@ -184,6 +232,9 @@ NSString *const collectionViewCellIdentifier_3 = @"wm_collection_view_cell_ident
     // 셀의 비디오 썸네일 설정
     cell.imageView.image = [self.videoHelper gettingThumbnailFromVideoInView:cell.imageView withURL:[(WMMediaModel *)self.modelManager.mediaDatas[indexPath.row] mediaURL]].image;
     
+    UITapGestureRecognizer *imageViewTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageViewTapped:)];
+    [cell.imageView addGestureRecognizer:imageViewTapRecognizer];
+    
     cell.videoNumberLabel.text = [NSString stringWithFormat:@"%zd%@", indexPath.row + 1, @"번째 영상"];
     
     [cell.removeVideoButton addTarget:self action:@selector(removeVideoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
@@ -192,6 +243,40 @@ NSString *const collectionViewCellIdentifier_3 = @"wm_collection_view_cell_ident
     [cell.contentView addGestureRecognizer:contentViewPressRecognizer];
     
     return cell;
+}
+
+
+#pragma mark - Imagae View Event Handler Methods
+
+- (void)imageViewTapped:(UITapGestureRecognizer *)sender {
+    CGPoint location = [sender locationInView:self.collectionView];
+    NSIndexPath *tapedIndexPath = [self.collectionView indexPathForItemAtPoint:location];
+    WMVideoCollectionViewCell *tapedCell  = (WMVideoCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:tapedIndexPath];
+    
+    NSIndexPath *indexPath = [self.collectionView indexPathForCell:tapedCell];
+    
+    WMVideoCollectionViewCell *cell = (WMVideoCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+    
+    
+    AVURLAsset *avAsset = [AVURLAsset URLAssetWithURL:[(WMMediaModel *)self.modelManager.mediaDatas[indexPath.row] mediaURL] options:nil];
+    AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:avAsset];
+    
+    self.player = [AVPlayer playerWithPlayerItem:playerItem];
+    
+    AVPlayerLayer *playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
+    [playerLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
+    playerLayer.frame = cell.imageView.subviews.firstObject.frame;
+//    [cell.imageView.subviews.firstObject.layer addSublayer:playerLayer];
+    [cell.imageView.layer addSublayer:playerLayer];
+    
+    
+    if (self.player.rate == 1.0) { // 재생 중일 때 실행
+        cell.playButton.hidden = NO;
+        [self.player pause];
+    } else if (self.player.rate == 0.0) { // 정지 상태일 때 실행
+        cell.playButton.hidden = YES;
+        [self.player play];
+    }
 }
 
 

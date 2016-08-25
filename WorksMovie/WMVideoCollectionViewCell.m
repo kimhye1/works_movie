@@ -66,6 +66,10 @@
     self.imageView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.imageView setUserInteractionEnabled:YES];
     [self.contentView addSubview:self.imageView];
+    
+    self.videoView = [[UIView alloc] init];
+    self.videoView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.imageView addSubview:self.videoView];
 }
 
 - (void)setupPlayButton {
@@ -84,6 +88,7 @@
     [self setupViewsHorizontalConstraints];
     [self setupViewsHeightConstraints];
     [self setupPlayButtonConstraints];
+    [self setupVideoViewConstraints];
 }
 
 - (void)setupViewsAlignConstraints {
@@ -104,7 +109,7 @@
                                   attribute:NSLayoutAttributeCenterY
                                  multiplier:1
                                    constant:0]];
-
+    
     [self.contentView addConstraint:
      [NSLayoutConstraint constraintWithItem:self.contentView
                                   attribute:NSLayoutAttributeCenterY
@@ -159,7 +164,6 @@
                                   attribute:NSLayoutAttributeCenterX
                                  multiplier:1
                                    constant:0]];
-    
     [self.imageView addConstraint:
      [NSLayoutConstraint constraintWithItem:self.imageView
                                   attribute:NSLayoutAttributeCenterY
@@ -170,14 +174,26 @@
                                    constant:0]];
     
     [self.playButton addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[playButton(==40)]"
-                                                                             options:0
-                                                                             metrics:nil
-                                                                               views:@{@"playButton" : self.playButton}]];
+                                                                            options:0
+                                                                            metrics:nil
+                                                                              views:@{@"playButton" : self.playButton}]];
     
     [self.playButton addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[playButton(==40)]"
+                                                                            options:0
+                                                                            metrics:nil
+                                                                              views:@{@"playButton" : self.playButton}]];
+}
+
+- (void)setupVideoViewConstraints {
+    [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[videoView]|"
                                                                              options:0
                                                                              metrics:nil
-                                                                               views:@{@"playButton" : self.playButton}]];
+                                                                               views:@{@"videoView" : self.videoView}]];
+    
+    [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[videoView]|"
+                                                                             options:0
+                                                                             metrics:nil
+                                                                               views:@{@"videoView" : self.videoView}]];
 }
 
 @end
