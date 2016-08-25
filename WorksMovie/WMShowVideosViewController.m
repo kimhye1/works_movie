@@ -22,6 +22,7 @@
 @property (nonatomic, strong) UIView *titleView;
 @property (nonatomic, strong) UIButton *backButton;
 @property (nonatomic, strong) UILabel *titleLabel;
+@property (nonatomic, strong) UILabel *userGuideLabel;
 
 @end
 
@@ -119,6 +120,18 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
     self.selectButton.hidden = YES;
 }
 
+- (void)setupUserGuidLabel {
+    self.userGuideLabel = [[UILabel alloc] init];
+    self.userGuideLabel.text = @"버튼을 눌러 영상에 후시녹음을 해보세요";
+    self.userGuideLabel.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.7f];
+    [self.userGuideLabel setFont:[UIFont systemFontOfSize:12]];
+    self.userGuideLabel.layer.cornerRadius = 6;
+    self.userGuideLabel.clipsToBounds = YES;
+    self.userGuideLabel.textAlignment = NSTextAlignmentCenter;
+    self.userGuideLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.collectionView.superview addSubview:self.userGuideLabel];
+}
+
 
 #pragma mark - Setup Constraints Methods
 
@@ -206,6 +219,18 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
                                                                         views:@{@"selectButton" : self.selectButton}]];
 }
 
+- (void)setupUserGuideLabelConstraints {
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[userGuideLabel(==207)]-10-|"
+                                                                      options:0
+                                                                      metrics:nil
+                                                                        views:@{@"userGuideLabel" : self.userGuideLabel}]];
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[userGuideLabel(==37)]-120-|"
+                                                                      options:0
+                                                                      metrics:nil
+                                                                        views:@{@"userGuideLabel" : self.userGuideLabel}]];
+}
+
 
 #pragma mark - Collection view delegate methods
 
@@ -246,6 +271,8 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
     self.selectButton.titleLabel.text = [NSString stringWithFormat:@"%ld", (unsigned long)indexPath.row];
     self.selectButton.titleLabel.hidden = YES;
     [self.selectButton addTarget:self action:@selector(selectButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    
+    [self checkIsInitialEntry];
 }
 
 // 델리게이트에게 특정 셀이 선택 해제되었다는 것을 알려준다.
@@ -256,6 +283,19 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
     self.cell.layer.borderWidth = 0.0f;
     
     self.selectButton.hidden = YES;
+}
+
+
+#pragma mark - Check Is Initial Entry
+
+- (void)checkIsInitialEntry {
+    NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+    if ([userDefault valueForKey:@"isInitialInWMShowVideosViewController"] == nil) {   // 앱을 처음 실행한 상태
+        [userDefault setBool:false forKey:@"isInitialInWMShowVideosViewController"];
+        
+        [self setupUserGuidLabel];
+        [self setupUserGuideLabelConstraints];
+    }
 }
 
 

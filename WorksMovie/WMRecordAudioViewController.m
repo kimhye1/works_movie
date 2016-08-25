@@ -44,6 +44,7 @@
 @property (nonatomic, strong) NSTimer *recordPorgresstimer;
 @property (nonatomic, strong) NSTimer *recordMarkTimer;
 @property (nonatomic, assign) double videoRunningTime;
+@property (nonatomic, strong) UILabel *userGuideLabel;
 
 @end
 
@@ -69,6 +70,8 @@
     
     [self setupViewComponents];
     [self setupConstraints];
+    
+    [self checkIsInitialEntry];
     
     [self preparePlayVideo];
     [self prepareRecordAudio];
@@ -197,6 +200,18 @@
     [self.recordAudioContainerView addSubview:self.completeRecordingButton];
     self.completeRecordingButton.userInteractionEnabled = NO;
     [self.completeRecordingButton addTarget:self action:@selector(completeRecordingButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)setupUserGuidLabel {
+    self.userGuideLabel = [[UILabel alloc] init];
+    self.userGuideLabel.text = @"버튼을 누르면 후시 녹음이 시작됩니다";
+    self.userGuideLabel.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.3f];
+    [self.userGuideLabel setFont:[UIFont systemFontOfSize:12]];
+    self.userGuideLabel.layer.cornerRadius = 6;
+    self.userGuideLabel.clipsToBounds = YES;
+    self.userGuideLabel.textAlignment = NSTextAlignmentCenter;
+    self.userGuideLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.recordAudioContainerView addSubview:self.userGuideLabel];
 }
 
 
@@ -392,6 +407,40 @@
                                    constant:0]];
 }
 
+- (void)setupUserGuideLabelConstraints {
+    [self.view addConstraint:
+     [NSLayoutConstraint constraintWithItem:self.view
+                                  attribute:NSLayoutAttributeCenterX
+                                  relatedBy:NSLayoutRelationEqual
+                                     toItem:self.userGuideLabel
+                                  attribute:NSLayoutAttributeCenterX
+                                 multiplier:1
+                                   constant:0]];
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[userGuideLabel(==200)]"
+                                                                      options:0
+                                                                      metrics:nil
+                                                                        views:@{@"userGuideLabel" : self.userGuideLabel}]];
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-145-[userGuideLabel(==30)]"
+                                                                      options:0
+                                                                      metrics:nil
+                                                                        views:@{@"userGuideLabel" : self.userGuideLabel}]];
+}
+
+
+#pragma mark - Check Is Initial Entry
+
+- (void)checkIsInitialEntry {
+    NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+    if ([userDefault valueForKey:@"isInitialInWMRecordAudioViewController"] == nil) {   // 앱을 처음 실행한 상태
+        [userDefault setBool:false forKey:@"isInitialInWMRecordAudioViewController"];
+        
+        [self setupUserGuidLabel];
+        [self setupUserGuideLabelConstraints];
+    }
+}
+
 
 #pragma mark - Prepare Record Audio / Play Video Method
 
@@ -456,6 +505,8 @@
 #pragma mark - Record Audio Button Event Handler Methods
 
 - (void)recordButtonClicked:(UIButton *)sender {
+    [self userGuideLabelFadeOut];
+
     self.videoView.userInteractionEnabled = NO; // 녹음을 진행하는 동안 viewView 클릭 이벤트가 발생해 video가 play되는 것을 막는다.
     
     self.completeRecordingButton.userInteractionEnabled = YES;
@@ -499,6 +550,21 @@
         
         [self.recordMarkTimer invalidate];
     }
+}
+
+- (void)userGuideLabelFadeOut {
+    [UIView animateWithDuration:1.0f animations:^{
+        [self.userGuideLabel setAlpha:1.0f];
+        
+    } completion:^(BOOL finished) {
+        //fade out
+        [UIView animateWithDuration:1.0f animations:^{
+            [self.userGuideLabel setAlpha:0.0f];
+            self.userGuideLabel = nil;
+        } completion:nil];
+        
+        
+    }];
 }
 
 - (void)viewWillAppear:(BOOL)animated {

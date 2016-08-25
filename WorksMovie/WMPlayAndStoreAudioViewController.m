@@ -32,6 +32,7 @@
 @property (nonatomic, strong) UIButton *audioButton;
 @property (nonatomic, assign) BOOL audioAvailable;
 @property (nonatomic, strong) AVVideoComposition *videoComposition;
+@property (nonatomic, strong) UILabel *userGuideLabel;
 
 @end
 
@@ -68,6 +69,8 @@
     
     [self setupViewComponents];
     [self setupConstraints];
+    
+    [self checkIsInitialEntry];
     
     [self preparePlayVideoAndAudio];
 }
@@ -172,6 +175,20 @@
     self.audioButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.videoView addSubview:self.audioButton];
     [self.audioButton addTarget:self action:@selector(audioButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)setupUserGuidLabel {
+    self.userGuideLabel = [[UILabel alloc] init];
+    self.userGuideLabel.text = @"버튼을 누르면\n동영상의 음향이 음소거되어 저장됩니다";
+    [self.userGuideLabel setNumberOfLines:0];
+    //    self.userGuideLabel.lineBreakMode = UILineBreakModeWordWrap;
+    self.userGuideLabel.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.5f];
+    [self.userGuideLabel setFont:[UIFont systemFontOfSize:12]];
+    self.userGuideLabel.layer.cornerRadius = 6;
+    self.userGuideLabel.clipsToBounds = YES;
+    self.userGuideLabel.textAlignment = NSTextAlignmentLeft;
+    self.userGuideLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.videoView addSubview:self.userGuideLabel];
 }
 
 
@@ -323,6 +340,31 @@
 
 }
 
+- (void)setupUserGuideLabelConstraints {
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-65-[userGuideLabel(==195)]"
+                                                                      options:0
+                                                                      metrics:nil
+                                                                        views:@{@"userGuideLabel" : self.userGuideLabel}]];
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[userGuideLabel(==40)]-12-|"
+                                                                      options:0
+                                                                      metrics:nil
+                                                                        views:@{@"userGuideLabel" : self.userGuideLabel}]];
+}
+
+
+#pragma mark - Check Is Initial Entry
+
+- (void)checkIsInitialEntry {
+    NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+    if ([userDefault valueForKey:@"isInitialInWMPlayAndStoreAudioViewController"] == nil) {   // 앱을 처음 실행한 상태
+        [userDefault setBool:false forKey:@"isInitialInWMPlayAndStoreAudioViewController"];
+        
+        [self setupUserGuidLabel];
+        [self setupUserGuideLabelConstraints];
+    }
+}
+
 
 #pragma mark - Prepare Play Video And Audio Method
 
@@ -389,6 +431,8 @@
 #pragma mark - Audio Button Event Handler Methods
 
 - (void)audioButtonClicked:(UIButton *)sender {
+    [self userGuideLabelFadeOut];
+
     UIButton *button = (UIButton *)sender;
     button.selected = !button.selected;
     
@@ -398,6 +442,21 @@
     else {
         self.audioAvailable = NO;
     }
+}
+
+- (void)userGuideLabelFadeOut {
+    [UIView animateWithDuration:1.0f animations:^{
+        [self.userGuideLabel setAlpha:1.0f];
+        
+    } completion:^(BOOL finished) {
+        //fade out
+        [UIView animateWithDuration:1.0f animations:^{
+            [self.userGuideLabel setAlpha:0.0f];
+            self.userGuideLabel = nil;
+        } completion:nil];
+        
+        
+    }];
 }
 
 
