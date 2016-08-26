@@ -169,7 +169,7 @@ NSString *const showVideoButtonTitle = @"동영상 가져오기";
 
 - (void)setupButtonsVerticalConstraints {
     [self.view addConstraints:
-     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[shootingVideoButton(==50)]-17-[showVideosButton(==50)]-30-|"
+     [NSLayoutConstraint constraintsWithVisualFormat:@"V:[shootingVideoButton(==50)]-15-[showVideosButton(==50)]-30-|"
                                              options:0
                                              metrics:nil
                                                views:@{

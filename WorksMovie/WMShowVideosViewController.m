@@ -290,13 +290,13 @@ NSString *const kCollectionViewCellIdentifier = @"wm_collection_view_cell_identi
 #pragma mark - Check Is Initial Entry
 
 - (void)checkIsInitialEntry {
-    NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
-    if ([userDefault valueForKey:@"isInitialInWMShowVideosViewController"] == nil) {   // 앱을 처음 실행한 상태
-        [userDefault setBool:false forKey:@"isInitialInWMShowVideosViewController"];
-        
+//    NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+//    if ([userDefault valueForKey:@"isInitialInWMShowVideosViewController"] == false) {   // 앱을 처음 실행한 상태
+//        [userDefault setBool:false forKey:@"isInitialInWMShowVideosViewController"];
+    
         [self setupUserGuidLabel];
         [self setupUserGuideLabelConstraints];
-    }
+//    }
 }
 
 

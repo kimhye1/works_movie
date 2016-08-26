@@ -208,7 +208,7 @@
 
 - (void)setupUserGuidLabel {
     self.userGuideLabel = [[UILabel alloc] init];
-    self.userGuideLabel.text = @"버튼을 누르면 후시 녹음이 시작됩니다";
+    self.userGuideLabel.text = @"버튼을 누르면 후시 녹음이 시작됩니다!";
     self.userGuideLabel.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.3f];
     [self.userGuideLabel setFont:[UIFont systemFontOfSize:12]];
     self.userGuideLabel.layer.cornerRadius = 6;
@@ -421,12 +421,12 @@
                                  multiplier:1
                                    constant:0]];
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[userGuideLabel(==170)]"
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[userGuideLabel(==195)]"
                                                                       options:0
                                                                       metrics:nil
                                                                         views:@{@"userGuideLabel" : self.userGuideLabel}]];
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-145-[userGuideLabel(==30)]"
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-128-[userGuideLabel(==30)]"
                                                                       options:0
                                                                       metrics:nil
                                                                         views:@{@"userGuideLabel" : self.userGuideLabel}]];
@@ -436,13 +436,13 @@
 #pragma mark - Check Is Initial Entry
 
 - (void)checkIsInitialEntry {
-    NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
-    if ([userDefault valueForKey:@"isInitialInWMRecordAudioViewController"] == nil) {   // 앱을 처음 실행한 상태
-        [userDefault setBool:false forKey:@"isInitialInWMRecordAudioViewController"];
-        
+//    NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+//    if ([userDefault valueForKey:@"isInitialInWMRecordAudioViewController"] == nil) {   // 앱을 처음 실행한 상태
+//        [userDefault setBool:false forKey:@"isInitialInWMRecordAudioViewController"];
+    
         [self setupUserGuidLabel];
         [self setupUserGuideLabelConstraints];
-    }
+//    }
 }
 
 

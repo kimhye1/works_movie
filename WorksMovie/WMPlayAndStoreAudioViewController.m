@@ -499,13 +499,13 @@
 #pragma mark - Check Is Initial Entry
 
 - (void)checkIsInitialEntry {
-    NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
-    if ([userDefault valueForKey:@"isInitialInWMPlayAndStoreAudioViewController"] == nil) {   // 앱을 처음 실행한 상태
-        [userDefault setBool:false forKey:@"isInitialInWMPlayAndStoreAudioViewController"];
-        
+//    NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+//    if ([userDefault valueForKey:@"isInitialInWMPlayAndStoreAudioViewController"] == nil) {   // 앱을 처음 실행한 상태
+//        [userDefault setBool:false forKey:@"isInitialInWMPlayAndStoreAudioViewController"];
+    
         [self setupUserGuidLabel];
         [self setupUserGuideLabelConstraints];
-    }
+//    }
 }
 
 
