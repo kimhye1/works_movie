@@ -706,6 +706,11 @@
                                 [strongSelf.videoModelManager.mediaDatas removeAllObjects];
                                 [strongSelf.audioModelManager.mediaDatas removeAllObjects];
                                 
+                                NSFileManager *manager = [[NSFileManager alloc] init];
+                                if ([manager fileExistsAtPath:[self.audioModelManager.mediaDatas.firstObject mediaURL].path]) {
+                                    [manager removeItemAtPath:[self.audioModelManager.mediaDatas.firstObject mediaURL].path error:nil];
+                                }
+                                
                                 dispatch_async(dispatch_get_main_queue(), ^{
                                     UIViewController *vc = strongSelf.presentingViewController;
                                     while (vc.presentingViewController) {

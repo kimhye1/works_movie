@@ -43,6 +43,7 @@ NSString *const showVideoButtonTitle = @"동영상 가져오기";
                                              selector:@selector(appDidBecomeActiveWhenDismissed:)
                                                  name:WMShootingVideoViewControllerDidDismissedNotification object:nil];
     
+    [self removeTempFiles];
 }
 
 
@@ -174,6 +175,14 @@ NSString *const showVideoButtonTitle = @"동영상 가져오기";
                                                views:@{
                                                        @"shootingVideoButton" : self.shootingVideoButton,
                                                        @"showVideosButton" : self.showVideosButton}]];
+}
+
+
+- (void)removeTempFiles {
+    NSArray* tmpDirectory = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:NSTemporaryDirectory() error:NULL];
+    for (NSString *file in tmpDirectory) {
+        [[NSFileManager defaultManager] removeItemAtPath:[NSString stringWithFormat:@"%@%@", NSTemporaryDirectory(), file] error:NULL];
+    }
 }
 
 

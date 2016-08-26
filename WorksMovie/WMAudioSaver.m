@@ -13,7 +13,7 @@
 
 @property (nonatomic, strong) WMVideoModelManager *videoModelManager;
 @property (nonatomic, strong) WMAudioModelManager *audioModelManager;
-@property (nonatomic, strong) AVMutableComposition *composition;
+//@property (nonatomic, strong) AVMutableComposition *composition;
 @property (nonatomic, strong) UILabel *saveAlertLabel;
 @property (nonatomic, strong) UIView *savingView;
 
@@ -32,13 +32,13 @@
 }
 
 - (AVMutableComposition *)mergeAudio:(NSURL *)audioURL withVideo:(NSURL *)videoURL audioAvailable:(BOOL)audioAvailable {
-    self.composition = [AVMutableComposition composition];
+    AVMutableComposition *composition = [AVMutableComposition composition];
     
     // video
     AVURLAsset *videoAsset = [[AVURLAsset alloc]initWithURL:videoURL options:nil];
     CMTimeRange videoTimeRange = CMTimeRangeMake(kCMTimeZero, videoAsset.duration);
     
-    AVMutableCompositionTrack *videoCompositionVideoTrack = [self.composition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
+    AVMutableCompositionTrack *videoCompositionVideoTrack = [composition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
     
     CGAffineTransform transform = CGAffineTransformMakeRotation((90 * M_PI ) / 180);
     videoCompositionVideoTrack.preferredTransform = transform;
@@ -48,40 +48,37 @@
     
     // audio
     AVURLAsset *audioAsset = [[AVURLAsset alloc]initWithURL:audioURL options:nil];
-//    CMTimeRange audioTimeRange = CMTimeRangeMake(kCMTimeZero, audioAsset.duration);
-    
-    AVMutableCompositionTrack *audioCompositionAudioTrack = [self.composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
+        
+    AVMutableCompositionTrack *audioCompositionAudioTrack = [composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
     [audioCompositionAudioTrack insertTimeRange:videoTimeRange ofTrack:[[audioAsset tracksWithMediaType:AVMediaTypeAudio] firstObject] atTime:kCMTimeZero error:nil];
-    
-    
+
     
     // video's audio
     if (audioAvailable) { // 비디오 사운드 그대로 놔둘 때
-        AVMutableCompositionTrack *videoCompositionAuidoTrack = [self.composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
+        AVMutableCompositionTrack *videoCompositionAuidoTrack = [composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
         [videoCompositionAuidoTrack insertTimeRange:videoTimeRange ofTrack:[[videoAsset tracksWithMediaType:AVMediaTypeAudio] firstObject] atTime:kCMTimeZero error:nil];
     }
     
-    
-    
-    return self.composition;
+    return composition;
 }
 
-- (void)removeTemporarydirectoryFiles {
-    NSFileManager *manager = [[NSFileManager alloc] init];
-    
-    for (int i = 0 ; i < self.audioModelManager.mediaDatas.count; i++) {
-        if ([manager fileExistsAtPath:[self.audioModelManager.mediaDatas[i] mediaURL].path]) {
-            [manager removeItemAtPath:[self.audioModelManager.mediaDatas[i] mediaURL].path error:nil];
-        }
-    }
-}
+//- (void)removeTemporarydirectoryFiles {
+//    NSFileManager *manager = [[NSFileManager alloc] init];
+//    
+//    for (int i = 0 ; i < self.audioModelManager.mediaDatas.count; i++) {
+//        if ([manager fileExistsAtPath:[self.audioModelManager.mediaDatas[i] mediaURL].path]) {
+//            [manager removeItemAtPath:[self.audioModelManager.mediaDatas[i] mediaURL].path error:nil];
+//        }
+//    }
+//}
 
 // 카메라 롤에 merge된 비디오를 저장하는 메소드
 - (NSURL *)storeVideo:(AVMutableComposition *)composition videoComposition:(AVVideoComposition *)videoComposition alertLabel:(UILabel *)saveAlertLabel savigView:(UIView *)savingView {
+ 
     self.saveAlertLabel = saveAlertLabel;
     self.savingView = savingView;
     
-    [self removeTemporarydirectoryFiles];
+//    [self removeTemporarydirectoryFiles];
     
     NSString *outputVideoPath = [self outputPath];
     NSURL *outputVideoURL = [NSURL fileURLWithPath:outputVideoPath];

@@ -704,11 +704,16 @@
                                  [self.player pause];
                                  self.player = nil;
                                  
-//                                 [self.playerLayer removeFromSuperlayer];
+                                 [self.playerLayer.player pause];
                                  
                                  self.playerWithAudio = nil;
                                  [self.audioHelper stopRecording];
-                                 [self.audioHelper removeSession];                                 
+                                 [self.audioHelper removeSession];
+                                 
+                                 NSFileManager *manager = [[NSFileManager alloc] init];
+                                 if ([manager fileExistsAtPath:[self.audioModelManager.mediaDatas.firstObject mediaURL].path]) {
+                                     [manager removeItemAtPath:[self.audioModelManager.mediaDatas.firstObject mediaURL].path error:nil];
+                                 }
                              }];
     [alert addAction:ok];
     [alert addAction:cancel];
@@ -762,7 +767,12 @@
     self.playerWithAudio = nil;
     [self.audioHelper stopRecording];
     [self.audioHelper removeSession];
-        
+    
+    NSFileManager *manager = [[NSFileManager alloc] init];
+    if ([manager fileExistsAtPath:[self.audioModelManager.mediaDatas.firstObject mediaURL].path]) {
+        [manager removeItemAtPath:[self.audioModelManager.mediaDatas.firstObject mediaURL].path error:nil];
+    }
+    
     [self dismissViewControllerAnimated:NO completion:nil];
 }
 
