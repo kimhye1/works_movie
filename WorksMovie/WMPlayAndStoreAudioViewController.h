@@ -15,8 +15,6 @@
 
 @property (nonatomic, strong) WMFilter *filter;
 
-//- (instancetype)initWithVideoModelManager:(WMVideoModelManager *)videoModelManager audioModelManager:(WMAudioModelManager *)audioModelManager;
-
 - (instancetype)initWithVideoModelManager:(WMVideoModelManager *)videoModelManager
                         audioModelManager:(WMAudioModelManager *)audioModelManager
                               composition:(AVVideoComposition *)composition

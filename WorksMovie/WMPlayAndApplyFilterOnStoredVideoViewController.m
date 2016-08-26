@@ -15,6 +15,7 @@
 #import "WMPlayAndStoreAudioViewController.h"
 #import "WMMediaUtils.h"
 #import "WMAudioHelper.h"
+#import "WMNotificationStrings.h"
 
 @interface WMPlayAndApplyFilterOnStoredVideoViewController ()
 
@@ -68,6 +69,18 @@ NSString *const collectionViewCellIdentifier_2 = @"wm_collection_view_cell_ident
     self.composition = [[AVMutableComposition alloc] init];
     [self playVideo];
     [self playAudio];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applicationWillResignActive:)
+                                                 name:UIApplicationWillResignActiveNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(appDidBecomeActive:)
+                                                 name:UIApplicationDidBecomeActiveNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(appDidBecomeActiveWhenDismissed:)
+                                                 name:WMPlayAndStoreAudioViewControllerDidDismissedNotification object:nil];
 }
 
 
@@ -244,6 +257,9 @@ NSString *const collectionViewCellIdentifier_2 = @"wm_collection_view_cell_ident
 - (void)itemDidFinishPlaying:(NSNotification *)notification {
     AVPlayerItem *p = [notification object];
     [p seekToTime:kCMTimeZero];
+    
+    self.audioPlayer = nil;
+    [self playAudio];
 }
 
 
@@ -343,12 +359,9 @@ NSString *const collectionViewCellIdentifier_2 = @"wm_collection_view_cell_ident
 
 - (void)completeButtonClicked:(UIButton *)sender {
     [self.player pause];
-    [self.playerLayer.player pause];
-    [self.playerLayer removeFromSuperlayer];
     self.player = nil;
     
-    [self.audioPlayer stop];
-    self.audioPlayer = nil;
+    [self.audioPlayer pause];
     
     [self presentWMPlayAndStoreAudioViewController];
 }
@@ -366,5 +379,31 @@ NSString *const collectionViewCellIdentifier_2 = @"wm_collection_view_cell_ident
 -(void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
+
+
+#pragma mark - Notificatioin Handler Methods
+
+- (void)applicationWillResignActive:(NSNotification *)notification {
+    [self.player pause];
+    self.playerLayer.player = nil;
+}
+
+- (void)appDidBecomeActive:(NSNotification *)notification {
+    self.playerLayer.player = self.player;
+    [self.player play];
+}
+
+
+- (void)appDidBecomeActiveWhenDismissed:(NSNotification *)notice {
+    self.player = self.playerLayer.player;
+    [self.player play];
+    
+    [self.audioPlayer play];
+
+}
+
+
+
+
 
 @end

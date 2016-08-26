@@ -13,5 +13,6 @@
 extern NSString *const WMShootingVideoViewControllerDidDismissedNotification;
 extern NSString *const WMEditVideoViewControllerDidDismissedNotification;
 extern NSString *const WMPlayAndStoreVideoViewControllerDidDismissedNotification;
+extern NSString *const WMPlayAndStoreAudioViewControllerDidDismissedNotification;
 
 @end

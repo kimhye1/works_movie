@@ -15,6 +15,7 @@
 @property (nonatomic, strong) AVAudioRecorder *audioRecorder;
 @property (nonatomic, strong) WMAudioModelManager *audioModelManager;
 @property (nonatomic, strong) WMVideoModelManager *videoModelManager;
+@property (nonatomic, strong) AVAudioSession *session;
 
 @end
 
@@ -59,8 +60,8 @@
 
 // audio session을 정의
 - (void)setupAudioSession {
-    AVAudioSession *session = [AVAudioSession sharedInstance];
-    [session setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+    self.session = [AVAudioSession sharedInstance];
+    [self.session setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
 }
 
 // recorder setting을 정의
@@ -96,6 +97,12 @@
 
 - (void)stopRecording {
     [self.audioRecorder stop];
+}
+
+- (void)removeSession {
+    [[AVAudioSession sharedInstance] setActive:NO error:nil];
+    self.session = nil;
+    self.audioRecorder = nil;
 }
 
 - (BOOL)isRecording {

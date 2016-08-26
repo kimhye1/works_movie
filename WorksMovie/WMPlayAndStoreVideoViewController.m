@@ -70,7 +70,7 @@
                                                  name:UIApplicationWillResignActiveNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(appDidBecomeActive:)
+                                             selector:@selector(applicationDidBecomeActive:)
                                                  name:UIApplicationDidBecomeActiveNotification object:nil];
 }
 
@@ -441,8 +441,6 @@
 #pragma mark - Prepare Play Video
 
 - (void)preparePlayVideo {
-    [self removeTemporarydirectoryFiles];
-    
     AVURLAsset *avAsset = [AVURLAsset URLAssetWithURL:self.outputURL options:nil];
     self.playerItem = [AVPlayerItem playerItemWithAsset:avAsset];
     self.playerItem.videoComposition = self.composition;
@@ -490,8 +488,18 @@
 
 // 비디오 재생이 끝나면 리플레이를 위해 preparePlayVideo를 호출한다.
 - (void)itemDidFinishPlaying:(NSNotification *)notification {
-    AVPlayerItem *p = [notification object];
-    [p seekToTime:kCMTimeZero];
+    [self.videoView addSubview:self.backToCameraViewButton];
+    [self.videoView addSubview:self.resetAndbackToCameraButton];
+    self.playVideoButton.hidden = NO;
+    self.backToCameraViewButton.hidden = NO;
+    self.resetAndbackToCameraButton.hidden = NO;
+    
+    [self.playerLayer removeFromSuperlayer];
+    self.player = nil;
+    self.playerItem = nil;
+    self.playerLayer = nil;
+    
+    [self preparePlayVideo];
 }
 
 - (void)removeTemporarydirectoryFiles {
@@ -547,6 +555,8 @@
                                  [strongSelf.modelManager.mediaDatas removeAllObjects];
                                  
                                  dispatch_async(dispatch_get_main_queue(), ^{
+                                    [self removeTemporarydirectoryFiles];
+                                     
                                      UIViewController *vc = strongSelf.presentingViewController;
                                      while (vc.presentingViewController) {
                                          vc = vc.presentingViewController;
@@ -570,15 +580,12 @@
     [self setupSavingViewConstraints];
     
     [self.player pause];
-    self.playerLayer.player = nil;
     
     [self.videoView addSubview:self.backToCameraViewButton];
+    [self.videoView addSubview:self.resetAndbackToCameraButton];
     self.playVideoButton.hidden = NO;
     self.backToCameraViewButton.hidden = NO;
-//    [self.player pause];
-//    [self.playerLayer.player pause];
-//    [self.playerLayer removeFromSuperlayer];
-//    self.player = nil;
+    self.resetAndbackToCameraButton.hidden = NO;
  
     [self.videoHelper storeVideo:self.composition outputURL:self.outputURL alertLabel:self.saveAlertLabel savigView:self.savingView];
 }
@@ -589,7 +596,12 @@
 - (void)shareVideoButtonClicked:(UIButton *)sender {
     self.saveAlertLabel = nil;
     [self.player pause];
-    self.playerLayer.player = nil;
+
+    [self.videoView addSubview:self.backToCameraViewButton];
+    [self.videoView addSubview:self.resetAndbackToCameraButton];
+    self.playVideoButton.hidden = NO;
+    self.backToCameraViewButton.hidden = NO;
+    self.resetAndbackToCameraButton.hidden = NO;
     
     NSURL *url = [self.videoHelper storeVideo:self.composition outputURL:self.outputURL alertLabel:(UILabel *)self.saveAlertLabel savigView:(UIView *)self.savingView];
 
@@ -605,29 +617,27 @@
 #pragma mark - Notificatioin Handler Methods
 
 - (void)applicationWillResignActive:(NSNotification *)notification {
-//    if ([self isPlaying]) {
+    if ([self isPlaying]) {
         [self.player pause];
-        self.playerLayer.player = nil;
-//    }
-
-    
-//        [self.playerLayer.player pause];
-//        [self.playerLayer removeFromSuperlayer];
-//        self.player = nil;
-//    self.playerItem = nil;
-//    self.playerLayer = nil;
-    
+         self.playerLayer.player = nil;
+        
+        [self.videoView addSubview:self.backToCameraViewButton];
+        [self.videoView addSubview:self.resetAndbackToCameraButton];
+        self.playVideoButton.hidden = NO;
+        self.backToCameraViewButton.hidden = NO;
+        self.resetAndbackToCameraButton.hidden = NO;
+        
+        [self.playerLayer removeFromSuperlayer];
+        self.player = nil;
+        self.playerItem = nil;
+        self.playerLayer = nil;
+    }
 }
 
-- (void)appDidBecomeActive:(NSNotification *)notification {
-//    self.playerLayer.player = self.player;
-//    [self.player play];
-//    if ([self isPlaying]) {
-//        [self preparePlayVideo];
-//    }
+- (void)applicationDidBecomeActive:(NSNotification *)notification {
+    self.playerLayer.player = self.player;
     
-
-
+    [self preparePlayVideo];
 }
 
 @end

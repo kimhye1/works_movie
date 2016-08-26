@@ -23,8 +23,7 @@
 @implementation WMAudioHelper
 
 - (instancetype)initWithVideoModelManager:(WMVideoModelManager *)videoModelManager audioModelManager:(WMAudioModelManager *)audioModelManager {
-    
-    self = [super self];
+    self = [super init];
     
     if (self) {
         self.audioRecorder = [[WMAudioRecorder alloc] initWithVideoModelManager:videoModelManager audioModelManager:audioModelManager];
@@ -57,6 +56,10 @@
 
 - (void)stopRecording {
     [self.audioRecorder stopRecording];
+}
+
+- (void)removeSession {
+    [self.audioRecorder removeSession];
 }
 
 - (BOOL)isRecording {

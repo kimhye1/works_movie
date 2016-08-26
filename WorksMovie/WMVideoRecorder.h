@@ -21,5 +21,6 @@
 - (void)stopRecording;
 - (void)stopSession;
 - (void)startSession;
+- (void)removeSession;
 
 @end

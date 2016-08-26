@@ -25,8 +25,7 @@
 @implementation WMVideoHelper
 
 - (instancetype)initWithVideoModelManager:(WMVideoModelManager *)modelManager {
-    
-    self = [super self];
+    self = [super init];
     
     if (self) {
         self.videoRecorder = [[WMVideoRecorder alloc] initWithVideoModelManager:modelManager];

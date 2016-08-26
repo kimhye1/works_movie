@@ -26,6 +26,7 @@
 @property (nonatomic, strong) UIButton *shareVideoButton;
 @property (nonatomic, strong) UILabel *shareLabel;
 @property (nonatomic, strong) AVPlayer *player;
+@property (nonatomic, strong) AVPlayerItem *playerItem;
 @property (nonatomic, strong) AVPlayerLayer *playerLayer;
 @property (nonatomic, strong) AVPlayer *playerWithAudio;
 @property (nonatomic, strong) AVPlayerLayer *playerLayerWithAudio;
@@ -43,17 +44,6 @@
 @end
 
 @implementation WMPlayAndStoreAudioViewController
-
-//- (instancetype)initWithVideoModelManager:(WMVideoModelManager *)videoModelManager audioModelManager:(WMAudioModelManager *)audioModelManager {
-//    self = [super init];
-//
-//    if (self) {
-//        self.videoModelManager = videoModelManager;
-//        self.audioModelManager = audioModelManager;
-//        self.audioHelper = [[WMAudioHelper alloc] initWithVideoModelManager:self.videoModelManager audioModelManager:self.audioModelManager];
-//    }
-//    return self;
-//}
 
 - (instancetype)initWithVideoModelManager:(WMVideoModelManager *)videoModelManager
                         audioModelManager:(WMAudioModelManager *)audioModelManager
@@ -79,6 +69,14 @@
     [self checkIsInitialEntry];
     
     [self preparePlayVideoAndAudio];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applicationWillResignActive:)
+                                                 name:UIApplicationWillResignActiveNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applicationDidBecomeActive:)
+                                                 name:UIApplicationDidBecomeActiveNotification object:nil];
 }
 
 
@@ -520,14 +518,14 @@
 
 - (void)preparePlayVideo {
     AVURLAsset *avAsset = [AVURLAsset URLAssetWithURL:[(WMMediaModel *)self.videoModelManager.mediaDatas.firstObject mediaURL] options:nil];
-    AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:avAsset];
-    playerItem.videoComposition = self.videoComposition;
+    self.playerItem = [AVPlayerItem playerItemWithAsset:avAsset];
+    self.playerItem.videoComposition = self.videoComposition;
     
     // 동영상 play가 끝나면 불릴 notification 등록
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:)
-                                                 name:AVPlayerItemDidPlayToEndTimeNotification object:playerItem];
+                                                 name:AVPlayerItemDidPlayToEndTimeNotification object:self.playerItem];
     
-    self.player = [AVQueuePlayer playerWithPlayerItem:playerItem];
+    self.player = [AVQueuePlayer playerWithPlayerItem:self.playerItem];
     
     self.playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
     [self.playerLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
@@ -543,7 +541,7 @@
 
 // viewView를 tap하면 비디오의 재생 상태에 따라 play또는 pause시킨다.
 - (void)videoViewTapped:(UITapGestureRecognizer *)sender {
-    if (self.player.rate == 1.0) { // 재생 중일 때 실행
+    if ([self isPlaying]) { // 재생 중일 때 실행
         [self.videoView addSubview:self.backButton];
         [self.videoView addSubview:self.goHomeButton];
         self.playVideoAndAudioButton.hidden = NO;
@@ -551,7 +549,7 @@
         self.goHomeButton.hidden = NO;
         [self.player pause];
         [self.audioPlayer pause];
-    } else if (self.player.rate == 0.0) { // 정지 상태일 때 실행
+    } else { // 정지 상태일 때 실행
         self.playVideoAndAudioButton.hidden = YES;
         self.backButton.hidden = YES;
         self.goHomeButton.hidden = YES;
@@ -561,12 +559,33 @@
     }
 }
 
+- (BOOL)isPlaying {
+    if (self.player.rate == 0.0) { // player가 정지 상태일 때 실행
+        return NO;
+    }
+    return YES;
+}
+
 - (void)itemDidFinishPlaying:(NSNotification *)notification {
-    AVPlayerItem *p = [notification object];
-    [p seekToTime:kCMTimeZero];
+//    AVPlayerItem *p = [notification object];
+//    [p seekToTime:kCMTimeZero];
+//    
+//    self.playVideoAndAudioButton.hidden = NO;
+//    self.backButton.hidden = NO;
     
+    [self.videoView addSubview:self.backButton];
+    [self.videoView addSubview:self.goHomeButton];
     self.playVideoAndAudioButton.hidden = NO;
     self.backButton.hidden = NO;
+    self.goHomeButton.hidden = NO;
+    
+    [self.playerLayer removeFromSuperlayer];
+    self.player = nil;
+    self.playerItem = nil;
+    self.playerLayer = nil;
+    
+    [self preparePlayVideo];
+    [self preparePlayVideo];
 }
 
 
@@ -574,6 +593,8 @@
 
 - (void)backButtonClicked:(UIButton *)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:WMPlayAndStoreAudioViewControllerDidDismissedNotification object:nil];
 }
 
 
@@ -616,18 +637,11 @@
     [self setupSavingViewConstraints];
 
     [self.player pause];
+    [self.audioPlayer stop];
     
     [self.videoView addSubview:self.backButton];
     self.playVideoAndAudioButton.hidden = NO;
     self.backButton.hidden = NO;
-    [self.player pause];
-    [self.playerLayer.player pause];
-    [self.playerLayer removeFromSuperlayer];
-    self.player = nil;
-    
-    [self.audioPlayer stop];
-    self.audioPlayer = nil;
-
     
     NSURL *audioURL = [self.audioModelManager.mediaDatas.firstObject mediaURL];
     NSURL *videoURL = [self.videoModelManager.mediaDatas.firstObject mediaURL];
@@ -644,6 +658,11 @@
     self.saveAlertLabel = nil;
 
     [self.player pause];
+    [self.audioPlayer stop];
+    
+    [self.videoView addSubview:self.backButton];
+    self.playVideoAndAudioButton.hidden = NO;
+    self.backButton.hidden = NO;
     
     NSURL *audioURL = [self.audioModelManager.mediaDatas.firstObject mediaURL];
     NSURL *videoURL = [self.videoModelManager.mediaDatas.firstObject mediaURL];
@@ -707,6 +726,33 @@
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+
+#pragma mark - Notificatioin Handler Methods
+
+- (void)applicationWillResignActive:(NSNotification *)notification {
+    if ([self isPlaying]) {
+        [self.player pause];
+        self.playerLayer.player = nil;
+        
+        [self.videoView addSubview:self.backButton];
+        [self.videoView addSubview:self.goHomeButton];
+        self.playVideoAndAudioButton.hidden = NO;
+        self.backButton.hidden = NO;
+        self.goHomeButton.hidden = NO;
+        
+        [self.playerLayer removeFromSuperlayer];
+        self.player = nil;
+        self.playerItem = nil;
+        self.playerLayer = nil;
+    }
+}
+
+- (void)applicationDidBecomeActive:(NSNotification *)notification {
+    self.playerLayer.player = self.player;
+    
+    [self preparePlayVideo];
 }
 
 @end

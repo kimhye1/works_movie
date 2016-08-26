@@ -22,6 +22,7 @@
 - (void)pauseRecording;
 - (void)stopRecording;
 - (BOOL)isRecording;
+- (void)removeSession;
 
 - (AVMutableComposition *)mergeAudio:(NSURL *)audioURL withVideo:(NSURL *)videoURL audioAvailable:(BOOL)audioAvailable;
 - (NSURL *)storeVideo:(AVMutableComposition *)composition videoComposition:(AVVideoComposition *)videoComposition alertLabel:(UILabel *)saveAlertLabel savigView:(UIView *)savingView;

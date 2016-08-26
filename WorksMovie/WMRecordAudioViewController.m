@@ -37,7 +37,6 @@
 @property (nonatomic, strong) AVPlayerLayer *playerLayer;
 @property (nonatomic, strong) AVPlayer *playerWithAudio;
 @property (nonatomic, strong) AVPlayerLayer *playerLayerWithAudio;
-//@property (nonatomic, strong) AVAudioPlayer *audioPlayer;
 @property (nonatomic, strong) NSURL *outputFileURL;
 @property (nonatomic, strong) UIProgressView *progressView;
 @property (nonatomic, assign) CGFloat progress;
@@ -76,6 +75,11 @@
     [self preparePlayVideo];
     [self prepareRecordAudio];
     [self preparePlayVideoWhenRocorded];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applicationWillResignActive:)
+                                                 name:UIApplicationWillResignActiveNotification object:nil];
+    
 }
 
 
@@ -491,6 +495,7 @@
 - (void)videoViewTapped:(UITapGestureRecognizer *)sender {
     if (self.player.rate == 1.0) { // 재생 중일 때 실행
         self.playVideoButton.hidden = NO;
+        [self.videoView addSubview:self.backToCellectionViewButton];
         self.backToCellectionViewButton.hidden = NO;
         [self.player pause];
     } else if (self.player.rate == 0.0) { // 정지 상태일 때 실행
@@ -513,6 +518,9 @@
     [self.completeRecordingButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     
     if (![self.audioHelper isRecording]) {
+        [self.player pause];
+        self.player = nil;
+        
         self.recordButton.backgroundColor = [UIColor colorWithRed:0.15 green:0.16 blue:0.17 alpha:1.00];
         self.recordingSquare.hidden = NO;
         self.recordingSquare.userInteractionEnabled = NO;
@@ -542,6 +550,9 @@
         [self.videoView addSubview:self.playVideoButton];
         self.playVideoButton.hidden = NO;
         [self.playerWithAudio pause];
+        
+        [self.videoView addSubview:self.backToCellectionViewButton];
+        self.backToCellectionViewButton.hidden = NO;
         
         [self.audioHelper pauseRecording];
         
@@ -653,6 +664,18 @@
 #pragma mark - Remove Audio Button Event Handler Methods
 
 - (void)removeAudioButtonClicked:(UIButton *)sender {
+    [self.playerWithAudio pause];
+    self.recordButton.backgroundColor = [UIColor redColor];
+    self.recordingSquare.hidden = YES;
+    
+    [self.audioHelper pauseRecording];
+    
+    [self.progressView setProgress:self.progress animated:NO];
+    
+    [self.recordPorgresstimer invalidate]; //timer 진행을 멈춘다.
+    
+    [self.recordMarkTimer invalidate];
+    
     [self alertResetAudio];
 }
 
@@ -678,6 +701,14 @@
                                  [alert dismissViewControllerAnimated:YES completion:nil];
                                  [weakSelf dismissViewControllerAnimated:NO completion:nil];
                                  
+                                 [self.player pause];
+                                 self.player = nil;
+                                 
+//                                 [self.playerLayer removeFromSuperlayer];
+                                 
+                                 self.playerWithAudio = nil;
+                                 [self.audioHelper stopRecording];
+                                 [self.audioHelper removeSession];                                 
                              }];
     [alert addAction:ok];
     [alert addAction:cancel];
@@ -696,14 +727,8 @@
     [self.playerLayer removeFromSuperlayer];
     self.player = nil;
     
-    
-    //    WMPlayAndStoreAudioViewController *playAndStoreViewController = [[WMPlayAndStoreAudioViewController alloc] initWithVideoModelManager:self.videoModelManager audioModelManager:self.audioModelManager];
-    //    [self presentViewController:playAndStoreViewController animated:YES completion:nil];
-    
-    
     WMPlayAndApplyFilterOnStoredVideoViewController *playAndApplyFilterOnStoredVideoViewController = [[WMPlayAndApplyFilterOnStoredVideoViewController alloc] initWithVideoModelManager:self.videoModelManager audioModelManager:self.audioModelManager];
     [self presentViewController:playAndApplyFilterOnStoredVideoViewController animated:YES completion:nil];
-    
 }
 
 - (void)stopRecording {
@@ -731,11 +756,47 @@
 #pragma mark - Back To Collection View Button Event Handler Methods
 
 - (void)backToCollectionViewButtonClicked:(UIButton *)sender {
+    [self.playerLayer.player pause];
+    [self.playerLayer removeFromSuperlayer];
+    self.player = nil;
+    self.playerWithAudio = nil;
+    [self.audioHelper stopRecording];
+    [self.audioHelper removeSession];
+        
     [self dismissViewControllerAnimated:NO completion:nil];
 }
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+
+#pragma mark - Notificatioin Handler Methods
+
+- (void)applicationWillResignActive:(NSNotification *)notification {
+    if ([self.audioHelper isRecording]) {
+        self.recordButton.backgroundColor = [UIColor redColor];
+        self.recordingSquare.hidden = YES;
+        
+        [self.videoView addSubview:self.playVideoButton];
+        self.playVideoButton.hidden = NO;
+        [self.playerWithAudio pause];
+        
+        [self.audioHelper pauseRecording];
+        
+        [self.progressView setProgress:self.progress animated:NO];
+        
+        [self.recordPorgresstimer invalidate]; //timer 진행을 멈춘다.
+        
+        [self.recordMarkTimer invalidate];
+    }
+    
+    if (self.player.rate == 1.0) { // 재생 중일 때 실행
+        self.playVideoButton.hidden = NO;
+        [self.videoView addSubview:self.backToCellectionViewButton];
+        self.backToCellectionViewButton.hidden = NO;
+        [self.player pause];
+    }
 }
 
 @end

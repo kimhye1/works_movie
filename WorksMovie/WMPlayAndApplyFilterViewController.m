@@ -27,6 +27,7 @@
 @property (nonatomic, strong) AVPlayer *player;
 @property (nonatomic, strong) AVPlayerLayer *playerLayer;
 @property (nonatomic, strong) AVPlayerItem *playerItem;
+@property (nonatomic, strong) AVPlayerItem *playerItemFilter;
 @property (nonatomic, strong) UILabel *saveAlertLabel;
 @property (nonatomic, strong) NSArray *filterTitleList;
 @property (nonatomic, strong) NSArray *filterNameList;
@@ -349,14 +350,15 @@ NSString *const collectionViewCellIdentifier = @"wm_collection_view_cell_identif
                                              }];
     
     if (self.playerItem.videoComposition == nil) {
-        AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:[AVAsset assetWithURL:self.outputVideoURL]];
-        playerItem.videoComposition = self.videoComposition;
-        [self.player replaceCurrentItemWithPlayerItem:playerItem];
+        self.playerItemFilter = nil;
+        self.playerItemFilter = [AVPlayerItem playerItemWithAsset:[AVAsset assetWithURL:self.outputVideoURL]];
+        self.playerItemFilter.videoComposition = self.videoComposition;
+        [self.player replaceCurrentItemWithPlayerItem:self.playerItemFilter];
         [self.player play];
         
         // 동영상 play가 끝나면 불릴 notification 등록
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:)
-                                                     name:AVPlayerItemDidPlayToEndTimeNotification object:playerItem];
+                                                     name:AVPlayerItemDidPlayToEndTimeNotification object:self.playerItemFilter];
     }
 
 }
@@ -373,6 +375,17 @@ NSString *const collectionViewCellIdentifier = @"wm_collection_view_cell_identif
 #pragma mark - Back to Camera Button Event Handler Methods
 
 - (void)backToCameraViewButtonClicked:(UIButton *)sender {
+    [self.player pause];
+    self.playerLayer.player = nil;
+    [self.playerLayer removeFromSuperlayer];
+    self.playerItem = nil;
+    
+    NSFileManager *manager = [[NSFileManager alloc] init];
+    
+    if ([manager fileExistsAtPath:self.outputVideoURL.path]) {
+        [manager removeItemAtPath:self.outputVideoURL.path error:nil];
+    }
+    
    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -381,10 +394,7 @@ NSString *const collectionViewCellIdentifier = @"wm_collection_view_cell_identif
 
 - (void)completeButtonClicked:(UIButton *)sender {
     [self.player pause];
-    self.playerLayer.player = nil;
-//    [self.playerLayer.player pause];
-//    [self.playerLayer removeFromSuperlayer];
-//    self.player = nil;
+    self.player = nil;
 
     [self presentWMPlayAndStoreVideoViewController];
 }
@@ -416,7 +426,7 @@ NSString *const collectionViewCellIdentifier = @"wm_collection_view_cell_identif
 }
 
 - (void)appDidBecomeActiveWhenDismissed:(NSNotification *)notice {
-    self.playerLayer.player = self.player;
+    self.player = self.playerLayer.player;
     [self.player play];
 }
 

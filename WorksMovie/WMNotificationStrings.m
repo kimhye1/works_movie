@@ -13,5 +13,6 @@
 NSString *const WMShootingVideoViewControllerDidDismissedNotification = @"WMShootingVideoViewControllerDidDismissedNotification";
 NSString *const WMEditVideoViewControllerDidDismissedNotification = @"WMEditVideoViewControllerDidDismissedNotification";
 NSString *const WMPlayAndStoreVideoViewControllerDidDismissedNotification = @"WMPlayAndStoreVideoViewControllerDidDismissedNotification";
+NSString *const WMPlayAndStoreAudioViewControllerDidDismissedNotification = @"WMPlayAndStoreAudioViewControllerDidDismissedNotification";
 
 @end
